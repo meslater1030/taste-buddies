@@ -1,0 +1,26 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>Look at this group!</h1>
+
+<p>Things to be displayed in this group:</p>
+
+<ul>
+    <li>Name</li>
+    <li>Description</li>
+    <li>Age Range</li>
+    <li>List of Members</li>
+    <li>Location</li>
+    <li>Admin</li>
+    <li>Taste Profile</li>
+    <li>Price Range</li>
+    <li>Group Picture</li>
+    <li>Comments</li>
+</ul>
+
+<a href="{{ request.route_url('group_edit', group_id=1) }}">Edit Group (hidden if not admin)</a>
+
+<a href="{{ request.route_url('profile_detail', username='username') }}">"Delete Group (hidden if not admin)"</a>
+
+{% endblock %}

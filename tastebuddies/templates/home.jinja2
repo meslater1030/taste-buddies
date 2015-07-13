@@ -1,0 +1,9 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>You've made it to the home page!</h1>
+<a href="{{ request.route_url('user_login') }}">Login</a>
+<a href="{{ request.route_url('user_create') }}">Sign up</a>
+
+{% endblock %}
