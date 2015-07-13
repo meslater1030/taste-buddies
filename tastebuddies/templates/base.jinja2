@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <title>TasteBuddies!</title>
+    </head>
+
+  <body>
+
+  <nav>
+      <a href="{{ request.route_url('profile_detail', username='username') }}">Profile</a>
+      <a href="{{ request.route_url('home') }}">Logout</a>
+  </nav>
+  {% block body %}
+  {% endblock %}
+  </body>
+</html>
