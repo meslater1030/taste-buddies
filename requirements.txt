@@ -21,7 +21,6 @@ pyramid-tm==0.12
 repoze.lru==0.6
 SQLAlchemy==1.0.6
 supervisor==3.1.3
--e git+http://github.com/meslater1030/taste-buddies@16ca12ee89878fba7cb3bc46d3ee3f8aeeab4439#egg=tastebuddies-dev
 transaction==1.4.4
 translationstring==1.3
 venusian==1.0
