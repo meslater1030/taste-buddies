@@ -1,0 +1,107 @@
+.boxsizingBorder {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+body {
+        font-size: 80%;
+        font-family: "Courier New", Courier, monospace;
+        letter-spacing: 0.15em;
+        background-color: #efefef;}
+
+#page {
+    max-width: 940px;
+    min-width: 720px;
+    margin: 10px auto 10px auto;
+    padding: 20px;
+    border: 4px double #000;
+    background-color: #ffffff;}
+
+#logo {
+    display:block;
+    text-align: center;
+    margin:auto;
+    margin: 2% 25% 0% 25%;}
+
+
+
+ul {
+    list-style-type: circle;
+    width: 570px;
+    padding: 15px;
+    margin: 0px auto 0px auto;
+    border-top: 2px solid #000;
+    border-bottom: 1px solid #000;
+    text-align: center;}
+
+
+nav li {
+    display: inline;
+    margin: 50px 3px;}
+
+p {
+    text-align: center;
+    width: 600px;
+    margin: 20px auto 20px auto;
+    font-weight: normal;}
+a {
+    color: #000000;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 6px 18px 5px 18px;}
+
+a:hover, a.on {
+    color: #cc3333;
+    background-color: #ffffff;}
+
+#logo {
+    margin-top: 25px;
+    text-align: center;}
+
+#user-controls {
+    list-style-type: none;
+}
+
+
+.selected {
+     color: #cc3333;}
+
+
+#restriction {
+    text-align: center;
+    font-weight: bold;
+}
+
+.field, .control_row {
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+    width:100px;
+    font-family:  Courier, monospace;
+}
+
+
+button {
+    margin-top: 1%;
+}
+
+/*#new-entry-button{
+    list-style: none;
+    font-weight: bold;
+    font-family: Courier, monospace;
+    display: inline;}*/
+
+footer {
+    font-size: 0.9em;
+    text-align: center;
+    clear: both;
+    padding-top: 10px;
+    color: #000;}
+
+
+@media screen and (min-width: 480px) {
+
+  form {
+    max-width: 480px;}
+}
