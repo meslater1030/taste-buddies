@@ -1,5 +1,12 @@
 [![Travis](https://travis-ci.org/meslater1030/taste-buddies.svg)](https://travis-ci.org/meslater1030/taste-buddies.svg)
 
+# IMPORTANT
+
+**Make sure to run `python setup.py development.ini` on local
+machine after pulling down, or `python setup.py production.ini`
+on the server instance. This will create the system-specific
+egg files for gunicorn, etc. to use.**
+
 # taste-buddies
 **TasteBuddies** lets you connect to people who like the food you like!
 
