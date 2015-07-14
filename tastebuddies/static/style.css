@@ -37,7 +37,7 @@ body {
     margin-right: auto;}
 
 
-#create-group-form {
+#create-group-form, #create-profile-form {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
@@ -124,7 +124,7 @@ a:hover, a.on {
      color: #cc3333;}
 
 
-.group-profile-photo {
+.group-profile-photo, .profile-photo {
     max-width: 150px;
     margin: 0 5% 0px 0;
     border-radius: 100%;
