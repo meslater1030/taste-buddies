@@ -22,9 +22,6 @@
       <li><a href="{{ request.route_url('user_login') }}">Login</a></li>
       <li><a href="{{ request.route_url('user_create') }}">Sign up</a></li>
 
-    {% else %}
-      <li><a href="{{ request.route_url('home') }}">Logout</a></li>
-
     {% endif %}
 
     </ul>
@@ -36,7 +33,12 @@
   {% block body %}
   {% endblock %}
         <ul>
-          <li><a href="{{ request.route_url('home') }}">Logout</a></li>
+
+        {% if request.authenticated_userid %}
+          <li><a href="{{ request.route_url('logout') }}">Logout</a></li>
+
+        {% endif %}
+
         </ul>
       </nav>
     <aside>

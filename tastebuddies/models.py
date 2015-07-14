@@ -3,7 +3,8 @@ from sqlalchemy import (
     Column,
     Integer,
     Text,
-    ForeignKey
+    ForeignKey,
+    Boolean
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,9 +13,12 @@ from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
     relationship,
+    validates,
     )
 
+
 from zope.sqlalchemy import ZopeTransactionExtension
+
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -38,47 +42,149 @@ usercost_table = Table('user_cost', Base.metadata,
                        )
 
 
-class User(Base):
-    __tablename__ = 'users'
+groupdiscussion_table = Table('group_discussion', Base.metadata,
+                              Column('group', Integer, ForeignKey('group.id')),
+                              Column('discussion', Integer, ForeignKey(
+                                     'discussion.id'))
+                              )
+
+groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
+                       ForeignKey('group.id')), Column('agegroup', Integer,
+                       ForeignKey('agegroup.id'))
+                       )
+
+groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
+                        ForeignKey('group.id')), Column('users', Integer,
+                        ForeignKey('users.id'))
+                        )
+
+
+class _Table(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(Text)
-    firstname = Column(Text)
-    lastname = Column(Text)
-    password = Column(Text)
+
+    @classmethod
+    def write(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+
+class User(Base, _Table):
+    __tablename__ = 'users'
+    username = Column(Text, nullable=False, unique=True)
+    firstname = Column(Text, nullable=False)
+    lastname = Column(Text, nullable=False)
+    password = Column(Text, nullable=False)
+    email = Column(Text, nullable=False, unique=True)
+    confirmed = Column(Boolean)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
-    food_profile = relationship('profile', secondary=usertaste_table)
-    diet_restrict = relationship('diet', secondary=userdiet_table)
-    cost_restrict = relationship('cost', secondary=usercost_table)
+    food_profile = relationship('Profile', secondary=usertaste_table,
+                                backref='users')
+    diet_restrict = relationship('Diet', secondary=userdiet_table,
+                                 backref='users')
+    cost_restrict = relationship('Cost', secondary=usercost_table,
+                                 backref='users')
+    user_groups = relationship('Group', secondary=groupuser_table,
+                               backref='users')
     restaurants = Column(Text)
-    photo = Column(Text)
+
+    @validates('email')
+    def validate_email(self, key, email):
+        try:
+            assert '@' in email
+            assert '.' in email
+            return email
+        except:
+            raise TypeError('Please enter a vaild email address')
+
+    @classmethod
+    def lookup_user(cls, username, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(username=username).all()
+
+    def __repr__(self):
+        return "<User({} {}, username={})>".format(self.firstname,
+                                                   self.lastname,
+                                                   self.username)
 
 
-class Profile(Base):
+class Profile(Base, _Table):
     __tablename__ = 'profile'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    taste = Column(Text)
+    taste = Column(Text, unique=True)
+
+    def __repr__(self):
+        return "<Taste(%s)>" % (self.taste)
 
 
-class AgeGroup(Base):
+class AgeGroup(Base, _Table):
     __tablename__ = 'agegroup'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     age_group = Column(Text)
 
+    def __repr__(self):
+        return "<Age(%s)>" % (self.age_group)
 
-class Location(Base):
+
+class Location(Base, _Table):
     __tablename__ = 'location'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     city = Column(Text)
 
+    def __repr__(self):
+        return "<Location(%s)>" % (self.city)
 
-class Cost(Base):
+
+class Cost(Base, _Table):
     __tablename__ = 'cost'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     cost = Column(Text)
 
+    def __repr__(self):
+        return "<Cost(%s)>" % (self.cost)
 
-class Diet(Base):
+
+class Diet(Base, _Table):
     __tablename__ = 'diet'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     diet = Column(Text)
+
+    def __repr__(self):
+        return "<Dietary Preference(%s)>" % (self.diet)
+
+
+class Group(Base, _Table):
+    __tablename__ = 'group'
+    name = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    location = Column(Integer, ForeignKey('location.id'))
+    discussion = relationship('Discussion', secondary=groupdiscussion_table,
+                              backref='group')
+    group_admin = relationship("Admin", uselist=False, backref='group')
+
+    def __repr__(self):
+        return "<Group(%s, location=%s)>" % (self.name, self.location)
+
+
+class Discussion(Base, _Table):
+    __tablename__ = 'discussion'
+    discussion_title = Column(Text)
+
+    def __repr__(self):
+        return "<Discussion(%s)>" % (self.discussion_title)
+
+
+class Post(Base, _Table):
+    __tablename__ = 'post'
+    discussionpost = Column(Integer, ForeignKey('discussion.id'))
+
+    def __repr__(self):
+        return "<Post(%s)>" % (self.discussionpost)
+
+
+class Admin(Base, _Table):
+    __tablename__ = 'admin'
+    users = Column(Integer, ForeignKey('users.id'))
+    group_id = Column(Integer, ForeignKey('group.id'))
+
+    def __repr__(self):
+        return "<Admin(%s)>" % (self.users)

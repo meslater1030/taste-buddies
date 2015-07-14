@@ -71,7 +71,7 @@ def create_group(db_session):
     group = models.Group.write(
         name='Seattle Spicy Chinese Food',
         description="it's all in the name",
-    )
+        )
     db_session.flush()
     return group
 
