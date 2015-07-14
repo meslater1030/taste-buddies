@@ -94,10 +94,10 @@ class User(Base):
         return instance
 
     @classmethod
-    def lookup_user(cls, session=None, username=username):
+    def lookup_user(cls, username, session=None):
         if session is None:
             session = DBSession
-        return session.query(cls).get(username)
+        return session.query(cls).filter(username=username).all()
 
     def __repr__(self):
         return "<User({} {}, username={})>".format(self.firstname,
