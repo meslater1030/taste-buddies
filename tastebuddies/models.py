@@ -7,7 +7,7 @@ from sqlalchemy import (
     Boolean
     )
 
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -59,9 +59,21 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         )
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Table(object):
+
     id = Column(Integer, primary_key=True, autoincrement=True)
+
+    @classmethod
+    def write(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+
+class User(Base, Table):
+    __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     firstname = Column(Text, nullable=False)
     lastname = Column(Text, nullable=False)
@@ -86,14 +98,6 @@ class User(Base):
             raise TypeError('Please enter a vaild email address')
 
     @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
-    @classmethod
     def lookup_user(cls, username, session=None):
         if session is None:
             session = DBSession
@@ -105,9 +109,8 @@ class User(Base):
                                                    self.username)
 
 
-class Profile(Base):
+class Profile(Base, Table):
     __tablename__ = 'profile'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     taste = Column(Text)
 
     @classmethod
@@ -122,9 +125,8 @@ class Profile(Base):
         return "<Taste(%s)>" % (self.taste)
 
 
-class AgeGroup(Base):
+class AgeGroup(Base, Table):
     __tablename__ = 'agegroup'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     age_group = Column(Text)
 
     @classmethod
@@ -139,9 +141,8 @@ class AgeGroup(Base):
         return "<Age(%s)>" % (self.age_group)
 
 
-class Location(Base):
+class Location(Base, Table):
     __tablename__ = 'location'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     city = Column(Text)
 
     @classmethod
@@ -156,9 +157,8 @@ class Location(Base):
         return "<Location(%s)>" % (self.city)
 
 
-class Cost(Base):
+class Cost(Base, Table):
     __tablename__ = 'cost'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     cost = Column(Text)
 
     @classmethod
@@ -173,9 +173,8 @@ class Cost(Base):
         return "<Cost(%s)>" % (self.cost)
 
 
-class Diet(Base):
+class Diet(Base, Table):
     __tablename__ = 'diet'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     diet = Column(Text)
 
     @classmethod
