@@ -97,6 +97,14 @@ a:hover, a.on {
      color: #cc3333;}
 
 
+.group-profile-photo {
+    max-width: 150px;
+    margin: 0 5% 0px 0;
+    border-radius: 100%;
+
+}
+
+
 #text_entry {
     display: block;
     margin-top: 2%;
