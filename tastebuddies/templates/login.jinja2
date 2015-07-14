@@ -4,14 +4,14 @@
 
 <h1>Log In!</h1>
 
-<form action="{{ request.route_url('profile_detail', username='username') }}">
-    <input type="text" name="username" id="username"
-    value="Username"/>
-
-    <input type="text" name="password" id="password"
-    value="Password"/>
-
-    <input type="submit" name="submit" value="Login"/>
+<div id="#form-container">
+<form id="login-form" action="{{ request.route_url('user_login') }}" method='POST'>
+    <input class="input" type="text" name="username" id="username"
+    placeholder="Username"/>
+    <input class="input" type="text" name="password" id="password"
+    placeholder="Password"/>
+    <input id="login" type="submit" name="submit" value="Login"/>
 </form>
+</div>
 
 {% endblock %}

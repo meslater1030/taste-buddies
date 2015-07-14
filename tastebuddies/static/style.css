@@ -28,7 +28,47 @@ body {
     text-align: center;
     margin: 2% 10% 0% 10%;}
 
+#form-container {
+    width: 100%;}
 
+#login-form, #create-user-form, #verification-form{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;}
+
+
+#create-group-form, #create-profile-form {
+    text-align: left;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #F7F7F7;
+    line-height: 150%;
+    font-family: Courier;
+    font-size: 16px;
+    color: black;
+    padding: 20px;
+    border-radius: 6px
+
+}
+
+#login, #save_group, #create-account, #verify {
+    background-color: #7ab800;
+    font-family:"Courier";
+    color: #fff;
+    display: block;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 42px;
+    width: auto;
+    height: 42px;
+    margin: 12px 0 12px 0;
+    padding: 0 22px;
+    border-radius: 3px;
+    vertical-align: top;
+    display: inline-block;
+}
 
 ul {
     list-style-type: circle;
@@ -57,6 +97,17 @@ a {
     text-decoration: none;
     padding: 6px 18px 5px 18px;}
 
+label {
+  line-height: 150%;
+  font-family: 'Just Another Hand';
+  font-size: 30px;
+  color: black;
+  display: block;
+  width: auto;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
 a:hover, a.on {
     color: #cc3333;
     background-color: #ffffff;}
@@ -70,8 +121,17 @@ a:hover, a.on {
 }
 
 
+
 .selected {
      color: #cc3333;}
+
+
+.group-profile-photo, .profile-photo {
+    max-width: 150px;
+    margin: 0 5% 0px 0;
+    border-radius: 100%;
+
+}
 
 
 #text_entry {
@@ -79,7 +139,8 @@ a:hover, a.on {
     margin-top: 2%;
     margin-left: auto;
     margin-right: auto;
-    font-family:  Courier, monospace;}
+    font-family:  Courier, monospace;
+    display: inline-block;}
 
 #restriction {
     text-align: center;
@@ -100,15 +161,32 @@ a:hover, a.on {
   margin-right: 20%;
 }
 
+
+.input {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  color: #000;
+  font-size: 16px;
+  font-style: italic;
+  font-family: Courier;
+  margin: 2% auto;
+  padding: 10px 15px;
+/*  width: 88%;*/
+  display: block;
+}
+
+
 button {
     margin-top: 1%;
+    background-color: #7ab800;
 }
 
 #new-entry-button, #edit_entry-button, #delete_entry-button {
     list-style: none;
     font-weight: bold;
     font-family: Courier, monospace;
-    display: inline;}
+    display: inline;
+}
 
 footer {
     font-size: 0.9em;

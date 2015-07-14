@@ -2,14 +2,14 @@
 
 {% block body %}
 
-<h1>Edit your profile!</h1>
+<h1>Edit your group!</h1>
 
-<form action="{{ request.route_url('profile_detail', username='username') }}">
-    <input type="text" name="first_name" id="first_name"
-    value="First Name"/>
+<form action="{{ request.route_url('group_detail', group_id=1) }}">
+    <input type="text" name="group_name" id="group_name"
+    value="Group Name"/>
 
-    <input type="text" name="last_name" id="last_name"
-    value="Last Name"/>
+    <input type="text" name="age_range" id="age_range"
+    value="Age Range"/>
 
     <p>An image uploading thing should be here...?</p>
 
@@ -18,18 +18,9 @@
 
     <p>Checkboxes of tastes go here</p>
 
-    <input type="text" name="age_group" id="age_group"
-    value="Age Group"/>
-
-    <input type="text" name="fav_restaurants" id="fave_restaurants"
-    value="Favorite Restaurants"/>
-
     <p>Radio buttons to select $$$$</p>
 
-    <input type="text" name="fav_food" id="fav_fopd"
-    value="Favorite Food"/>
-
-    <input type="submit" name="profile_save" value="Save Profile"/>
+    <input type="submit" name="profile_save" value="Save Group"/>
 </form>
 
 {% endblock %}

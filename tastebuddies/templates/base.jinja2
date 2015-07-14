@@ -18,8 +18,12 @@
       <li><a href="{{ request.route_url('home') }}" class="selected">Home</a></li>
       <li><a href="{{ request.route_url('profile_detail', username='username') }}">Profile</a></li>
 
+    {% if not request.authenticated_userid %}
       <li><a href="{{ request.route_url('user_login') }}">Login</a></li>
       <li><a href="{{ request.route_url('user_create') }}">Sign up</a></li>
+
+    {% endif %}
+
     </ul>
   </nav>
   <div id="banner">
@@ -29,7 +33,12 @@
   {% block body %}
   {% endblock %}
         <ul>
-          <li><a href="{{ request.route_url('home') }}">Logout</a></li>
+
+        {% if request.authenticated_userid %}
+          <li><a href="{{ request.route_url('logout') }}">Logout</a></li>
+
+        {% endif %}
+
         </ul>
       </nav>
     <aside>
