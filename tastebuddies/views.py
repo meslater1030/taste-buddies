@@ -3,6 +3,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from pyramid.security import remember, forget
+from cryptacular.bcrypt import BCRYPTPasswordManager
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 
@@ -10,7 +11,6 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
-    # MyModel,
 )
 
 
@@ -23,16 +23,11 @@ from .models import (
 #                         status_int=500)
 #     return {'one': one, 'project': 'tastebuddies'}
 
+
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
 def home_view(request):
     return {}
-
-
-@view_config(route_name='logout')
-def logout(request):
-    headers = forget(request)
-    return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='user_create',
@@ -53,10 +48,34 @@ def profile_create_view(request):
     return {}
 
 
+def do_login(request):
+    username = request.params.get('username', None)
+    password = request.params.get('password', None)
+    login_result = False
+
+    if not (username and password):
+        raise ValueError('Both username and password are required')
+
+    settings = request.registry.settings
+    manager = BCRYPTPasswordManager()
+
+    if username == settings.get('auth.username', ''):
+        hashed = settings.get('auth.password', '')
+        login_result = manager.check(hashed, password)
+
+    return login_result
+
+
 @view_config(route_name='user_login',
              renderer='templates/login.jinja2')
 def login(request):
     return {}
+
+
+@view_config(route_name='logout')
+def logout(request):
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',
