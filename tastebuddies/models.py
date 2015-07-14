@@ -76,6 +76,34 @@ class User(Base):
     user_groups = relationship('Group', secondary=groupuser_table)
     restaurants = Column(Text)
 
+    @validates('email')
+    def validate_email(self, key, email):
+        try:
+            assert '@' in email
+            assert '.' in email
+            return email
+        except:
+            raise TypeError('Please enter a vaild email address')
+
+    @classmethod
+    def write(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+    @classmethod
+    def lookup_user(cls, session=None, username=username):
+        if session is None:
+            session = DBSession
+        return session.query(cls).get(username)
+
+    def __repr__(self):
+        return "<User({} {}, username={})>".format(self.firstname,
+                                                   self.lastname,
+                                                   self.username)
+
 
 class Profile(Base):
     __tablename__ = 'profile'
