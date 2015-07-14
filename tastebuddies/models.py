@@ -65,14 +65,6 @@ class User(Base):
             raise TypeError('Please enter a vaild email address')
 
     @classmethod
-    def edit(cls, session=None, username=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.query(cls).filter(cls.username == username).update(**kwargs)
-        return instance
-
-    @classmethod
     def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
@@ -97,11 +89,33 @@ class Profile(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     taste = Column(Text)
 
+    @classmethod
+    def write(cls, session=None, taste=None):
+        if session is None:
+            session = DBSession
+        instance = cls(taste)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<Taste(%s)>" % (self.taste)
+
 
 class AgeGroup(Base):
     __tablename__ = 'agegroup'
     id = Column(Integer, primary_key=True, autoincrement=True)
     age_group = Column(Text)
+
+    @classmethod
+    def write(cls, session=None, age_group=None):
+        if session is None:
+            session = DBSession
+        instance = cls(age_group)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<Age(%s)>" % (self.age_group)
 
 
 class Location(Base):
@@ -109,14 +123,47 @@ class Location(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     city = Column(Text)
 
+    @classmethod
+    def write(cls, session=None, city=None):
+        if session is None:
+            session = DBSession
+        instance = cls(city)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<Location(%s)>" % (self.city)
+
 
 class Cost(Base):
     __tablename__ = 'cost'
     id = Column(Integer, primary_key=True, autoincrement=True)
     cost = Column(Text)
 
+    @classmethod
+    def write(cls, session=None, cost=None):
+        if session is None:
+            session = DBSession
+        instance = cls(cost)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<Cost(%s)>" % (self.cost)
+
 
 class Diet(Base):
     __tablename__ = 'diet'
     id = Column(Integer, primary_key=True, autoincrement=True)
     diet = Column(Text)
+
+    @classmethod
+    def write(cls, session=None, diet=None):
+        if session is None:
+            session = DBSession
+        instance = cls(diet)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<Dietary Preference(%s)>" % (self.diet)
