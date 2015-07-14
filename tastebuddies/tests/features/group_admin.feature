@@ -4,15 +4,15 @@ Feature: Admin
 
 Scenario: Admin Delete Posts
     Given a group admin
-    When I visit the group page forum
+    When I visit a group page forum
     Then I will be able to delete any post
-    And that post will not be visible to anyone
+    And that post will not exit
 
 Scenario: Admin Delete Group
     Given a group admin
-    When I visit the group page
+    When I visit a group page
     Then I will be able to delete the group
-    And that group will no longer exist
+    And that group will not exist
 
 Scenario: Admin authorization
     Given a group admin
@@ -21,14 +21,14 @@ Scenario: Admin authorization
 
 Scenario: Admin Edit Group
     Given a group admin
-    When I visit the group page
-    Then I will have an edit button
-    When I click the edit button
+    When I visit a group page
+    Then I will have an edit group button
+    When I click the edit group button
     Then I will be able to edit that group
     And Those edits will be visible to everyone
 
 Scenario: Admin Delete Group Member
     Given a group admin
-    When I visit the group page
+    When I visit a group page
     Then I will be able to delete a member of the group
     And that user will no longer be a group member

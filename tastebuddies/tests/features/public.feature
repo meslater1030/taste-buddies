@@ -6,7 +6,7 @@ Scenario: Signing up
     Given anyone on the web
     When I go to the signup page
     Then I can create an account
-    And I will be able to log in
+    And I can log in
 
 Scenario: Anonymous View
     Given anyone on the web

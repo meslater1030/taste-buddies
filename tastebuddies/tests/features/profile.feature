@@ -3,9 +3,10 @@ Feature: User Profile
 
 Scenario: Editing User Profile
     Given a user
-    When I click the edit button
+    When I visit my profile
+    And I click the edit profile button
     Then I can edit my profile
-    And those edits will populate to my page
+    And profile edits will populate to my page
 
 Scenario: Group Suggestions
     Given a user
@@ -16,7 +17,7 @@ Scenario: Create User Profile
     Given a user
     When I first sign up
     Then I will be taken to a create profile page
-    And those edits will populate to my page
+    And profile edits will populate to my page
 
 Scenario: User Login
     Given a user
