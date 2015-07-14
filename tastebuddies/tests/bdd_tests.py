@@ -77,6 +77,25 @@ def test_create_profile_redirect():
     pass
 
 
+@then('I will create a profile')
+def test_profile_creation(db_session):
+    data = {
+        u'username': u'SallyJones',
+        u'firstname': u'Sally',
+        u'lastname': u'Jones',
+        u'password': u'SuperSecret',
+        u'email': u'sally.jones@gmail.com',
+        u'restaurants': u'Arbys'
+    }
+    models.User.write(session=db_session, **data)
+    db_session.flush()
+
+
+@then('that profile will populate to my page')
+def test_profile_population():
+    pass
+
+
 @scenario('features/profile.feature', 'User Login')
 def test_user_login():
     pass

@@ -17,7 +17,8 @@ Scenario: Create User Profile
     Given a user
     When I first sign up
     Then I will be taken to a create profile page
-    And profile edits will populate to my page
+    And I will create a profile
+    And that profile will populate to my page
 
 Scenario: User Login
     Given a user
