@@ -4,12 +4,11 @@ import models
 import os
 import pytest
 from sqlalchemy import create_engine
-
+  import pdb;pdb.set_trace()
 TEST_DATABASES_URL = os.environ.get(
     'DATABASE_URL',
-    'postgresql://meslater:@localhost:5432/test-taste-buddies'
+    'postgresql:///tastebuddies'
 )
-os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 
 
 # you will want to make a fixture that creates an app
