@@ -28,20 +28,29 @@ body {
     text-align: center;
     margin: 2% 10% 0% 10%;}
 
+#form-container {
+    width: 100%;}
+
+#login-form {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;}
+
 #login {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
-    display: inline-block;
+    display: block;
     font-weight: 500;
     font-size: 16px;
     line-height: 42px;
     width: auto;
     height: 42px;
-    margin: 12px 5px 12px 0;
+    margin: 12px 0 12px 0;
     padding: 0 22px;
     border-radius: 3px;
     vertical-align: top;
+    display: inline-block;
 }
 
 
@@ -95,7 +104,8 @@ a:hover, a.on {
     margin-top: 2%;
     margin-left: auto;
     margin-right: auto;
-    font-family:  Courier, monospace;}
+    font-family:  Courier, monospace;
+    display: inline-block;}
 
 #restriction {
     text-align: center;
@@ -116,6 +126,22 @@ a:hover, a.on {
   margin-right: 20%;
 }
 
+
+.input {
+  background-color: transparent;
+  border: 1px solid #ddd;
+  color: #000;
+  font-size: 16px;
+  font-style: italic;
+  font-family: Courier;
+  margin: 2% auto;
+  padding: 10px 15px;
+/*  width: 88%;*/
+  display: block;
+}
+
+
+
 button {
     margin-top: 1%;
     background-color: #7ab800;
@@ -125,7 +151,8 @@ button {
     list-style: none;
     font-weight: bold;
     font-family: Courier, monospace;
-    display: inline;}
+    display: inline;
+}
 
 footer {
     font-size: 0.9em;
