@@ -5,13 +5,29 @@
 <h1>Create your group!</h1>
 
 <form action="{{ request.route_url('group_detail', group_id=1) }}">
+    <p>An image uploading thing should be here...?</p>
     <input type="text" name="group_name" id="group_name"
     value="Group Name"/>
 
-    <input type="text" name="age_range" id="age_range"
-    value="Age Range"/>
-
-    <p>An image uploading thing should be here...?</p>
+    <h2>Age Range</h2>
+    <select class="age_range" />
+        <option>18-24</option>
+        <option>25-34</option>
+        <option>35-44</option>
+        <option>45-54</option>
+        <option>55-64</option>
+        <option>65-74</option>
+        <option>75+</option>
+    </select>
+    <h2>Location>
+    <select class="location" />
+        <option>Seattle</option>
+        <option>Kitsap</option>
+        <option>Eastside</option>
+        <option>Skagit</option>
+        <option>South King</option>
+        <option>65-74</option>
+    </select>
 
     <input type="text" name="location" id="location"
     value="Location"/>
@@ -25,7 +41,7 @@
     <input type="checkbox" name="taste" class="style" value="Italian"> Italian
     <input type="checkbox" name="taste" class="style" value="Indian"> Indian
     <input type="checkbox" name="taste" class="style" value="Chinese"> Chinese
-    <input type="checkbox" name="taste" class="style" value="American Classic"> American Classic
+    <input type="checkbox" name="taste" class="style" value="American_Classic"> American Classic
     <input type="checkbox" name="taste" class="style" value="German"> German
     <input type="checkbox" name="taste" class="style" value="British"> British
     <input type="checkbox" name="taste" class="style" value="French"> French
@@ -49,15 +65,14 @@
     <h2>Diet</h2>
     <input type="checkbox" name="taste" class="style" value="Vegetarian">Vegetarian
     <input type="checkbox" name="taste" class="style" value="Vegan">Vegan
-    <input type="checkbox" name="taste" class="style" value="Meat Eater">Meat Eater
-    <input type="checkbox" name="taste" class="style" value="Gluten Free">Gluteen Free
-    <input type="checkbox" name="taste" class="style" value="Low Carb">Low Carb
+    <input type="checkbox" name="taste" class="style" value="Meat_Eater">Meat Eater
+    <input type="checkbox" name="taste" class="style" value="Gluten_Free">Gluteen Free
+    <input type="checkbox" name="taste" class="style" value="Low_Carb">Low Carb
     <h2>Price</h2>
     <input type="radio" name="price" class="style" value="cheap">$
     <input type="radio" name="price" class="style" value="average">$$
     <input type="radio" name="price" class="style" value="moderate">$$$
     <input type="radio" name="price" class="style" value="expensive">$$$$
-
 
     <input type="submit" name="profile_save" value="Save Group"/>
 </form>
