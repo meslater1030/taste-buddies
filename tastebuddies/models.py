@@ -79,8 +79,8 @@ class User(Base, _Table):
     password = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
     confirmed = Column(Boolean)
-    age = Column(Integer, ForeignKey('agegroup.id'), backref='users')
-    user_location = Column(Integer, ForeignKey('location.id'), backref='users')
+    age = Column(Integer, ForeignKey('agegroup.id'))
+    user_location = Column(Integer, ForeignKey('location.id'))
     food_profile = relationship('Profile', secondary=usertaste_table,
                                 backref='users')
     diet_restrict = relationship('Diet', secondary=userdiet_table,
@@ -156,7 +156,7 @@ class Group(Base, _Table):
     __tablename__ = 'group'
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
-    location = Column(Integer, ForeignKey('location.id'), backref='group')
+    location = Column(Integer, ForeignKey('location.id'))
     discussion = relationship('Discussion', secondary=groupdiscussion_table,
                               backref='group')
     group_admin = relationship("Admin", uselist=False, backref='group')
@@ -175,8 +175,7 @@ class Discussion(Base, _Table):
 
 class Post(Base, _Table):
     __tablename__ = 'post'
-    discussionpost = Column(Integer, ForeignKey('discussion.id'),
-                            backref='post')
+    discussionpost = Column(Integer, ForeignKey('discussion.id'))
 
     def __repr__(self):
         return "<Post(%s)>" % (self.discussionpost)
@@ -185,7 +184,7 @@ class Post(Base, _Table):
 class Admin(Base, _Table):
     __tablename__ = 'admin'
     users = Column(Integer, ForeignKey('users.id'))
-    group_id = Column(Integer, ForeignKey('group.id'), backref='group')
+    group_id = Column(Integer, ForeignKey('group.id'))
 
     def __repr__(self):
         return "<Admin(%s)>" % (self.users)
