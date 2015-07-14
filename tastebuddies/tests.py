@@ -66,6 +66,21 @@ def create_user(db_session):
     return diet, profile, age, location, cost, user
 
 
+@pytest.fixture()
+def create_group(db_session):
+    group = models.Group.write(
+        name='Seattle Spicy Chinese Food',
+        description="it's all in the name",
+        )
+    db_session.flush()
+    return group
+
+
+def test_create_group(create_group, db_session):
+    create_group
+    assert len(db_session.query(models.Group).all()) == 1
+
+
 def test_create_user(create_user, db_session):
     create_user
     assert len(db_session.query(models.User).all()) == 1
@@ -74,3 +89,6 @@ def test_create_user(create_user, db_session):
     assert len(db_session.query(models.Location).all()) == 1
     assert len(db_session.query(models.Cost).all()) == 1
     assert len(db_session.query(models.AgeGroup).all()) == 1
+    assert len(db_session.query(models.usertaste_table).all()) == 0
+    assert len(db_session.query(models.userdiet_table).all()) == 0
+    assert len(db_session.query(models.usercost_table).all()) == 0
