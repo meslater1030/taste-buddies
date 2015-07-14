@@ -2,7 +2,7 @@
 
 
 def app(environ, start_response):
-    data = "Hello, World!\nHow are you?\n"
+    data = "Hello, World!\nHow are you?"
     start_response("200 OK", [
         ("Content-Type", "text/plain"),
         ("Content-Length", str(len(data)))
@@ -11,5 +11,5 @@ def app(environ, start_response):
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
-    srv = make_server('localhost', 8080, app)
+    srv = make_server('', 8080, app)
     srv.serve_forever()
