@@ -6,7 +6,7 @@ Scenario: Admin Delete Posts
     Given a group admin
     When I visit a group page forum
     Then I will be able to delete any post
-    And that post will not exit
+    And that post will not exist
 
 Scenario: Admin Delete Group
     Given a group admin
@@ -21,8 +21,8 @@ Scenario: Admin authorization
 
 Scenario: Admin Edit Group
     Given a group admin
-    When I visit a group page
-    Then I will have an edit group button
+    # When I visit a group page
+    # Then I will have an edit group button
     When I click the edit group button
     Then I will be able to edit that group
     And Those edits will be visible to everyone
