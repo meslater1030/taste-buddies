@@ -31,12 +31,12 @@ body {
 #form-container {
     width: 100%;}
 
-#login-form {
+#login-form, #create-user-form {
     text-align: center;
     margin-left: auto;
     margin-right: auto;}
 
-#login {
+#login, #create-account {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
