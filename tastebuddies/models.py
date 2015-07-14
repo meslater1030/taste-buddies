@@ -7,7 +7,7 @@ from sqlalchemy import (
     Boolean
     )
 
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -60,7 +60,6 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
 
 
 class Table(object):
-
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
