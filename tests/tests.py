@@ -5,6 +5,15 @@ from pyramid import testing
 
 from .models import DBSession
 
+import tastebuddies
+
+TEST_DATABASE_URL = os.environ.get(
+    'DATABASE_URL',
+    'postgresql:///travis_ci_test'
+)
+os.environ['DATABASE_URL'] = TEST_DATABASE_URL
+os.environ['TESTING'] = 'True'
+
 
 class TestMyViewSuccessCondition(unittest.TestCase):
     def setUp(self):
