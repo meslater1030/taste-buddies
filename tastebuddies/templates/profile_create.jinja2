@@ -2,10 +2,9 @@
 
 {% block body %}
 
-<h1>Make a profile!</h1>
-
 <div id="#form-container">
 <form id="create-profile-form" action="{{ request.route_url('profile_detail', username='username') }}">
+    <h1>Create your profile!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../static/img/dog2.jpg" alt="Group Profile Photo" class="profile-photo">
     </div>
@@ -81,18 +80,24 @@
         <input type="checkbox" name="personal_taste" class="style" value="Gluten_Free">Gluten Free
         <input type="checkbox" name="personal_taste" class="style" value="Low_Carb">Low Carb
     </div>
-
-
-
-    <input type="text" name="fav_restaurants" id="fave_restaurants"
-    value="Favorite Restaurants"/>
-
-    <p>Radio buttons to select $$$$</p>
-
-    <input type="text" name="fav_food" id="fav_fopd"
-    value="Favorite Food"/>
-
-    <input type="submit" name="profile_save" value="Save Profile"/>
+    <label>Favorite Restaurants</label>
+    <div class="field-group">
+        <input type="text" name="favorite_restaurants" id="favorite_restaurants"
+        placeholder="Favorite Restaurants"/>
+    </div>
+    <label>Favorite Food</label>
+    <div class="field-group">
+    <input type="text" name="favorite_food" id="favorite_food"
+    placeholder="Favorite Food"/>
+    </div>
+    <div id="personal_price_range" class="field-group">
+        <label>Price</label>
+        <input type="radio" name="group_price" class="style" value="cheap">$
+        <input type="radio" name="group_price" class="style" value="average">$$
+        <input type="radio" name="group_price" class="style" value="moderate">$$$
+        <input type="radio" name="group_price" class="style" value="expensive">$$$$
+    </div>
+    <input id="save_personal_profile" type="submit" name="profile_save" value="Save Profile"/>
 </form>
 </div>
 
