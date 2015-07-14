@@ -5,7 +5,7 @@
 <h1>Log In!</h1>
 
 <div id="#form-container">
-<form id="login-form" action="{{ request.route_url('profile_detail', username='username') }}">
+<form id="login-form" action="{{ request.route_url('user_login') }}" method='POST'>
     <input class="input" type="text" name="username" id="username"
     placeholder="Username"/>
     <input class="input" type="text" name="password" id="password"
