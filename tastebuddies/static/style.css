@@ -31,12 +31,18 @@ body {
 #form-container {
     width: 100%;}
 
-#login-form, #create-user-form {
+#login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
     margin-right: auto;}
 
-#login, #create-account {
+
+#create-group-form {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;}
+
+#login, #create-account, #verify {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
@@ -52,8 +58,6 @@ body {
     vertical-align: top;
     display: inline-block;
 }
-
-
 
 ul {
     list-style-type: circle;
@@ -99,6 +103,14 @@ a:hover, a.on {
      color: #cc3333;}
 
 
+.group-profile-photo {
+    max-width: 150px;
+    margin: 0 5% 0px 0;
+    border-radius: 100%;
+
+}
+
+
 #text_entry {
     display: block;
     margin-top: 2%;
@@ -139,7 +151,6 @@ a:hover, a.on {
 /*  width: 88%;*/
   display: block;
 }
-
 
 
 button {
