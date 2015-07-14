@@ -31,8 +31,14 @@ body {
 #form-container {
     width: 100%;}
 
-#login-form, #create-user-form, #verification-form {
+#login-form, #create-user-form, #verification-form{
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;}
+
+
+#create-group-form {
+    text-align: left;
     margin-left: auto;
     margin-right: auto;}
 
