@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 
 TEST_DATABASES_URL = os.environ.get(
     'DATABASE_URL',
-    'postgresql://meslater:@localhost:5432/test-taste-buddies'
+    'postgresql:///test-tastebuddies'
 )
 os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 
@@ -39,19 +39,21 @@ def db_session(request, connection):
 
 @pytest.fixture()
 def create_user(db_session):
-    profile = models.Profile.write(
-        taste='spicy'
-    )
-    age = models.AgeGroup.write(
+    taste_list = ['sweet', 'salty', 'spicy']
+    for tastes in taste_list:
+        models.Profile.write(
+            taste=tastes
+        )
+    models.AgeGroup.write(
         age_group='18-24'
     )
-    location = models.Location.write(
+    models.Location.write(
         city='Seattle'
     )
-    cost = models.Cost.write(
+    models.Cost.write(
         cost='expensive'
     )
-    diet = models.Diet.write(
+    models.Diet.write(
         diet='vegan'
     )
     user = models.User.write(
@@ -62,30 +64,26 @@ def create_user(db_session):
         email='bob.jones@gmail.com',
         restaurants='Chipotle',
     )
-    db_session.flush()
-    return diet, profile, age, location, cost, user
-
-
-@pytest.fixture()
-def create_group(db_session):
-    group = models.Group.write(
-        name='Seattle Spicy Chinese Food',
-        description="it's all in the name",
+    user2 = models.User.write(
+        username='pewpew',
+        firstname='Bob',
+        lastname='Jones',
+        password='secret',
+        email='pewpew@gmail.com',
+        restaurants='Chipotle',
     )
+    salty = db_session.query(models.Profile).all()[1]
+    user.food_profile.append(salty)
+    user2.food_profile.append(salty)
     db_session.flush()
-    return group
-
-
-def test_create_group(create_group, db_session):
-    create_group
-    assert len(db_session.query(models.Group).all()) == 1
 
 
 def test_create_user(create_user, db_session):
     create_user
-    assert len(db_session.query(models.User).all()) == 1
+    import pdb;pdb.set_trace()
+    assert len(db_session.query(models.User).all()) == 2
     assert len(db_session.query(models.Diet).all()) == 1
-    assert len(db_session.query(models.Profile).all()) == 1
+    assert len(db_session.query(models.Profile).all()) == 3
     assert len(db_session.query(models.Location).all()) == 1
     assert len(db_session.query(models.Cost).all()) == 1
     assert len(db_session.query(models.AgeGroup).all()) == 1
