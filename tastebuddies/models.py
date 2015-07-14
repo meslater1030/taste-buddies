@@ -111,10 +111,10 @@ class Profile(Base):
     taste = Column(Text)
 
     @classmethod
-    def write(cls, taste=None, session=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(taste=taste)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -128,10 +128,10 @@ class AgeGroup(Base):
     age_group = Column(Text)
 
     @classmethod
-    def write(cls, session=None, age_group=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(age_group=age_group)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -145,10 +145,10 @@ class Location(Base):
     city = Column(Text)
 
     @classmethod
-    def write(cls, session=None, city=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(city=city)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -162,10 +162,10 @@ class Cost(Base):
     cost = Column(Text)
 
     @classmethod
-    def write(cls, session=None, cost=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(cost=cost)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -179,10 +179,10 @@ class Diet(Base):
     diet = Column(Text)
 
     @classmethod
-    def write(cls, session=None, diet=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(diet=diet)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
