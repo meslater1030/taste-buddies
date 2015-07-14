@@ -80,6 +80,12 @@ class User(Base):
     picture = image_attachment('UserPicture')
 
 
+class UserPicture(Base, Image):
+    __tablename__ = 'user_picture'
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    user = relationship('users.id')
+
+
 class Profile(Base):
     __tablename__ = 'profile'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -116,9 +122,15 @@ class Group(Base):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
-    picture = image_attachment('UserPicture')
+    picture = image_attachment('GroupPicture')
     discussion = relationship('discussion', secondary=groupdiscussion_table)
     group_admin = relationship("group admin", uselist=False, backref="admin")
+
+
+class GroupPicture(Base, Image):
+    __tablename__ = 'group_picture'
+    user_id = Column(Integer, ForeignKey('group.id'), primary_key=True)
+    user = relationship('group.id')
 
 
 class Discussion(Base):
