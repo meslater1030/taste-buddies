@@ -31,12 +31,12 @@ body {
 #form-container {
     width: 100%;}
 
-#login-form, #create-user-form {
+#login-form, #create-user-form, #verification-form {
     text-align: center;
     margin-left: auto;
     margin-right: auto;}
 
-#login, #create-account {
+#login, #create-account, #verify {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
@@ -52,8 +52,6 @@ body {
     vertical-align: top;
     display: inline-block;
 }
-
-
 
 ul {
     list-style-type: circle;
@@ -139,7 +137,6 @@ a:hover, a.on {
 /*  width: 88%;*/
   display: block;
 }
-
 
 
 button {
