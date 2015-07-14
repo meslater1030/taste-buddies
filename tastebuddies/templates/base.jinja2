@@ -14,9 +14,11 @@
      </div>
     <header>
   <nav>
+      <ul>
       <li><a href="{{ request.route_url('home') }}" class="selected">Home</a></li>
       <li><a href="{{ request.route_url('profile_detail', username='username') }}">Profile</a></li>
       <li><a href="{{ request.route_url('home') }}">Logout</a></li>
+    </ul>
   </nav>
   <div id=cat>
         <img src="../static/img/taste_buddies_banner.png" alt="taste buddies banner" />
