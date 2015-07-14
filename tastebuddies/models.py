@@ -4,6 +4,7 @@ from sqlalchemy import (
     Integer,
     Text,
     ForeignKey,
+    Boolean
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,7 +16,13 @@ from sqlalchemy.orm import (
     validates,
     )
 
+from sqlalchemy_imageattach.entity import (
+    Image,
+    image_attachment
+    )
+
 from zope.sqlalchemy import ZopeTransactionExtension
+
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -39,6 +46,23 @@ usercost_table = Table('user_cost', Base.metadata,
                        )
 
 
+groupdiscussion_table = Table('group_discussion', Base.metadata,
+                              Column('group', Integer, ForeignKey('group.id')),
+                              Column('discussion', Integer, ForeignKey(
+                                     'discussion.id'))
+                              )
+
+groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
+                       ForeignKey('group.id')), Column('agegroup', Integer,
+                       ForeignKey('agegroup.id'))
+                       )
+
+groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
+                        ForeignKey('group.id')), Column('users', Integer,
+                        ForeignKey('users.id'))
+                        )
+
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -53,7 +77,13 @@ class User(Base):
     diet_restrict = relationship('diet', secondary=userdiet_table)
     cost_restrict = relationship('cost', secondary=usercost_table)
     restaurants = Column(Text)
-    photo = Column(Text)
+    picture = image_attachment('UserPicture')
+
+
+class UserPicture(Base, Image):
+    __tablename__ = 'user_picture'
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    user = relationship('users.id')
 
     @validates('email')
     def validate_email(self, key, email):
@@ -73,7 +103,7 @@ class User(Base):
         return instance
 
     @classmethod
-    def lookup_user(cls, session=None, username=username):
+    def lookup_user(cls, session=None, username=None):
         if session is None:
             session = DBSession
         return session.query(cls).get(username)
@@ -167,3 +197,40 @@ class Diet(Base):
 
     def __repr__(self):
         return "<Dietary Preference(%s)>" % (self.diet)
+
+
+class Group(Base):
+    __tablename__ = 'group'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    location = Column(Integer, ForeignKey('location.id'))
+    picture = image_attachment('GroupPicture')
+    discussion = relationship('discussion', secondary=groupdiscussion_table)
+    group_admin = relationship("group admin", uselist=False, backref="admin")
+
+
+class GroupPicture(Base, Image):
+    __tablename__ = 'group_picture'
+    user_id = Column(Integer, ForeignKey('group.id'), primary_key=True)
+    user = relationship('group.id')
+
+
+class Discussion(Base):
+    __tablename__ = 'discussion'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    discussion_title = Column(Text)
+
+
+class Post(Base):
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    discussionpost = Column(Integer, ForeignKey('discussion.id'))
+
+
+class Admin(Base):
+    __tablename__ = 'admin'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    users = Column(Integer, ForeignKey('users.id'))
+    group_id = Column(Integer, ForeignKey('group.id'))
+
