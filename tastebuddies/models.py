@@ -131,7 +131,7 @@ class AgeGroup(Base):
     def write(cls, session=None, age_group=None):
         if session is None:
             session = DBSession
-        instance = cls(age_group)
+        instance = cls(age_group=age_group)
         session.add(instance)
         return instance
 
@@ -148,7 +148,7 @@ class Location(Base):
     def write(cls, session=None, city=None):
         if session is None:
             session = DBSession
-        instance = cls(city)
+        instance = cls(city=city)
         session.add(instance)
         return instance
 
@@ -165,7 +165,7 @@ class Cost(Base):
     def write(cls, session=None, cost=None):
         if session is None:
             session = DBSession
-        instance = cls(cost)
+        instance = cls(cost=cost)
         session.add(instance)
         return instance
 
@@ -182,7 +182,7 @@ class Diet(Base):
     def write(cls, session=None, diet=None):
         if session is None:
             session = DBSession
-        instance = cls(diet)
+        instance = cls(diet=diet)
         session.add(instance)
         return instance
 
