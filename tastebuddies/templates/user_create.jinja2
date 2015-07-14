@@ -4,14 +4,18 @@
 
 <h1>You want to sign up for an account!</h1>
 
-<form action="{{ request.route_url('verify') }}">
-    <input type="text" name="username" id="username"
+<div id="#form-container">
+<form id="create-user-form" action="{{ request.route_url('verify') }}">
+    <input class="input" type="text" name="username" id="username"
     value="Username"/>
 
-    <input type="text" name="password" id="password"
+    <input class="input" type="text" name="password" id="password"
     value="Password"/>
 
-    <input type="submit" name="submit" value="Create Account"/>
+    <input id="create-account" type="submit" name="submit" value="Create Account"/>
 </form>
+</div>
 
 {% endblock %}
+
+
