@@ -105,17 +105,17 @@ def login(request):
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
-                    username='1',
+                    username='1'),
                     headers=headers,
-                ))
+                )
             else:
                 result = HTTPFound(request.route_url(
-                    'verify',
+                    'verify'),
                     headers=headers,
-                ))
+                )
 
     if not result:
-        result = {'error': error, 'username': username}
+        result = {'error': error, 'username': username, 'headers': None}
 
     return result
 
