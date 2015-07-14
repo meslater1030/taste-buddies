@@ -1,5 +1,10 @@
 from pyramid.response import Response
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
+
+from pyramid.security import remember, forget
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 
 from sqlalchemy.exc import DBAPIError
 
@@ -22,6 +27,12 @@ from .models import (
              renderer='templates/home.jinja2')
 def home_view(request):
     return {}
+
+
+@view_config(route_name='logout')
+def logout(request):
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='user_create',
