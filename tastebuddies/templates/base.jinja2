@@ -17,17 +17,19 @@
       <ul>
       <li><a href="{{ request.route_url('home') }}" class="selected">Home</a></li>
       <li><a href="{{ request.route_url('profile_detail', username='username') }}">Profile</a></li>
-      <li><a href="{{ request.route_url('home') }}">Logout</a></li>
+
+      <li><a href="{{ request.route_url('user_login') }}">Login</a></li>
+      <li><a href="{{ request.route_url('user_create') }}">Sign up</a></li>
     </ul>
   </nav>
-  <div id=cat>
+  <div id="banner">
         <img src="../static/img/taste_buddies_banner.png" alt="taste buddies banner" />
   </div>
 </header>
   {% block body %}
   {% endblock %}
-          <ul>
-          <li><a href="/">Home</a></li>
+        <ul>
+          <li><a href="{{ request.route_url('home') }}">Logout</a></li>
         </ul>
       </nav>
     <aside>
