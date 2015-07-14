@@ -28,6 +28,22 @@ body {
     text-align: center;
     margin: 2% 10% 0% 10%;}
 
+#login {
+    background-color: #7ab800;
+    font-family:"Courier";
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 42px;
+    width: auto;
+    height: 42px;
+    margin: 12px 5px 12px 0;
+    padding: 0 22px;
+    border-radius: 3px;
+    vertical-align: top;
+}
+
 
 
 ul {
@@ -102,6 +118,7 @@ a:hover, a.on {
 
 button {
     margin-top: 1%;
+    background-color: #7ab800;
 }
 
 #new-entry-button, #edit_entry-button, #delete_entry-button {
