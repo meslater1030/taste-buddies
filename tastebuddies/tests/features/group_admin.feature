@@ -14,7 +14,7 @@ Scenario: Admin Delete Group
     Then I will be able to delete the group
     And that group will no longer exist
 
-Scenario: Admin user authorization
+Scenario: Admin authorization
     Given a group admin
     When I create a group
     Then I will have the same authorizations as any group member
