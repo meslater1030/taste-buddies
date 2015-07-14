@@ -41,10 +41,10 @@ usercost_table = Table('user_cost', Base.metadata,
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(Text)
-    firstname = Column(Text)
-    lastname = Column(Text)
-    password = Column(Text)
+    username = Column(Text, nullable=False)
+    firstname = Column(Text, nullable=False)
+    lastname = Column(Text, nullable=False)
+    password = Column(Text, nullable=False)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
     food_profile = relationship('profile', secondary=usertaste_table)
@@ -52,6 +52,19 @@ class User(Base):
     cost_restrict = relationship('cost', secondary=usercost_table)
     restaurants = Column(Text)
     photo = Column(Text)
+
+    @classmethod
+    def write(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+    def __repr__(self):
+        return "<User({} {}, username={})>".format(self.firstname,
+                                                   self.lastname,
+                                                   self.username)
 
 
 class Profile(Base):
