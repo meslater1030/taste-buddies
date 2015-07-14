@@ -1,4 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from pytest_bdd import scenario, given, when, then
+from cryptacular.bcrypt import BCRYPTPasswordManager
+import models
+import os
+from pyramid import testing
+
+os.environ['TESTING'] = "True"
 
 
 @scenario('features/profile.feature', 'Editing User Profile')
@@ -7,8 +15,21 @@ def test_edit_user_profile():
 
 
 @given('a user')
-def test_user():
-    pass
+def test_user(request):
+    manager = BCRYPTPasswordManager()
+    settings = {
+        'auth.username': 'admin',
+        'auth.password': manager.encode('secret'),
+    }
+    testing.setUp(settings=settings)
+    req = testing.DummyRequest()
+
+    def cleanup():
+        testing.tearDown()
+
+    request.addfinalizer(cleanup)
+
+    return req
 
 
 @when('I visit my profile')
