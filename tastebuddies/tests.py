@@ -4,7 +4,7 @@ import pytest
 
 from pyramid import testing
 
-from .models import DBSession
+from models import DBSession
 import models
 
 
@@ -17,7 +17,7 @@ def create_user(db_session):
         age_group='18-24'
     )
     location = models.Location.write(
-        location='Seattle'
+        city='Seattle'
     )
     cost = models.Cost.write(
         cost='expensive'
@@ -32,7 +32,6 @@ def create_user(db_session):
         password='secret',
         email='bob.jones@gmail.com',
         restaurants='Chipotle',
-        session=db_session
     )
     db_session.flush()
     return user, profile, age, location, cost, diet
