@@ -2,11 +2,12 @@
 
 {% block body %}
 
-<h1>Create your group!</h1>
+
 
 
 <div id="#form-container">
 <form id="create-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
+    <h1>Create your group!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
     </div>
