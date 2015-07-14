@@ -59,7 +59,7 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         )
 
 
-class Table(object):
+class _Table(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
@@ -71,7 +71,7 @@ class Table(object):
         return instance
 
 
-class User(Base, Table):
+class User(Base, _Table):
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     firstname = Column(Text, nullable=False)
@@ -108,7 +108,7 @@ class User(Base, Table):
                                                    self.username)
 
 
-class Profile(Base, Table):
+class Profile(Base, _Table):
     __tablename__ = 'profile'
     taste = Column(Text)
 
@@ -116,7 +116,7 @@ class Profile(Base, Table):
         return "<Taste(%s)>" % (self.taste)
 
 
-class AgeGroup(Base, Table):
+class AgeGroup(Base, _Table):
     __tablename__ = 'agegroup'
     age_group = Column(Text)
 
@@ -124,7 +124,7 @@ class AgeGroup(Base, Table):
         return "<Age(%s)>" % (self.age_group)
 
 
-class Location(Base, Table):
+class Location(Base, _Table):
     __tablename__ = 'location'
     city = Column(Text)
 
@@ -132,7 +132,7 @@ class Location(Base, Table):
         return "<Location(%s)>" % (self.city)
 
 
-class Cost(Base, Table):
+class Cost(Base, _Table):
     __tablename__ = 'cost'
     cost = Column(Text)
 
@@ -140,7 +140,7 @@ class Cost(Base, Table):
         return "<Cost(%s)>" % (self.cost)
 
 
-class Diet(Base, Table):
+class Diet(Base, _Table):
     __tablename__ = 'diet'
     diet = Column(Text)
 
@@ -148,7 +148,7 @@ class Diet(Base, Table):
         return "<Dietary Preference(%s)>" % (self.diet)
 
 
-class Group(Base, Table):
+class Group(Base, _Table):
     __tablename__ = 'group'
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
@@ -160,7 +160,7 @@ class Group(Base, Table):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
 
 
-class Discussion(Base, Table):
+class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     discussion_title = Column(Text)
 
@@ -168,7 +168,7 @@ class Discussion(Base, Table):
         return "<Discussion(%s)>" % (self.discussion_title)
 
 
-class Post(Base, Table):
+class Post(Base, _Table):
     __tablename__ = 'post'
     discussionpost = Column(Integer, ForeignKey('discussion.id'))
 
@@ -176,7 +176,7 @@ class Post(Base, Table):
         return "<Post(%s)>" % (self.discussionpost)
 
 
-class Admin(Base, Table):
+class Admin(Base, _Table):
     __tablename__ = 'admin'
     users = Column(Integer, ForeignKey('users.id'))
     group_id = Column(Integer, ForeignKey('group.id'))
