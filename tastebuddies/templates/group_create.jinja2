@@ -6,8 +6,10 @@
 
 <form action="{{ request.route_url('group_detail', group_id=1) }}">
     <p>An image uploading thing should be here...?</p>
+    <img src="../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
+    <h2>Group Name</h2>
     <input type="text" name="group_name" id="group_name"
-    value="Group Name"/>
+    placeholder="Group Name"/>
 
     <h2>Age Range</h2>
     <select class="age_range" />
@@ -19,7 +21,7 @@
         <option>65-74</option>
         <option>75+</option>
     </select>
-    <h2>Location>
+    <h2>Location</h2>
     <select class="location" />
         <option>Seattle</option>
         <option>Kitsap</option>
@@ -28,9 +30,6 @@
         <option>South King</option>
         <option>65-74</option>
     </select>
-
-    <input type="text" name="location" id="location"
-    value="Location"/>
 
     <h2>Taste</h2>
     <input type="checkbox" name="taste" class="style" value="Sour"> Sour
