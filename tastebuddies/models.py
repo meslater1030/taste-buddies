@@ -148,30 +148,38 @@ class Diet(Base, Table):
         return "<Dietary Preference(%s)>" % (self.diet)
 
 
-class Group(Base):
+class Group(Base, Table):
     __tablename__ = 'group'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
     discussion = relationship('Discussion', secondary=groupdiscussion_table)
     group_admin = relationship("Admin", uselist=False)
 
+    def __repr__(self):
+        return "<Group(%s, location=%s)>" % (self.name, self.location)
 
-class Discussion(Base):
+
+class Discussion(Base, Table):
     __tablename__ = 'discussion'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     discussion_title = Column(Text)
 
+    def __repr__(self):
+        return "<Discussion(%s)>" % (self.discussion_title)
 
-class Post(Base):
+
+class Post(Base, Table):
     __tablename__ = 'post'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     discussionpost = Column(Integer, ForeignKey('discussion.id'))
 
+    def __repr__(self):
+        return "<Post(%s)>" % (self.discussionpost)
 
-class Admin(Base):
+
+class Admin(Base, Table):
     __tablename__ = 'admin'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     users = Column(Integer, ForeignKey('users.id'))
     group_id = Column(Integer, ForeignKey('group.id'))
+
+    def __repr__(self):
+        return "<Admin(%s)>" % (self.users)
