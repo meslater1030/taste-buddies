@@ -63,9 +63,14 @@ def create_user(db_session):
         restaurants='Chipotle',
     )
     db_session.flush()
-    return user, profile, age, location, cost, diet
+    return diet, profile, age, location, cost, user
 
 
 def test_create_user(create_user, db_session):
     create_user
-    assert len(db_session.query('User').all()) == 1
+    assert len(db_session.query(models.User).all()) == 1
+    assert len(db_session.query(models.Diet).all()) == 1
+    assert len(db_session.query(models.Profile).all()) == 1
+    assert len(db_session.query(models.Location).all()) == 1
+    assert len(db_session.query(models.Cost).all()) == 1
+    assert len(db_session.query(models.AgeGroup).all()) == 1
