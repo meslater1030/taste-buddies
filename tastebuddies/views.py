@@ -1,11 +1,16 @@
 from pyramid.response import Response
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
+
+from pyramid.security import remember, forget
+from cryptacular.bcrypt import BCRYPTPasswordManager
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
 
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
     DBSession,
-    # MyModel,
 )
 
 
@@ -17,6 +22,7 @@ from .models import (
 #         return Response(conn_err_msg, content_type='text/plain',
 #                         status_int=500)
 #     return {'one': one, 'project': 'tastebuddies'}
+
 
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
@@ -42,10 +48,82 @@ def profile_create_view(request):
     return {}
 
 
+def do_login(request):
+    username = request.params.get('username', None)
+    password = request.params.get('password', None)
+    login_result = False
+
+    settings = request.registry.settings
+    manager = BCRYPTPasswordManager()
+
+    if username == settings.get('auth.username', ''):
+        hashed = settings.get('auth.password', '')
+        # manager.check returns bool
+        login_result = manager.check(hashed, password)
+
+    return login_result
+
+
+def passes_authentication(request):
+    username = request.params.get('username', None)
+    password = request.params.get('password', None)
+
+    if not (username and password):
+        raise ValueError('Both username and password are required')
+
+    return do_login(request)
+
+
+def passes_verification(request):
+    # !!!!!
+    # HERE WE NEED TO CHECK THE USER'S 'VERIFIED' DB COLUMN
+    # AND RETURN IT
+    # !!!!!
+    verified_status = True
+    return verified_status
+
+
 @view_config(route_name='user_login',
              renderer='templates/login.jinja2')
 def login(request):
-    return {}
+    username = request.params.get('username', '')
+    error = ''
+    result = ''
+
+    if request.method == 'POST':
+        error = 'Login Failed'
+
+        try:
+            passes_authentication(request)
+
+        except ValueError as e:
+            error = str(e)
+
+        else:
+            headers = remember(request, username)
+
+            if passes_verification(request):
+                result = HTTPFound(request.route_url(
+                    'profile_detail',
+                    username='1',
+                    headers=headers,
+                ))
+            else:
+                result = HTTPFound(request.route_url(
+                    'verify',
+                    headers=headers,
+                ))
+
+    if not result:
+        result = {'error': error, 'username': username}
+
+    return result
+
+
+@view_config(route_name='logout')
+def logout(request):
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',

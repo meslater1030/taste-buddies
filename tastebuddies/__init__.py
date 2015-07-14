@@ -22,6 +22,7 @@ def main(global_config, **settings):
     config.add_route('verify', '/verify')
     config.add_route('profile_create', '/create_profile')
     config.add_route('user_login', '/login')
+    config.add_route('logout', '/logout')
     config.add_route('profile_detail', '/profile/{username}')
     config.add_route('profile_edit', '/profile/edit/{username}')
     config.add_route('group_create', '/group/create_group')
