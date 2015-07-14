@@ -37,7 +37,7 @@ body {
     margin-right: auto;}
 
 
-#create-group-form, #create-profile-form, #view-personal-profile-form{
+#create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
     text-align: left;
     margin-top: 5%;
     margin-bottom: 5%;
