@@ -7,7 +7,7 @@ from sqlalchemy import (
     Boolean
     )
 
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 from sqlalchemy.orm import (
     scoped_session,
@@ -59,9 +59,21 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         )
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Table(object):
+
     id = Column(Integer, primary_key=True, autoincrement=True)
+
+    @classmethod
+    def write(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.add(instance)
+        return instance
+
+
+class User(Base, Table):
+    __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     firstname = Column(Text, nullable=False)
     lastname = Column(Text, nullable=False)
@@ -84,6 +96,7 @@ class User(Base):
             return email
         except:
             raise TypeError('Please enter a vaild email address')
+<<<<<<< HEAD
 
     @classmethod
     def write(cls, session=None, **kwargs):
@@ -104,17 +117,30 @@ class User(Base):
                                                    self.lastname,
                                                    self.username)
 
+=======
+>>>>>>> 1072acc0e53483d34436f3fe912d89b72b539621
 
-class Profile(Base):
+    @classmethod
+    def lookup_user(cls, username, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(username=username).all()
+
+    def __repr__(self):
+        return "<User({} {}, username={})>".format(self.firstname,
+                                                   self.lastname,
+                                                   self.username)
+
+
+class Profile(Base, Table):
     __tablename__ = 'profile'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     taste = Column(Text)
 
     @classmethod
-    def write(cls, taste=None, session=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(taste=taste)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -122,16 +148,15 @@ class Profile(Base):
         return "<Taste(%s)>" % (self.taste)
 
 
-class AgeGroup(Base):
+class AgeGroup(Base, Table):
     __tablename__ = 'agegroup'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     age_group = Column(Text)
 
     @classmethod
-    def write(cls, session=None, age_group=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(age_group)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -139,16 +164,15 @@ class AgeGroup(Base):
         return "<Age(%s)>" % (self.age_group)
 
 
-class Location(Base):
+class Location(Base, Table):
     __tablename__ = 'location'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     city = Column(Text)
 
     @classmethod
-    def write(cls, session=None, city=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(city)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -156,16 +180,15 @@ class Location(Base):
         return "<Location(%s)>" % (self.city)
 
 
-class Cost(Base):
+class Cost(Base, Table):
     __tablename__ = 'cost'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     cost = Column(Text)
 
     @classmethod
-    def write(cls, session=None, cost=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(cost)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
@@ -173,16 +196,15 @@ class Cost(Base):
         return "<Cost(%s)>" % (self.cost)
 
 
-class Diet(Base):
+class Diet(Base, Table):
     __tablename__ = 'diet'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     diet = Column(Text)
 
     @classmethod
-    def write(cls, session=None, diet=None):
+    def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls(diet)
+        instance = cls(**kwargs)
         session.add(instance)
         return instance
 
