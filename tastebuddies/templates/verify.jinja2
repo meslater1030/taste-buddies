@@ -1,0 +1,16 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>Let's make sure you're not a robot!</h1>
+
+<form action="{{ request.route_url('profile_create') }}">
+    <input type="text" name="verify_code" id="verify_text"
+    value="Verification Code"/>
+
+    <input type="submit" name="Submit" value="Verify!"/>
+</form>
+
+<a href="{{ request.route_url('verify') }}">Resend Email</a>
+
+{% endblock %}

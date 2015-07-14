@@ -1,0 +1,35 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>Edit your profile!</h1>
+
+<form action="{{ request.route_url('profile_detail', username='username') }}">
+    <input type="text" name="first_name" id="first_name"
+    value="First Name"/>
+
+    <input type="text" name="last_name" id="last_name"
+    value="Last Name"/>
+
+    <p>An image uploading thing should be here...?</p>
+
+    <input type="text" name="location" id="location"
+    value="Location"/>
+
+    <p>Checkboxes of tastes go here</p>
+
+    <input type="text" name="age_group" id="age_group"
+    value="Age Group"/>
+
+    <input type="text" name="fav_restaurants" id="fave_restaurants"
+    value="Favorite Restaurants"/>
+
+    <p>Radio buttons to select $$$$</p>
+
+    <input type="text" name="fav_food" id="fav_fopd"
+    value="Favorite Food"/>
+
+    <input type="submit" name="profile_save" value="Save Profile"/>
+</form>
+
+{% endblock %}

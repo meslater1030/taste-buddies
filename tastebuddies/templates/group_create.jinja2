@@ -1,0 +1,26 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>Create your group!</h1>
+
+<form action="{{ request.route_url('group_detail', group_id=1) }}">
+    <input type="text" name="group_name" id="group_name"
+    value="Group Name"/>
+
+    <input type="text" name="age_range" id="age_range"
+    value="Age Range"/>
+
+    <p>An image uploading thing should be here...?</p>
+
+    <input type="text" name="location" id="location"
+    value="Location"/>
+
+    <p>Checkboxes of tastes go here</p>
+
+    <p>Radio buttons to select $$$$</p>
+
+    <input type="submit" name="profile_save" value="Save Group"/>
+</form>
+
+{% endblock %}
