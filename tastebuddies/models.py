@@ -16,10 +16,6 @@ from sqlalchemy.orm import (
     validates,
     )
 
-from sqlalchemy_imageattach.entity import (
-    Image,
-    image_attachment
-    )
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -71,47 +67,14 @@ class User(Base):
     lastname = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+    confirmed = Column(Boolean)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
-    food_profile = relationship('profile', secondary=usertaste_table)
-    diet_restrict = relationship('diet', secondary=userdiet_table)
-    cost_restrict = relationship('cost', secondary=usercost_table)
+    food_profile = relationship('Profile', secondary=usertaste_table)
+    diet_restrict = relationship('Diet', secondary=userdiet_table)
+    cost_restrict = relationship('Cost', secondary=usercost_table)
+    user_groups = relationship('Group', secondary=groupuser_table)
     restaurants = Column(Text)
-    picture = image_attachment('UserPicture')
-
-
-class UserPicture(Base, Image):
-    __tablename__ = 'user_picture'
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    user = relationship('users.id')
-
-    @validates('email')
-    def validate_email(self, key, email):
-        try:
-            assert '@' in email
-            assert '.' in email
-            return email
-        except:
-            raise TypeError('Please enter a vaild email address')
-
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def lookup_user(cls, session=None, username=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).get(username)
-
-    def __repr__(self):
-        return "<User({} {}, username={})>".format(self.firstname,
-                                                   self.lastname,
-                                                   self.username)
 
 
 class Profile(Base):
@@ -120,10 +83,10 @@ class Profile(Base):
     taste = Column(Text)
 
     @classmethod
-    def write(cls, session=None, taste=None):
+    def write(cls, taste=None, session=None):
         if session is None:
             session = DBSession
-        instance = cls(taste)
+        instance = cls(taste=taste)
         session.add(instance)
         return instance
 
@@ -205,15 +168,8 @@ class Group(Base):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
-    picture = image_attachment('GroupPicture')
-    discussion = relationship('discussion', secondary=groupdiscussion_table)
-    group_admin = relationship("group admin", uselist=False, backref="admin")
-
-
-class GroupPicture(Base, Image):
-    __tablename__ = 'group_picture'
-    user_id = Column(Integer, ForeignKey('group.id'), primary_key=True)
-    user = relationship('group.id')
+    discussion = relationship('Discussion', secondary=groupdiscussion_table)
+    group_admin = relationship("Admin", uselist=False)
 
 
 class Discussion(Base):
@@ -233,4 +189,3 @@ class Admin(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     users = Column(Integer, ForeignKey('users.id'))
     group_id = Column(Integer, ForeignKey('group.id'))
-
