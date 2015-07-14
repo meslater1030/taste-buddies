@@ -1,9 +1,41 @@
 import unittest
 import transaction
+import pytest
 
 from pyramid import testing
 
 from .models import DBSession
+import models
+
+
+@pytest.fixture()
+def create_user(db_session):
+    profile = models.Profile.write(
+        taste='spicy'
+    )
+    age = models.AgeGroup.write(
+        age_group='18-24'
+    )
+    location = models.Location.write(
+        location='Seattle'
+    )
+    cost = models.Cost.write(
+        cost='expensive'
+    )
+    diet = models.Diet.write(
+        diet='vegan'
+    )
+    user = models.User.write(
+        username='BobRocks',
+        firstname='Bob',
+        lastname='Jones',
+        password='secret',
+        email='bob.jones@gmail.com',
+        restaurants='Chipotle',
+        session=db_session
+    )
+    db_session.flush()
+    return user, profile, age, location, cost, diet
 
 
 class TestMyViewSuccessCondition(unittest.TestCase):

@@ -67,6 +67,7 @@ class User(Base):
     lastname = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+<<<<<<< Updated upstream
     confirmed = Column(Boolean)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
@@ -74,6 +75,13 @@ class User(Base):
     diet_restrict = relationship('Diet', secondary=userdiet_table)
     cost_restrict = relationship('Cost', secondary=usercost_table)
     user_groups = relationship('Group', secondary=groupuser_table)
+=======
+    age = Column(Integer, ForeignKey('agegroup.id'))
+    user_location = Column(Integer, ForeignKey('location.id'))
+    food_profile = relationship('profile', secondary=usertaste_table)
+    diet_restrict = relationship('diet', secondary=userdiet_table)
+    cost_restrict = relationship('cost', secondary=usercost_table)
+>>>>>>> Stashed changes
     restaurants = Column(Text)
 
 
