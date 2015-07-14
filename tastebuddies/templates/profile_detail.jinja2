@@ -1,0 +1,27 @@
+{% extends "base.jinja2" %}
+
+{% block body %}
+
+<h1>Your Profile!</h1>
+
+<p>Things included on this page:</p>
+
+<ul>
+    <li>Location</li>
+    <li>Profile Picture</li>
+    <li>Age Group</li>
+    <li>Taste Profile</li>
+    <li>Favorite Restaurants</li>
+    <li>$$$ Preferences</li>
+    <li>Favorite Food</li>
+</ul>
+
+<a href="{{ request.route_url('group_detail', group_id=0) }}">A Group Of Which You're A Member</a>
+
+<a href="{{ request.route_url('group_detail', group_id=1) }}">A Group In Which You Are Admin</a>
+
+<a href="{{ request.route_url('group_create') }}">Create Group</a>
+
+<a href="{{ request.route_url('profile_edit', username='username') }}">Edit Profile</a>
+
+{% endblock %}
