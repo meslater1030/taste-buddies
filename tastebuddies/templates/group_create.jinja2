@@ -7,8 +7,9 @@
 
 <div id="#form-container">
 <form id="create-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
-    <p>An image uploading thing should be here...?</p>
     <div>
+<!--     an image uploading bar thing suppose to be right here -->
+
     <img src="../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
     </div>
     <label>Group Name</label>
@@ -76,7 +77,7 @@
         <input type="checkbox" name="taste" class="style" value="Vegetarian">Vegetarian
         <input type="checkbox" name="taste" class="style" value="Vegan">Vegan
         <input type="checkbox" name="taste" class="style" value="Meat_Eater">Meat Eater
-        <input type="checkbox" name="taste" class="style" value="Gluten_Free">Gluteen Free
+        <input type="checkbox" name="taste" class="style" value="Gluten_Free">Gluten Free
         <input type="checkbox" name="taste" class="style" value="Low_Carb">Low Carb
     </div>
     <div class="field-group">
@@ -87,7 +88,7 @@
         <input type="radio" name="price" class="style" value="expensive">$$$$
     </div>
 
-    <input type="submit" name="profile_save" value="Save Group"/>
+    <input id= "save_group" type="submit" name="profile_save" value="Save Group"/>
 </form>
 </div>
 {% endblock %}
