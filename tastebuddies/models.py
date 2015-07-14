@@ -112,14 +112,6 @@ class Profile(Base, Table):
     __tablename__ = 'profile'
     taste = Column(Text)
 
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
     def __repr__(self):
         return "<Taste(%s)>" % (self.taste)
 
@@ -127,14 +119,6 @@ class Profile(Base, Table):
 class AgeGroup(Base, Table):
     __tablename__ = 'agegroup'
     age_group = Column(Text)
-
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
 
     def __repr__(self):
         return "<Age(%s)>" % (self.age_group)
@@ -144,14 +128,6 @@ class Location(Base, Table):
     __tablename__ = 'location'
     city = Column(Text)
 
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
     def __repr__(self):
         return "<Location(%s)>" % (self.city)
 
@@ -160,14 +136,6 @@ class Cost(Base, Table):
     __tablename__ = 'cost'
     cost = Column(Text)
 
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
-
     def __repr__(self):
         return "<Cost(%s)>" % (self.cost)
 
@@ -175,14 +143,6 @@ class Cost(Base, Table):
 class Diet(Base, Table):
     __tablename__ = 'diet'
     diet = Column(Text)
-
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls(**kwargs)
-        session.add(instance)
-        return instance
 
     def __repr__(self):
         return "<Dietary Preference(%s)>" % (self.diet)
