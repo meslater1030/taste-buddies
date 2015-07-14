@@ -1,6 +1,12 @@
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 
+import os
+
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
+from cryptacular.bcrypt import BCRYPTPasswordManager
+
 from .models import (
     DBSession,
     Base,
@@ -13,10 +19,29 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
-    config = Configurator(settings=settings)
+
+    settings['auth.username'] = os.environ.get('AUTH_USERNAME', 'admin')
+    manager = BCRYPTPasswordManager()
+    settings['auth.password'] = os.environ.get(
+        'AUTH_PASSWORD', manager.encode('secret')
+    )
+
+    auth_secret = os.environ.get('TASTEBUDDIES_AUTH_SECRET', 'tastynoms')
+
+    config = Configurator(
+        settings=settings,
+        authentication_policy=AuthTktAuthenticationPolicy(
+            secret=auth_secret,
+            hashalg='sha512',
+        ),
+        authorization_policy=ACLAuthorizationPolicy(),
+    )
+
     config.include('pyramid_jinja2')
     config.include('pyramid_tm')
+
     config.add_static_view('static', 'static', cache_max_age=3600)
+
     config.add_route('home', '/')
     config.add_route('user_create', '/create_user')
     config.add_route('verify', '/verify')
@@ -28,5 +53,7 @@ def main(global_config, **settings):
     config.add_route('group_create', '/group/create_group')
     config.add_route('group_detail', '/group/{group_id}')
     config.add_route('group_edit', '/group/edit/{group_id}')
+
     config.scan()
+
     return config.make_wsgi_app()
