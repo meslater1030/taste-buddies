@@ -4,8 +4,6 @@ from pyramid.httpexceptions import HTTPFound
 
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
-from pyramid.authentication import AuthTktAuthenticationPolicy
-from pyramid.authorization import ACLAuthorizationPolicy
 
 from sqlalchemy.exc import DBAPIError
 
@@ -92,14 +90,15 @@ def login(request):
 
     if request.method == 'POST':
         error = 'Login Failed'
+        authn = False
 
         try:
-            passes_authentication(request)
+            authn = passes_authentication(request)
 
         except ValueError as e:
             error = str(e)
 
-        else:
+        if authn is True:
             headers = remember(request, username)
 
             if passes_verification(request):
@@ -115,7 +114,7 @@ def login(request):
                 )
 
     if not result:
-        result = {'error': error, 'username': username, 'headers': None}
+        result = {'error': error, 'username': username}
 
     return result
 
