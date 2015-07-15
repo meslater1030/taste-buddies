@@ -6,7 +6,7 @@
 <form id="create-profile-form" action="{{ request.route_url('profile_detail', username='username') }}">
     <h1>Create your profile!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
-       <img src="../static/img/dog2.jpg" alt="Group Profile Photo" class="profile-photo">
+       <img src="../static/img/dog2.jpg" alt="Personal Profile Photo" class="profile-photo">
     </div>
     <label>First Name</label>
     <div class="field-group">
@@ -39,7 +39,6 @@
             <option>Eastside</option>
             <option>Skagit</option>
             <option>South King</option>
-            <option>65-74</option>
         </select>
     </div>
     <div id="personal_taste" class="field-group">
@@ -76,7 +75,6 @@
         <label>Diet</label>
         <input type="checkbox" name="personal_taste" class="style" value="Vegetarian">Vegetarian
         <input type="checkbox" name="personal_taste" class="style" value="Vegan">Vegan
-        <input type="checkbox" name="personal_taste" class="style" value="Meat_Eater">Meat Eater
         <input type="checkbox" name="personal_taste" class="style" value="Gluten_Free">Gluten Free
         <input type="checkbox" name="personal_taste" class="style" value="Low_Carb">Low Carb
     </div>

@@ -13,9 +13,12 @@ from pyramid.scripts.common import parse_vars
 
 from ..models import (
     DBSession,
-    User,
+    Cost,
     Profile,
     Base,
+    Location,
+    Diet,
+    AgeGroup
     )
 
 
@@ -36,3 +39,80 @@ def main(argv=sys.argv):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
+    with transaction.manager:
+        tastes = [
+            'Sour',
+            'Sweet',
+            'Salty',
+            'Spicy',
+            'Bitter',
+            'Italian',
+            'Indian',
+            'Chinese',
+            'American Classic',
+            'German',
+            'British',
+            'French',
+            'Vietnamese',
+            'Japanese',
+            'Pub',
+            'Persian',
+            'Mediterranian',
+            'Greek',
+            'Afghan',
+            'Somolian',
+            'Thai',
+            'Barbecue',
+            'Soul',
+            'Ethiopian',
+            'Jamaican',
+            'Mexican',
+            'Korean',
+        ]
+
+        for taste in tastes:
+            Profile.write(taste=taste)
+
+        diets = [
+            'Vegetarian',
+            'Vegan',
+            'Gluten Free',
+            'Low Carb'
+        ]
+
+        for diet in diets:
+            Diet.write(diet=diet)
+
+        locations = [
+            'Seattle',
+            'Kitsap',
+            'Eastside',
+            'Skagit',
+            'South King'
+        ]
+
+        for location in locations:
+            Location.write(city=location)
+
+        ages = [
+            '18-25',
+            '25-34',
+            '35-44',
+            '45-54',
+            '55-64',
+            '65-74',
+            '75+'
+        ]
+
+        for age in ages:
+            AgeGroup.write(age_group=age)
+
+        costs = [
+            '$',
+            '$$',
+            '$$$',
+            '$$$$'
+        ]
+
+        for cost in costs:
+            Cost.write(cost=cost)
