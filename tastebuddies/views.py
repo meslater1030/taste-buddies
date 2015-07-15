@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
+import models as m
 
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
@@ -24,20 +25,22 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+    if request.method == 'POST':
+        try:
+            username = request.params.get('username')
+            password = request.params.get('password')
+            email = request.params.get('email')
+            m.User.write(username=username, password=password, email=email)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('verify'), headers=headers)
+        except:
+            return {}
     return {}
 
 
 @view_config(route_name='verify',
-             permission=Authenticated,
              renderer='templates/verify.jinja2')
 def verify(request):
-    return {}
-
-
-@view_config(route_name='profile_create',
-             permission=Authenticated,
-             renderer='templates/profile_create.jinja2')
-def profile_create_view(request):
     return {}
 
 
@@ -114,43 +117,52 @@ def login(request):
     return result
 
 
-@view_config(route_name='logout',
-             permission=Authenticated,)
+@view_config(route_name='logout',)
 def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',
-             permission=Authenticated,
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     return {}
 
 
 @view_config(route_name='profile_edit',
-             permission=Authenticated,
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
+    if request.method == 'POST':
+            username = request.authenticated_userid
+            firstname = request.params.get('first_name')
+            lastname = request.params.get('last_name')
+            location = request.params.get('location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('diet')
+            restaurant = request.params.get('restaurant')
+            price = request.params.get('group_price')
+            m.User.change(username=username, firstname=firstname,
+                          lastname=lastname, location=location,
+                          taste=taste, diet=diet, price=price,
+                          restaurant=restaurant)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('verify'), headers=headers)
     return {}
 
 
 @view_config(route_name='group_create',
-             permission=Authenticated,
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
     return {}
 
 
 @view_config(route_name='group_detail',
-             permission=Authenticated,
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
     return {}
 
 
 @view_config(route_name='group_edit',
-             permission=Authenticated,
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     return {}

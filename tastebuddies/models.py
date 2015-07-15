@@ -83,7 +83,7 @@ class User(Base, _Table):
     email = Column(Text, nullable=False, unique=True)
     firstname = Column(Text)
     lastname = Column(Text)
-    confirmed = Column(Boolean)
+    confirmed = Column(Boolean, default=False)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
     food_profile = relationship('Profile', secondary=usertaste_table,
@@ -109,7 +109,18 @@ class User(Base, _Table):
     def lookup_user(cls, username, session=None):
         if session is None:
             session = DBSession
-        return session.query(cls).filter(username=username).all()
+        return session.query(cls).filter(cls.username == username).one()
+
+    @classmethod
+    def change(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_user(username=kwargs["username"])
+        instance.firstname = kwargs.get("firstname")
+        instance.lastname = kwargs.get("lastname")
+        instance.restaurants = kwargs.get("restaurant")
+        session.add(instance)
+        return instance
 
     def __repr__(self):
         return "<User({} {}, username={})>".format(self.firstname,

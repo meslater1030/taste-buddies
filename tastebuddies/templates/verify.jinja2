@@ -5,7 +5,7 @@
 <h1>Let's make sure you're not a robot!</h1>
 
 <div id="#form-container">
-<form id="verification-form" action="{{ request.route_url('profile_create') }}">
+<form id="verification-form" action="{{ request.route_url('profile_edit') }}">
     <input class="input" type="text" name="verify_code" id="verify_text"
     placeholder="Verification Code"/>
     <input id="verify" type="submit" name="Submit" value="Verify"/>
