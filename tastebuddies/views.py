@@ -1,15 +1,8 @@
-from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
-
-from sqlalchemy.exc import DBAPIError
-
-from .models import (
-    DBSession,
-)
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -155,7 +148,7 @@ def group_edit_view(request):
     return {}
 
 
-conn_err_msg = """\
+conn_err_msg = """
 Pyramid is having a problem using your SQL database.  The problem
 might be caused by one of the following things:
 
