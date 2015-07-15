@@ -8,6 +8,7 @@ import pytest
 from sqlalchemy import create_engine
 from cryptacular.bcrypt import BCRYPTPasswordManager
 from pyramid import testing
+from pyramid.security import remember
 
 
 TEST_DATABASES_URL = os.environ.get(
@@ -69,8 +70,10 @@ def create_user(db_session):
         email='bob.jones@gmail.com',
         restaurants='Chipotle',
     )
+    headers = remember(request, user.username)
+    # please also give this user authentication that persists
     db_session.flush()
-    return user
+    return user, headers
 
 
 @pytest.fixture()
@@ -92,37 +95,34 @@ def test_edit_user_profile():
 
 @given('a user')
 def test_user(create_user):
-    user = create_user
-    test_user = {'user': user}
-    return test_user
+    {'user': user, 'headers': headers} = create_user
 
 
 @when('I visit my profile')
 def test_visit_profile(test_user, browser):
-    user = test_user['user']
-    url = "http://localhost:8080/profile/{}".format(user.username)
+    header = test_user['user']
+    url = ("http://ec2-52-27-184-229.us-west-2.compute."
+           "amazonaws.com/profile/{}".format(user.username))
     browser.visit(url)
 
 
 @when('I click the edit profile button')
 def test_edit_profile_button(browser, test_user):
-    user = test_user['user']
-    url = "http://localhost:8080/profile/{}".format(user.username)
-    browser.visit(url)
-    link = browser.find_by_text('Edit Profile')
-    link.click()
+    header = test_user['user']
+    browser.click_link_by_partial_href('\/profile\/edit')
 
 
 @then('I can edit my profile')
 def test_edit_profile(test_user):
-    user = test_user['user']
-    user.edit(firstname="new firstname")
-    test_user['user'] = user
+    header = test_user['user']
+    browser.find_by_name('first_name').type('Mary Poppins')
+    browser.find_by_name('profile_save').click()
 
 
 @then('profile edits will populate to my page')
 def test_populate_user_profile_edits(create_user):
-    pass
+    header = test_user['header']
+    assert browser.is_text_present('Mary Poppins')
 
 
 @scenario('features/profile.feature', 'Group Suggestions')
@@ -132,7 +132,8 @@ def test_group_suggestions():
 
 @then('I will see suggested groups')
 def test_suggested_groups():
-    pass
+    header = test_user['header']
+    assert browser.find_by_id('suggested_groups').is_text_present('')
 
 
 @scenario('features/profile.feature', 'Create User Profile')
@@ -142,7 +143,12 @@ def test_create_user_profile():
 
 @when('I first sign up')
 def test_signup():
-    pass
+    url = ('http://ec2-52-27-184-229.us-west-2.compute'
+           '.amazonaws.com/create_user')
+    browser.visit(url)
+    browser.find_by_name('username').type('SexyGuy23')
+    browser.find_by_name('password').type('still_sexy')
+    browser.find_by_name('submit').click()
 
 
 @then('I will be taken to a create profile page')

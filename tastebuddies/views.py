@@ -100,7 +100,7 @@ def login(request):
 
         if authn is True:
             headers = remember(request, username)
-
+            import pdb; pdb.set_trace()
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
