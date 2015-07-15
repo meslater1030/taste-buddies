@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 
 TEST_DATABASES_URL = os.environ.get(
     'DATABASE_URL',
-    'postgresql:///test-tastebuddies'
+    'postgresql:///test-taste-buddies'
 )
 os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 
