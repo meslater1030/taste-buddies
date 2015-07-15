@@ -34,6 +34,12 @@ Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac to
 <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
 <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
 </div>
+<div id="#form-container">
+<form id="join-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
+<input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
+</form>
+</div>
+
 <h2> Want to start an event? Leave a comment!!</h2>
 
 <div id="#form-container">
@@ -55,37 +61,8 @@ Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac to
     </div>
     <input id="save_comment" type="submit" name="save_comment" value="Comment"/>
 </form>
+
 </div>
-
-<div id="#form-container">
-<form id="create-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
-<input id="join_group" type="submit" name="join_group" value="Join Group"/>
-</form>
-</div>
-
-
-
-
-
-
-
-
-<!--
-<p>Things to be displayed in this group:</p>
-
-<ul>
-    <li>Name</li>
-    <li>Description</li>
-    <li>Age Range</li>
-    <li>List of Members</li>
-    <li>Location</li>
-    <li>Admin</li>
-    <li>Taste Profile</li>
-    <li>Price Range</li>
-    <li>Group Picture</li>
-    <li>Comments</li>
-</ul> -->
-
 <nav>
     <ul>
     <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>

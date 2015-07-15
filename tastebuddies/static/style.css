@@ -41,7 +41,7 @@ body {
     width: 100%;
 }
 
- #login-form, #create-user-form, #verification-form{
+#join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -68,7 +68,6 @@ body {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
-    display: block;
     font-weight: 500;
     font-size: 16px;
     line-height: 42px;
@@ -81,11 +80,18 @@ body {
     display: inline-block;
 }
 
-#join_group {
+#join_group_button {
     background-color: #FF9819;
     font-family:"Courier";
     color: #fff;
-    display: block;
+    /*  top: 30%;
+  left: 75%;
+  margin-top: -50px;
+  margin-left: -100px;
+  margin-bottom: 5px;
+  position: fixed;
+  height: 42px;*/
+    display: inline-block;
     font-weight: 500;
     font-size: 16px;
     line-height: 42px;
@@ -95,7 +101,6 @@ body {
     padding: 0 22px;
     border-radius: 3px;
     vertical-align: top;
-    display: inline-block;
 }
 
 ul {
