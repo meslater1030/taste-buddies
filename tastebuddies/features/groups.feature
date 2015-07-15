@@ -33,8 +33,13 @@ Scenario: Delete Group Posts
     Then I will be able to delete my post
     And that post will not exist
 
-
 Scenario: View Group Members
     Given a group member
     When I visit a group page
     Then I will be able to see all the members of my group
+
+Scenario: View Other Member Profiles
+    Given a group member
+    When I visit a group page
+    And I click on member
+    Then I can view the profile of that member

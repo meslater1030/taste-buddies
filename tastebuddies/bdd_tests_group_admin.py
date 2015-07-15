@@ -38,12 +38,24 @@ def test_group_admin():
     browser.find_by_name('profile_save')[0].click()
     # admin logs out
     browser.find_by_name('logout')[0].click()
-    # group member logs in
+    # group_member creates an account
     browser.find_by_name('username')[0].type('group_member')
-    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('password')[0].type('12345')
+    browser.find_by_name('email')[0].type('groupmember@gmail.com')
     browser.find_by_name('submit')[0].click()
-    browser.visit('http://ec2-52-27-184-229.us-west-2'
-                  '.compute.amazonaws.com/group/1')
+    browser.find_by_name('first_name')[0].type('Group')
+    browser.find_by_name('last_name')[0].type('Member')
+    browser.select('age_range', '25-34')
+    browser.select('location', 'Seattle')
+    browser.find_by_value('Salty').check
+    browser.find_by_value('Persian').check
+    browser.find_by_value('Soul').check
+    browser.find_by_value('Vegan').check
+    browser.find_by_value('Low_Carb').check
+    browser.find_by_name('favorite_restaurants')[0].type('Chipotle')
+    browser.find_by_name('favorite_food')[0].type('Corn')
+    browser.choose('group_price', 'average')
+    browser.find_by_name('profile_save')[0].click()
     # group member joins group
     browser.find_by_name('join')[0].click()
     browser.find_by_name('post')[0].type('Spicy food is awesome!')
