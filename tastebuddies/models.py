@@ -5,7 +5,7 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     Boolean
-    )
+)
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
     sessionmaker,
     relationship,
     validates,
-    )
+)
 
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -58,6 +58,11 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         ForeignKey('users.id'))
                         )
 
+groupcost_table = Table('group_cost', Base.metadata, Column('group_id',
+                        Integer, ForeignKey('group.id')),
+                        Column('cost_id', Integer, ForeignKey('cost.id'))
+                        )
+
 
 class _Table(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -74,10 +79,10 @@ class _Table(object):
 class User(Base, _Table):
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
-    firstname = Column(Text, nullable=False)
-    lastname = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+    firstname = Column(Text)
+    lastname = Column(Text)
     confirmed = Column(Boolean)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
