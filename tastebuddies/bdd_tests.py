@@ -91,35 +91,35 @@ def test_edit_user_profile():
 
 
 @given('a user')
-def test_user(browser):
+def test_user():
     url = ("http://ec2-52-27-184-229.us-west-2.compute."
            "amazonaws.com/login")
     browser.visit(url)
-    browser.find_by_name('username').type('admin')
-    browser.find_by_name('password').type('secret')
-    browser.find_by_name('submit').click()
+    browser.find_by_name('username')[0].type('admin')
+    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('submit')[0].click()
 
 
 @when('I visit my profile')
-def test_visit_profile(browser):
+def test_visit_profile():
     url = ("http://ec2-52-27-184-229.us-west-2.compute."
            "amazonaws.com/profile/1")
     browser.visit(url)
 
 
 @when('I click the edit profile button')
-def test_edit_profile_button(browser):
+def test_edit_profile_button():
     browser.click_link_by_partial_href('\/profile\/edit')
 
 
 @then('I can edit my profile')
-def test_edit_profile(browser):
-    browser.find_by_name('first_name').type('Mary Poppins')
-    browser.find_by_name('profile_save').click()
+def test_edit_profile():
+    browser.find_by_name('first_name')[0].type('Mary Poppins')
+    browser.find_by_name('profile_save')[0].click()
 
 
 @then('profile edits will populate to my page')
-def test_populate_user_profile_edits(browser):
+def test_populate_user_profile_edits():
     assert browser.is_text_present('Mary Poppins')
 
 
@@ -129,9 +129,9 @@ def test_group_suggestions():
 
 
 @then('I will see suggested groups')
-def test_suggested_groups(browser):
+def test_suggested_groups():
     # update with suggested groups id
-    assert browser.find_by_id('suggested_groups').is_text_present('')
+    assert browser.find_by_id('suggested_groups')[0].is_text_present('')
 
 
 @scenario('features/profile.feature', 'Create User Profile')
@@ -140,24 +140,24 @@ def test_create_user_profile():
 
 
 @when('I first sign up')
-def test_signup(browser):
+def test_signup():
     url = ('http://ec2-52-27-184-229.us-west-2.compute'
            '.amazonaws.com/create_user')
     browser.visit(url)
-    browser.find_by_name('username').type('SexyGal23')
-    browser.find_by_name('password').type('still_sexy')
-    browser.find_by_name('submit').click()
+    browser.find_by_name('username')[0].type('SexyGal23')
+    browser.find_by_name('password')[0].type('still_sexy')
+    browser.find_by_name('submit')[0].click()
 
 
 @then('I will be taken to a create profile page')
-def test_create_profile_redirect(browser):
+def test_create_profile_redirect():
     assert browser.is_text_present('Create your profile!')
 
 
 @then('I will create a profile')
-def test_profile_creation(browser):
-    browser.find_by_name('first_name').type('Sally')
-    browser.find_by_name('last_name').type('Hemmingway')
+def test_profile_creation():
+    browser.find_by_name('first_name')[0].type('Sally')
+    browser.find_by_name('last_name')[0].type('Hemmingway')
     browser.select('age_range', '45-54')
     browser.select('location', 'Seattle')
     browser.find_by_value('Salty').check
@@ -166,14 +166,14 @@ def test_profile_creation(browser):
     browser.find_by_value('Vegan').check
     browser.find_by_value('Low_Carb').check
     assert browser.find_by_value('Low_Carb').checked
-    browser.find_by_name('favorite_restaurants').type('Chipotle')
-    browser.find_by_name('favorite_food').type('Corn')
+    browser.find_by_name('favorite_restaurants')[0].type('Chipotle')
+    browser.find_by_name('favorite_food')[0].type('Corn')
     browser.choose('group_price', 'average')
-    browser.find_by_name('profile_save').click()
+    browser.find_by_name('profile_save')[0].click()
 
 
 @then('that profile will populate to my page')
-def test_profile_population(browser):
+def test_profile_population():
     assert browser.url == ('http://ec2-2-27-184-229.us-west-2.compute.'
                            'amazonaws.com/profile/SexyGal23')
     assert browser.is_text_present('Sally')
@@ -193,8 +193,8 @@ def test_login():
 
 
 @then('I will be taken to my profile')
-def test_profile_redirect(browser):
-    assert browser.url == ('http://ec2-2-27-184-229.us-west-2.compute.'
+def test_profile_redirect():
+    assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute.'
                            'amazonaws.com/profile/1')
 
 
@@ -209,27 +209,27 @@ def test_annon():
 
 
 @when('I go to the signup page')
-def test_signup_view(browser):
+def test_signup_view():
     url = ("http://ec2-52-27-184-229.us-west-2.compute"
            ".amazonaws.com/create_user")
     browser.visit(url)
 
 
 @then('I can create an account')
-def test_create_account(browser):
-    browser.find_by_name('username').type('JohnsonJew')
-    browser.find_by_name('password').type('12345')
-    browser.find_by_name('email').type('johnsonjew@gmail.com')
-    browser.find_by_name('submit').click()
+def test_create_account():
+    browser.find_by_name('username')[0].type('JohnsonJew')
+    browser.find_by_name('password')[0].type('12345')
+    browser.find_by_name('email')[0].type('johnsonjew@gmail.com')
+    browser.find_by_name('submit')[0].click()
 
 
 @then('I can log in')
-def test_login_privilege(browser):
-    browser.find_link_by_partial_href('logout').click()
-    browser.find_link_by_partial_href('login').click()
-    browser.find_by_name('username').type('JohnsonJew')
-    browser.find_by_name('password').type('12345')
-    browser.find_by_name('submit').click()
+def test_login_privilege():
+    browser.find_link_by_partial_href('logout')[0].click()
+    browser.find_link_by_partial_href('login')[0].click()
+    browser.find_by_name('username')[0].type('JohnsonJew')
+    browser.find_by_name('password')[0].type('12345')
+    browser.find_by_name('submit')[0].click()
     assert browser.url != ('http://ec2-52-27-184-229.us-west-2'
                            '.compute.amazonaws.com/login')
 
@@ -240,14 +240,14 @@ def test_anonymous_view():
 
 
 @when('I visit a group page')
-def test_group_view(browser):
+def test_group_view():
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)
 
 
 @then('I can view that group')
-def test_group_view_privilege(browser):
+def test_group_view_privilege():
     assert browser.is_text_present('Name')
     assert browser.is_text_present('Description')
     assert not browser.is_text_present('join')
@@ -261,13 +261,13 @@ def test_joining_groups():
 
 
 @then('I can join that group')
-def test_join_group(bowser):
+def test_join_group():
     assert browser.is_element_present_by_name('join')
-    browser.find_by_name('join').click()
+    browser.find_by_name('join')[0].click()
 
 
 @then('I can see group posts')
-def test_view_group_posts(browser):
+def test_view_group_posts():
     assert browser.is_text_present('forum')
 
 
@@ -277,20 +277,20 @@ def test_leaving_groups():
 
 
 @given('a group member')
-def test_group_member(browser):
+def test_group_member():
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)
 
 
 @then('I can leave that group')
-def test_leave_group(browser):
+def test_leave_group():
     assert browser.is_element_present_by_name('leave')
-    browser.find_by_name('leave').click()
+    browser.find_by_name('leave')[0].click()
 
 
 @then('I cannot see group posts')
-def test_not_view_group_posts(browser):
+def test_not_view_group_posts():
     assert not browser.is_text_present('forum')
 
 
@@ -300,19 +300,19 @@ def test_create_groups():
 
 
 @when('I click on the create group button')
-def test_create_group_button_clicked(browser):
-    browser.find_by_name('create').click()
+def test_create_group_button_clicked():
+    browser.find_by_name('create')[0].click()
 
 
 @then('I will be taken to a create group page')
-def test_create_group_redirect(browser):
+def test_create_group_redirect():
     assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute'
                            '.amazonaws.com/group/create_group')
 
 
 @then('that group will be created with my specifications')
-def test_group_creation(browser):
-    browser.find_by_name('group_name').type('Spicy Food Lovers')
+def test_group_creation():
+    browser.find_by_name('group_name')[0].type('Spicy Food Lovers')
     browser.select('age_range', '18-24')
     browser.select('location', 'Eastside')
     browser.find_by_value('Spicy').check
@@ -320,7 +320,7 @@ def test_group_creation(browser):
     browser.find_by_value('Mexican').check
     assert browser.find_by_value('Mexican').checked
     browser.choose('group_price', 'cheap')
-    browser.find_by_name('profile_save').click()
+    browser.find_by_name('profile_save')[0].click()
     assert browser.is_text_present('Spicy Food Lovers')
     assert not browser.is_text_present('Thai')
     assert browser.is_text_present('18-24')
@@ -338,18 +338,18 @@ def test_post_groups():
 
 
 @then('I will be able to write a post')
-def test_write_post(browser):
+def test_write_post():
     # this needs to be updated for the name of the post/title?
-    browser.find_by_name('post').type('Spicy food is awesome!')
+    browser.find_by_name('post')[0].type('Spicy food is awesome!')
 
 
 @then('that post will be visible to other group members')
-def test_post_visible(browser):
-    browser.find_by_name('logout').click()
-    browser.find_by_name('login').click()
-    browser.find_by_name('username').type('admin2')
-    browser.find_by_name('password').type('secret')
-    browser.find_by_name('submit').click()
+def test_post_visible():
+    browser.find_by_name('logout')[0].click()
+    browser.find_by_name('login')[0].click()
+    browser.find_by_name('username')[0].type('admin2')
+    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('submit')[0].click()
     browser.visit('http://ec2-52-27-184-229.us-west-2'
                   '.compute.amazonaws.com/group/1')
     assert browser.is_text_present('Spicy food is awesome!')
@@ -363,14 +363,14 @@ def test_delete_group_posts():
 @when('I have created a post')
 def test_create_post():
     # this needs to be updated with name of post/title
-    browser.find_by_name('post').type('Something Regrettable')
+    browser.find_by_name('post')[0].type('Something Regrettable')
 
 
 @then('I will be able to delete my post')
 def test_delete_my_post():
     # this needs to be updated with the delete plus a way
     # to find that specific post
-    browser.find_by_name('delete').click()
+    browser.find_by_name('delete')[0].click()
 
 
 @then('that post will not exist')
@@ -386,7 +386,7 @@ def test_view_group_members():
 @then('I will be able to see all the members of my group')
 def test_see_group_members():
     # update with group members id or class or whatever
-    assert browser.find_by_id('group_members').is_text_present('')
+    assert browser.find_by_id('group_members')[0].is_text_present('')
 
 
 @scenario('features/group_admin.feature', 'Admin Delete Posts')
@@ -409,22 +409,22 @@ def test_group_forum():
 @then('I will be able to delete any post')
 def test_delete_any_post():
     # this needs to be updated with the delete button name or id
-    browser.find_link_by_partial_href('logout').click()
-    browser.find_link_by_partial_href('login').click()
-    browser.find_by_name('username').type('admin2')
-    browser.find_by_name('password').type('secret')
-    browser.find_by_name('submit').click()
+    browser.find_link_by_partial_href('logout')[0].click()
+    browser.find_link_by_partial_href('login')[0].click()
+    browser.find_by_name('username')[0].type('admin2')
+    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('submit')[0].click()
     browser.visit('http://ec2-52-27-184-229.us-west-2'
                   '.compute.amazonaws.com/group/1')
-    browser.find_by_name('post').type('Spicy food is awesome!')
-    browser.find_link_by_partial_href('logout').click()
-    browser.find_link_by_partial_href('login').click()
-    browser.find_by_name('username').type('admin')
-    browser.find_by_name('password').type('secret')
-    browser.find_by_name('submit').click()
+    browser.find_by_name('post')[0].type('Spicy food is awesome!')
+    browser.find_link_by_partial_href('logout')[0].click()
+    browser.find_link_by_partial_href('login')[0].click()
+    browser.find_by_name('username')[0].type('admin')
+    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('submit')[0].click()
     browser.visit('http://ec2-52-27-184-229.us-west-2'
                   '.compute.amazonaws.com/group/1')
-    browser.find_by_name('delete').click()
+    browser.find_by_name('delete')[0].click()
     assert not browser.is_text_present('Spicy food is awesome!')
 
 
@@ -435,7 +435,7 @@ def test_admin_delete_group():
 
 @then('I will be able to delete the group')
 def test_delete_group():
-    browser.find_link_by_partial_text('Delete Group').click()
+    browser.find_link_by_partial_text('Delete Group')[0].click()
 
 
 @then('that group will not exist')
@@ -452,9 +452,9 @@ def test_admin_authorization():
 @then('I will have the same authorizations as any group member')
 def test_admin_authorizations():
     # this will need to be updated with forum title/post
-    browser.find_by_name('forum').type('I love being an admin!')
+    browser.find_by_name('forum')[0].type('I love being an admin!')
     assert browser.is_text_present('I love being an admin!')
-    assert browser.find_by_id('group_members').is_text_present('')
+    assert browser.find_by_id('group_members')[0].is_text_present('')
 
 
 @scenario('features/group_admin.feature', 'Admin Edit Group')
@@ -464,23 +464,23 @@ def test_admin_edit_group():
 
 @when('I click the edit group button')
 def test_group_button_clicked():
-    browser.find_link_by_partial_href('edit').click()
+    browser.find_link_by_partial_href('edit')[0].click()
 
 
 @then('I will be able to edit that group')
 def test_edit_group():
     assert "\/group\/edit" in browser.url
-    browser.find_by_name('group_name').type('Spicy Food Haters')
-    browser.find_by_name('profile_save').click()
+    browser.find_by_name('group_name')[0].type('Spicy Food Haters')
+    browser.find_by_name('profile_save')[0].click()
 
 
 @then('Those edits will be visible to everyone')
 def test_group_edits_populate():
-    browser.find_link_by_partial_href('logout').click()
-    browser.find_link_by_partial_href('login').click()
-    browser.find_by_name('username').type('admin2')
-    browser.find_by_name('password').type('secret')
-    browser.find_by_name('submit').click()
+    browser.find_link_by_partial_href('logout')[0].click()
+    browser.find_link_by_partial_href('login')[0].click()
+    browser.find_by_name('username')[0].type('admin2')
+    browser.find_by_name('password')[0].type('secret')
+    browser.find_by_name('submit')[0].click()
     browser.visit('http://ec2-52-27-184-229.us-west-2'
                   '.compute.amazonaws.com/group/1')
     assert browser.is_text_present('Spicy Food Haters')
@@ -494,7 +494,7 @@ def test_admin_delete_group_member():
 @then('I will be able to delete a member of the group')
 def test_delete_group_member():
     # need to change how we find the user delete
-    browser.find_by_name('delete user').click()
+    browser.find_by_name('delete user')[0].click()
 
 
 @then('that user will no longer be a group member')
