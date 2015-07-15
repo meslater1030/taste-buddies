@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from pytest_bdd import scenario, given, when, then
-from cryptacular.bcrypt import BCRYPTPasswordManager
 import models
-import os
-from pyramid import testing
+from pytest_bdd import scenario, given, when, then
+from splinter import Browser
 
-os.environ['TESTING'] = "True"
+browser = Browser()
 
 
 @scenario('features/profile.feature', 'Editing User Profile')
@@ -15,40 +13,36 @@ def test_edit_user_profile():
 
 
 @given('a user')
-def test_user(request):
-    manager = BCRYPTPasswordManager()
-    settings = {
-        'auth.username': 'admin',
-        'auth.password': manager.encode('secret'),
-    }
-    testing.setUp(settings=settings)
-    req = testing.DummyRequest()
-
-    def cleanup():
-        testing.tearDown()
-
-    request.addfinalizer(cleanup)
-
-    return req
+def test_user(create_user):
+    user = create_user
+    test_user = {'user': user}
+    return test_user
 
 
 @when('I visit my profile')
-def test_visit_profile():
-    pass
+def test_visit_profile(test_user, browser):
+    user = test_user['user']
+    url = "http://localhost:8080/profile/{}".format(user.username)
+    browser.visit(url)
 
 
 @when('I click the edit profile button')
-def test_edit_profile_button():
-    pass
+def test_edit_profile_button(browser, test_user):
+    user = test_user['user']
+    url = "http://localhost:8080/profile/{}".format(user.username)
+    browser.visit(url)
+    link = browser.find_by_text('Edit Profile')
+    link.click()
 
 
 @then('I can edit my profile')
-def test_edit_profile():
-    pass
+def test_edit_profile(test_user):
+    user = test_user['user']
+    user.edit(firstname="new firstname")
 
 
 @then('profile edits will populate to my page')
-def test_populate_user_profile_edits():
+def test_populate_user_profile_edits(create_user):
     pass
 
 
