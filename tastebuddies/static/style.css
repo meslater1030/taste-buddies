@@ -453,7 +453,32 @@ footer {
   text-shadow: 1px 1px 1px #FFB2B2;
 }
 
+/*Group Location Button*/
+.seattle.button.disabled{
+  background: linear-gradient(#FF6666,#FFA3A3);
+  text-shadow: 1px 1px 1px #FFA3A3;
+}
 
+.eastside.button.disabled{
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+/*from here haven't changed color*/
+.skagit.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.kitsap.button.disabled{
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.south_king.button.disabled{
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
 
 
 
