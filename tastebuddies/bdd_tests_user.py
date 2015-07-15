@@ -16,12 +16,23 @@ browser = Browser()
 
 @given('a user', scope="module")
 def test_user():
-    url = ("http://ec2-52-27-184-229.us-west-2.compute."
-           "amazonaws.com/login")
+    url = ("http://ec2-52-27-184-229.us-west-2."
+           "compute.amazonaws.com/login")
     browser.visit(url)
     browser.find_by_name('username')[0].type('admin')
     browser.find_by_name('password')[0].type('secret')
     browser.find_by_name('submit')[0].click()
+    url = ("http://ec2-52-27-184-229.us-west-2."
+           "compute.amazonaws.com/group/create_group")
+    browser.visit(url)
+    browser.find_by_name('group_name')[0].type('Spicy Food Lovers')
+    browser.select('age_range', '18-24')
+    browser.select('location', 'Eastside')
+    browser.find_by_value('Spicy').check
+    browser.find_by_value('Barbecue').check
+    browser.find_by_value('Mexican').check
+    browser.choose('group_price', 'cheap')
+    browser.find_by_name('profile_save')[0].click()
 
 
 @scenario('features/profile.feature', 'Editing User Profile')
@@ -77,3 +88,64 @@ def test_user_login():
 def test_profile_redirect():
     assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute.'
                            'amazonaws.com/profile/1')
+
+
+@scenario('features/groups.feature', 'Joining Groups')
+def test_joining_groups():
+    pass
+
+
+@when('I visit a group page')
+def test_group_view():
+    url = ('http://ec2-52-27-184-229.us-west-2'
+           '.compute.amazonaws.com/group/1')
+    browser.visit(url)
+
+
+@then('I can join that group')
+def test_join_group():
+    assert browser.is_element_present_by_name('join')
+    browser.find_by_name('join')[0].click()
+
+
+@then('I can see group posts')
+def test_view_group_posts():
+    assert browser.is_text_present('forum')
+
+
+@scenario('features/groups.feature', 'Create Groups')
+def test_create_groups():
+    pass
+
+
+@when('I click on the create group button')
+def test_create_group_button_clicked():
+    browser.find_link_by_partial_href('create_group')[0].click()
+
+
+@then('I will be taken to a create group page')
+def test_create_group_redirect():
+    assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute'
+                           '.amazonaws.com/group/create_group')
+
+
+@then('that group will be created with my specifications')
+def test_group_creation():
+    browser.find_by_name('group_name')[0].type('Spicy Food Lovers')
+    browser.select('age_range', '18-24')
+    browser.select('location', 'Eastside')
+    browser.find_by_value('Spicy').check
+    browser.find_by_value('Barbecue').check
+    browser.find_by_value('Mexican').check
+    assert browser.find_by_value('Mexican').checked
+    browser.choose('group_price', 'cheap')
+    browser.find_by_name('profile_save')[0].click()
+    assert browser.is_text_present('Spicy Food Lovers')
+    assert not browser.is_text_present('Thai')
+    assert browser.is_text_present('18-24')
+    assert browser.is_text_present('$')
+
+
+@then('I will be the admin of that group')
+def test_am_group_admin():
+    assert browser.find_link_by_partial_href('profile_detail')
