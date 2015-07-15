@@ -70,16 +70,6 @@ def test_edit_user_profile():
     pass
 
 
-@given('a user')
-def test_user():
-    url = ("http://ec2-52-27-184-229.us-west-2.compute."
-           "amazonaws.com/login")
-    browser.visit(url)
-    browser.find_by_name('username')[0].type('admin')
-    browser.find_by_name('password')[0].type('secret')
-    browser.find_by_name('submit')[0].click()
-
-
 @when('I visit my profile')
 def test_visit_profile():
     url = ("http://ec2-52-27-184-229.us-west-2.compute."
