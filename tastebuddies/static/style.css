@@ -38,13 +38,13 @@ body {
 #form-container {
     width: 100%;}
 
-#login-form, #create-user-form, #verification-form{
+ #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
     margin-right: auto;}
 
 
-#create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
+#leave-comment-form, #create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
     text-align: left;
     margin-top: 5%;
     margin-bottom: 5%;
@@ -60,7 +60,7 @@ body {
 
 }
 
-#login, #save_group, #create-account, #verify, #save_personal_profile, #join_group {
+#save_comment, #login, #save_group, #create-account, #verify, #save_personal_profile{
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
@@ -76,6 +76,32 @@ body {
     vertical-align: top;
     display: inline-block;
 }
+
+#join_group {
+    background-color: #FF9819;
+    font-family:"Courier";
+    color: #fff;
+    display: block;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 42px;
+    width: auto;
+    height: 42px;
+    margin: 12px 0 12px 0;
+    padding: 0 22px;
+    border-radius: 3px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+
+
+
+
+
+
+
+
 
 ul {
     list-style-type: circle;
