@@ -13,13 +13,6 @@ Scenario: Group Suggestions
     When I visit my profile
     Then I will see suggested groups
 
-Scenario: Create User Profile
-    Given a user
-    When I first sign up
-    Then I will be taken to a create profile page
-    And I will create a profile
-    And that profile will populate to my page
-
 Scenario: User Login
     Given a user
     When I log in

@@ -1,17 +1,6 @@
 Feature: Signup
     A feature that allows you to become a user
 
-Scenario: Signing up
-    Given an anonymous user
-    When I go to the signup page
-    Then I can create an account
-    And I will be able to log in
-
-Scenario: Anonymous View
-    Given an anonymous user
-    When I visit a group page
-    Then I can view that group
-
 Scenario: Editing User Profile
     Given a user
     When I click the edit button
