@@ -28,20 +28,24 @@ body {
     margin: 10px auto 10px auto;
     padding: 20px;
     border: 4px double #000;
-    background-color: #ffffff;}
+    background-color: #ffffff;
+}
 
 #logo {
     display:block;
     text-align: center;
-    margin: 2% 10% 0% 10%;}
+    margin: 2% 10% 0% 10%;
+}
 
 #form-container {
-    width: 100%;}
+    width: 100%;
+}
 
  #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
-    margin-right: auto;}
+    margin-right: auto;
+}
 
 
 #leave-comment-form, #create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
@@ -94,15 +98,6 @@ body {
     display: inline-block;
 }
 
-
-
-
-
-
-
-
-
-
 ul {
     list-style-type: circle;
     width: 570px;
@@ -112,7 +107,6 @@ ul {
     border-bottom: 1px solid #952d98;
     text-align: center;
 }
-
 
 nav li {
     display: inline;
@@ -154,8 +148,6 @@ a:hover, a.on {
     list-style-type: none;
 }
 
-
-
 .selected {
      color: #cc3333;}
 
@@ -177,7 +169,6 @@ a:hover, a.on {
 
 }
 
-
 #members_container{
 width: 700px;
 height: 100px;
@@ -186,8 +177,6 @@ overflow: hidden;
   margin-right: auto ;
 /*white-space: nowrap;*/
 }
-
-
 
 .group-page-member-photo{
     border-radius: 100%;
@@ -207,7 +196,6 @@ overflow: hidden;
     margin-right: auto;
     font-family:  Courier, monospace;
     display: inline-block;}
-
 
 .field, .control_row {
     text-align:center;
@@ -259,10 +247,9 @@ footer {
 }
 
 
-
 /*Group Taste Buttons/Profile*/
 
-#group_taste_buttons{
+#group_taste_buttons {
     width: 700px;
     margin-left: auto;
     margin-right: auto;
@@ -286,7 +273,7 @@ footer {
 
 }
 
-.sour.button.disabled{
+.sour.button.disabled {
   background: linear-gradient(#f0ad4e,#eea236);
   text-shadow: 1px 1px 1px #eea236;
 }
@@ -317,17 +304,17 @@ footer {
   text-shadow: 1px 1px 1px #7A2952;
 }
 
-.indian.button.disabled{
+.indian.button.disabled {
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
 
-.chinese.button.disabled{
+.chinese.button.disabled {
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
-.american.button.disabled{
+.american.button.disabled {
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
@@ -439,7 +426,6 @@ footer {
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
-
 /*Group Price Button*/
 
 .cheap.button.disabled{
@@ -498,12 +484,12 @@ footer {
 }
 
 /*Group Location Button*/
-.seattle.button.disabled{
+.seattle.button.disabled {
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
-.eastside.button.disabled{
+.eastside.button.disabled {
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
@@ -514,29 +500,15 @@ footer {
   text-shadow: 1px 1px 1px #AA6342;
 }
 
-.kitsap.button.disabled{
+.kitsap.button.disabled {
   background: linear-gradient(#808000,#8D8D19);
   text-shadow: 1px 1px 1px #8D8D19;
 }
 
-.south_king.button.disabled{
+.south_king.button.disabled {
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @media screen and (min-width: 480px) {
 
