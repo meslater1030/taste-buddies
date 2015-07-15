@@ -6,6 +6,13 @@
 
 h1 {
     font-family: 'Just Another Hand', cursive;
+    font-size: 35px;
+    text-align: center;
+}
+
+h2 {
+    font-family: 'Just Another Hand', cursive;
+    font-size: 30px;
     text-align: center;
 }
 
@@ -204,7 +211,19 @@ footer {
     text-align: center;
     clear: both;
     padding-top: 10px;
-    color: #000;}
+    color: #000;
+}
+
+
+
+/*Group Taste Buttons/Profile*/
+
+#group_taste_buttons{
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    border-bottom: 1px solid #952d98;
+}
 
 
 .button.disabled {
@@ -376,6 +395,29 @@ footer {
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
+
+/*Group Price button*/
+
+.cheap.button.disabled{
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+/*from here haven't changed color*/
+.moderate.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.average.button.disabled{
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.expensive.button.disabled{
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
 
 @media screen and (min-width: 480px) {
 

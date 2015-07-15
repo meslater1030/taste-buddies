@@ -1,11 +1,7 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-
-
 <h1> Group Description</h1>
-
-
 <div id="group-page-profile-photo">
 <img src="../static/img/dog3.jpg" alt="Pesonal Profile Photo" class="group-page-profile-photo">
 <div>
@@ -13,13 +9,18 @@
 <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
 Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
 </div>
-<div>
+<!-- only show the first 5 tastes -->
+<div id=group_taste_buttons>
     <a class="sweet button disabled" href="#">Sweet</a>
     <a class="spicy button disabled" href="#">Spicy</a>
     <a class="salty button disabled" href="#">Salty</a>
     <a class="sour button disabled" href="#">Sour</a>
-    <a class="bitter button disabled" href="#">Bitter</a>
-    <a class="italian button disabled" href="#">Italian</a>
+    <a class="moderate button disabled" href="#">$$$</a>
+</div>
+<h2> Members </h2>
+<div>
+   <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
+Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
 </div>
 
 
@@ -49,7 +50,7 @@ Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac to
     <ul>
     <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>
 
-    <li><a href="{{ request.route_url('profile_detail', username='username') }}"> +Delete Group hide admin</a><li>
+    <li><a href="{{ request.route_url('profile_detail', username='username') }}"> +Delete Group x admin</a><li>
     </ul>
 </nav>
 {% endblock %}
