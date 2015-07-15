@@ -97,6 +97,7 @@
         <input type="radio" name="group_price" class="style" value="moderate">$$$
         <input type="radio" name="group_price" class="style" value="expensive">$$$$
     </div>
+        <input id="save_personal_profile" type="submit" name="profile_save" value="Save Profile"/>
  </form>
 </div>
 
@@ -111,5 +112,8 @@
     <li><a href="{{ request.route_url('profile_edit', username='username') }}">+Edit Profile</a></li>
     </ul>
 </nav>
+
+</form>
+</div>
 
 {% endblock %}
