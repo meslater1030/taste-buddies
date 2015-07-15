@@ -80,7 +80,6 @@ def create_user(db_session):
 
 def test_create_user(create_user, db_session):
     create_user
-    import pdb;pdb.set_trace()
     assert len(db_session.query(models.User).all()) == 2
     assert len(db_session.query(models.Diet).all()) == 1
     assert len(db_session.query(models.Profile).all()) == 3
