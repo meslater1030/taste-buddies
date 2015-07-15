@@ -58,9 +58,9 @@ groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         ForeignKey('users.id'))
                         )
 
-groupcost_table = Table('group_cost', Base.metadata, Column('group_id', Integer,
-                        ForeignKey('group.id')), Column('cost_id', Integer,
-                        ForeignKey('cost.id'))
+groupcost_table = Table('group_cost', Base.metadata, Column('group_id',
+                        Integer, ForeignKey('group.id')),
+                        Column('cost_id', Integer, ForeignKey('cost.id'))
                         )
 
 
@@ -194,13 +194,3 @@ class Admin(Base, _Table):
 
     def __repr__(self):
         return "<Admin(%s)>" % (self.users)
-
-
-def initdb():
-    from sqlalchemy import create_engine
-    engine = create_engine('postgresql:///tastebuddies')
-    Base.metadata.create_all(engine)
-    connection = engine.connect()
-    DBSession.registry.clear()
-    DBSession.configure(bind=connection)
-    Base.metadata.bind = engine
