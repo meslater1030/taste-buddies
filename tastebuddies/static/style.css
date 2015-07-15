@@ -152,6 +152,28 @@ a:hover, a.on {
 }
 
 
+#members_container{
+width: 700px;
+height: 100px;
+overflow: hidden;
+  margin-left: auto ;
+  margin-right: auto ;
+/*white-space: nowrap;*/
+}
+
+
+
+.group-page-member-photo{
+    border-radius: 100%;
+    display: inline-block;
+    text-align: center;
+    max-width: 75px;
+    float: center;
+    clear: center;
+
+}
+
+
 #text_entry {
     display: block;
     margin-top: 2%;
