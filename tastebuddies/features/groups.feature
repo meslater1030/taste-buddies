@@ -16,7 +16,6 @@ Scenario: Leaving Groups
 
 Scenario: Create Groups
     Given a user
-    # Then I will see the option to create a group
     When I click on the create group button
     Then I will be taken to a create group page
     And that group will be created with my specifications

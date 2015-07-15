@@ -16,7 +16,6 @@ Scenario: Admin Delete Group
 
 Scenario: Admin authorization
     Given a group admin
-    When I create a group
     Then I will have the same authorizations as any group member
 
 Scenario: Admin Edit Group
