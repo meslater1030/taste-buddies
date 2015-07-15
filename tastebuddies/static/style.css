@@ -60,7 +60,7 @@ body {
 
 }
 
-#login, #save_group, #create-account, #verify, #save_personal_profile {
+#login, #save_group, #create-account, #verify, #save_personal_profile, #join_group {
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
@@ -160,10 +160,6 @@ a:hover, a.on {
     font-family:  Courier, monospace;
     display: inline-block;}
 
-#restriction {
-    text-align: center;
-    font-weight: bold;
-}
 
 .field, .control_row {
     text-align:center;
