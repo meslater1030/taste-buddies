@@ -396,14 +396,13 @@ footer {
 }
 
 
-/*Group Price button*/
+/*Group Price Button*/
 
 .cheap.button.disabled{
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
 
-/*from here haven't changed color*/
 .moderate.button.disabled {
   background: linear-gradient(#A0522D,#AA6342);
   text-shadow: 1px 1px 1px #AA6342;
@@ -418,6 +417,57 @@ footer {
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
+
+/*Group Age Range Button*/
+.eighteen_to_twentyfour.button.disabled{
+  background: linear-gradient(#f0ad4e,#eea236);
+  text-shadow: 1px 1px 1px #eea236;
+}
+
+.twentyfive_to_thirtyfour.button.disabled {
+  background: linear-gradient(#6BDB55,#57B245);
+  text-shadow: 1px 1px 1px #57B245;
+}
+
+.thirtyfive_to_fortyfour.button.disabled{
+  background: linear-gradient(#D60A0A,#B20808);
+  text-shadow: 1px 1px 1px #B20808;
+}
+
+.fortyfive_to_fiftyfour.button.disabled{
+  background: linear-gradient(#11A1D6,#0E86B2);
+  text-shadow: 1px 1px 1px #0E86B2;
+}
+.fiftyfive_to_sixtyfour.button.disabled{
+  background: linear-gradient(#337ab7,#2e6da4);
+  text-shadow: 1px 1px 1px ##2e6da4;
+}
+
+.sixtyfive_to_seventyfour.button.disabled {
+  background: linear-gradient(#993366,#7A2952);
+  text-shadow: 1px 1px 1px #7A2952;
+}
+
+.seventyfive_and_up.button.disabled{
+  background: linear-gradient(#FF9900,#FFB2B2);
+  text-shadow: 1px 1px 1px #FFB2B2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media screen and (min-width: 480px) {
 
