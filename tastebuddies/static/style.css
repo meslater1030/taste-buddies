@@ -41,12 +41,11 @@ body {
     width: 100%;
 }
 
-#join-group-form, #login-form, #create-user-form, #verification-form{
+#resend-email-form, #join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
-
 
 #leave-comment-form, #create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
     text-align: left;
@@ -61,7 +60,6 @@ body {
     color: black;
     padding: 20px;
     border-radius: 6px
-
 }
 
 #save_comment, #login, #save_group, #create-account, #verify, #save_personal_profile{
@@ -80,17 +78,10 @@ body {
     display: inline-block;
 }
 
-#join_group_button {
+#resend_email_button, #join_group_button {
     background-color: #FF9819;
     font-family:"Courier";
     color: #fff;
-    /*  top: 30%;
-  left: 75%;
-  margin-top: -50px;
-  margin-left: -100px;
-  margin-bottom: 5px;
-  position: fixed;
-  height: 42px;*/
     display: inline-block;
     font-weight: 500;
     font-size: 16px;
