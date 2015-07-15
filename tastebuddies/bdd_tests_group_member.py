@@ -106,3 +106,26 @@ def test_post_visible():
     browser.visit('http://ec2-52-27-184-229.us-west-2'
                   '.compute.amazonaws.com/group/1')
     assert browser.is_text_present('Spicy food is awesome!')
+
+
+@scenario('features/groups.feature', 'Delete Group Posts')
+def test_delete_group_posts():
+    pass
+
+
+@when('I have created a post')
+def test_create_post():
+    # this needs to be updated with name of post/title
+    browser.find_by_name('post')[0].type('Something Regrettable')
+
+
+@then('I will be able to delete my post')
+def test_delete_my_post():
+    # this needs to be updated with the delete plus a way
+    # to find that specific post
+    browser.find_by_name('delete')[0].click()
+
+
+@then('that post will not exist')
+def test_post_deleted():
+    assert not browser.is_text_present('Something Regrettable')
