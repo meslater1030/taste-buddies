@@ -2,8 +2,26 @@
 
 {% block body %}
 
-<h1>Look at this group!</h1>
 
+<h1> Group Description</h1>
+
+
+<div id="group-page-profile-photo">
+<img src="../static/img/dog3.jpg" alt="Pesonal Profile Photo" class="group-page-profile-photo">
+<div>
+<div>
+<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
+Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
+</div>
+
+
+
+
+
+
+
+
+<!--
 <p>Things to be displayed in this group:</p>
 
 <ul>
@@ -17,10 +35,13 @@
     <li>Price Range</li>
     <li>Group Picture</li>
     <li>Comments</li>
-</ul>
+</ul> -->
 
-<a href="{{ request.route_url('group_edit', group_id=1) }}">Edit Group (hidden if not admin)</a>
+<nav>
+    <ul>
+    <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>
 
-<a href="{{ request.route_url('profile_detail', username='username') }}">"Delete Group (hidden if not admin)"</a>
-
+    <li><a href="{{ request.route_url('profile_detail', username='username') }}"> +Delete Group hide admin</a><li>
+    </ul>
+</nav>
 {% endblock %}

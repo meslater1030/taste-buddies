@@ -110,7 +110,8 @@ label {
 
 a:hover, a.on {
     color: #cc3333;
-    background-color: #ffffff;}
+    background-color: #ffffff;
+}
 
 #banner {
     margin-top: 25px;
@@ -130,6 +131,16 @@ a:hover, a.on {
     max-width: 150px;
     margin: 0 5% 0px 0;
     border-radius: 100%;
+    position:center;
+
+}
+
+.group-page-profile-photo{
+    border-radius: 100%;
+    display:block;
+    text-align: center;
+    max-width: 150px;
+    margin: 0 auto;
 
 }
 
@@ -194,6 +205,194 @@ footer {
     clear: both;
     padding-top: 10px;
     color: #000;}
+
+
+.button.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background: #CCC;
+  color: #FFF;
+  display: inline-block;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+  font-family: Courier, sans-serif;
+  line-height: 1.85em;
+  padding: 0 3em;
+  text-decoration: none;
+  margin-bottom: 2%;
+
+}
+
+.sour.button.disabled{
+  background: linear-gradient(#f0ad4e,#eea236);
+  text-shadow: 1px 1px 1px #eea236;
+}
+
+.sweet.button.disabled {
+  background: linear-gradient(#6BDB55,#57B245);
+  text-shadow: 1px 1px 1px #57B245;
+}
+
+.spicy.button.disabled{
+  background: linear-gradient(#D60A0A,#B20808);
+  text-shadow: 1px 1px 1px #B20808;
+}
+
+.salty.button.disabled{
+  background: linear-gradient(#11A1D6,#0E86B2);
+  text-shadow: 1px 1px 1px #0E86B2;
+}
+
+
+.bitter.button.disabled{
+  background: linear-gradient(#337ab7,#2e6da4);
+  text-shadow: 1px 1px 1px ##2e6da4;
+}
+
+.italian.button.disabled {
+  background: linear-gradient(#993366,#7A2952);
+  text-shadow: 1px 1px 1px #7A2952;
+}
+
+.indian.button.disabled{
+  background: linear-gradient(#FF9900,#FFB2B2);
+  text-shadow: 1px 1px 1px #FFB2B2;
+}
+
+.chinese.button.disabled{
+  background: linear-gradient(#FF6666,#FFA3A3);
+  text-shadow: 1px 1px 1px #FFA3A3;
+}
+
+.american.button.disabled{
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+/*from here haven't changed color*/
+.german.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.british.button.disabled{
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.french.button.disabled{
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
+.vietnamese.button.disabled{
+  background: linear-gradient(#f0ad4e,#eea236);
+  text-shadow: 1px 1px 1px #eea236;
+}
+
+.japanese.button.disabled {
+  background: linear-gradient(#6BDB55,#57B245);
+  text-shadow: 1px 1px 1px #57B245;
+}
+
+.pub.button.disabled{
+  background: linear-gradient(#D60A0A,#B20808);
+  text-shadow: 1px 1px 1px #B20808;
+}
+
+.persian.button.disabled{
+  background: linear-gradient(#11A1D6,#0E86B2);
+  text-shadow: 1px 1px 1px #0E86B2;
+}
+.mediterranian.button.disabled{
+  background: linear-gradient(#337ab7,#2e6da4);
+  text-shadow: 1px 1px 1px ##2e6da4;
+}
+
+.greek.button.disabled {
+  background: linear-gradient(#993366,#7A2952);
+  text-shadow: 1px 1px 1px #7A2952;
+}
+
+.afghan.button.disabled{
+  background: linear-gradient(#FF9900,#FFB2B2);
+  text-shadow: 1px 1px 1px #FFB2B2;
+}
+
+.somalian.button.disabled{
+  background: linear-gradient(#FF6666,#FFA3A3);
+  text-shadow: 1px 1px 1px #FFA3A3;
+}
+.thai.button.disabled{
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+.barbeque.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.soul.button.disabled{
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.ethiopian.button.disabled{
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
+.jamaican.button.disabled{
+  background: linear-gradient(#f0ad4e,#eea236);
+  text-shadow: 1px 1px 1px #eea236;
+}
+
+.mexian.button.disabled {
+  background: linear-gradient(#6BDB55,#57B245);
+  text-shadow: 1px 1px 1px #57B245;
+}
+
+.korean.button.disabled{
+  background: linear-gradient(#D60A0A,#B20808);
+  text-shadow: 1px 1px 1px #B20808;
+}
+
+.vegan.button.disabled{
+  background: linear-gradient(#337ab7,#2e6da4);
+  text-shadow: 1px 1px 1px ##2e6da4;
+}
+
+.gluten_free.button.disabled {
+  background: linear-gradient(#993366,#7A2952);
+  text-shadow: 1px 1px 1px #7A2952;
+}
+
+.low_carb.button.disabled{
+  background: linear-gradient(#FF9900,#FFB2B2);
+  text-shadow: 1px 1px 1px #FFB2B2;
+}
+
+.vegetarian.button.disabled{
+  background: linear-gradient(#FF6666,#FFA3A3);
+  text-shadow: 1px 1px 1px #FFA3A3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @media screen and (min-width: 480px) {
