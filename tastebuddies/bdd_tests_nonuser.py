@@ -4,7 +4,11 @@ from pytest_bdd import given, when, then, scenario
 from splinter import Browser
 import os
 
-browser = Browser()
+
+@given('a browser', scope='module')
+def browser():
+    browser = Browser()
+    return browser
 
 
 TEST_DATABASES_URL = os.environ.get(
@@ -16,7 +20,7 @@ os.environ['TESTING'] = "True"
 
 
 @given('anyone on the web', scope='module')
-def test_annon():
+def test_annon(browser):
     url = ("http://ec2-52-27-184-229.us-west-2."
            "compute.amazonaws.com/login")
     browser.visit(url)
@@ -38,19 +42,19 @@ def test_annon():
 
 
 @scenario('features/public.feature', 'Signing up')
-def test_signing_up():
+def test_signing_up(browser):
     pass
 
 
 @when('I go to the signup page')
-def test_signup_view():
+def test_signup_view(browser):
     url = ("http://ec2-52-27-184-229.us-west-2.compute"
            ".amazonaws.com/create_user")
     browser.visit(url)
 
 
 @then('I can create an account')
-def test_create_account():
+def test_create_account(browser):
     browser.find_by_name('username')[0].type('JohnsonJew')
     browser.find_by_name('password')[0].type('12345')
     browser.find_by_name('email')[0].type('johnsonjew@gmail.com')
@@ -58,7 +62,7 @@ def test_create_account():
 
 
 @then('I can log in')
-def test_login_privilege():
+def test_login_privilege(browser):
     browser.find_link_by_partial_href('logout')[0].click()
     browser.find_link_by_partial_href('login')[0].click()
     browser.find_by_name('username')[0].type('JohnsonJew')
@@ -69,12 +73,12 @@ def test_login_privilege():
 
 
 @scenario('features/public.feature', 'Create User Profile')
-def test_create_user_profile():
+def test_create_user_profile(browser):
     pass
 
 
 @then('I will be taken to a create profile page')
-def test_create_profile_redirect():
+def test_create_profile_redirect(browser):
     assert browser.is_text_present('Create your profile!')
 
 
@@ -101,7 +105,7 @@ def test_profile_creation():
 
 
 @then('that profile will populate to my page')
-def test_profile_population():
+def test_profile_population(browser):
     assert browser.url == ('http://ec2-2-27-184-229.us-west-2.compute.'
                            'amazonaws.com/profile/JohnsonJew')
     assert browser.is_text_present('Sally')
@@ -111,12 +115,12 @@ def test_profile_population():
 
 
 @scenario('features/public.feature', 'Anonymous View')
-def test_anonymous_view():
+def test_anonymous_view(browser):
     pass
 
 
 @when('I visit a group page')
-def test_group_view():
+def test_group_view(browser):
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)

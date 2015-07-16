@@ -11,11 +11,16 @@ TEST_DATABASES_URL = os.environ.get(
 )
 os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 os.environ['TESTING'] = "True"
-browser = Browser()
+
+
+@given('a browser', scope='module')
+def browser():
+    browser = Browser()
+    return browser
 
 
 @given('a user', scope="module")
-def test_user():
+def test_user(browser):
     url = ("http://ec2-52-27-184-229.us-west-2."
            "compute.amazonaws.com/login")
     browser.visit(url)
@@ -36,101 +41,101 @@ def test_user():
 
 
 @scenario('features/profile.feature', 'Editing User Profile')
-def test_edit_user_profile():
+def test_edit_user_profile(browser):
     pass
 
 
 @when('I visit my profile')
-def test_visit_profile():
+def test_visit_profile(browser):
     url = ("http://ec2-52-27-184-229.us-west-2.compute."
            "amazonaws.com/profile/1")
     browser.visit(url)
 
 
 @when('I click the edit profile button')
-def test_edit_profile_button():
+def test_edit_profile_button(browser):
     browser.click_link_by_partial_href('/profile/edit')
 
 
 @then('I can edit my profile')
-def test_edit_profile():
+def test_edit_profile(browser):
     browser.find_by_name('first_name')[0].type('Mary Poppins')
     browser.find_by_name('profile_save')[0].click()
 
 
 @then('profile edits will populate to my page')
-def test_populate_user_profile_edits():
+def test_populate_user_profile_edits(browser):
     assert browser.is_text_present('Mary Poppins')
 
 
 @scenario('features/profile.feature', 'Group Suggestions')
-def test_group_suggestions():
+def test_group_suggestions(browser):
     pass
 
 
 @then('I will see suggested groups')
-def test_suggested_groups():
+def test_suggested_groups(browser):
     # update with suggested groups id
     assert browser.find_by_id('suggested_groups')[0].is_text_present('')
 
 
 @when('I log in')
-def test_login():
+def test_login(browser):
     pass
 
 
 @scenario('features/profile.feature', 'User Login')
-def test_user_login():
+def test_user_login(browser):
     pass
 
 
 @then('I will be taken to my profile')
-def test_profile_redirect():
+def test_profile_redirect(browser):
     assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute.'
                            'amazonaws.com/profile/1')
 
 
 @scenario('features/groups.feature', 'Joining Groups')
-def test_joining_groups():
+def test_joining_groups(browser):
     pass
 
 
 @when('I visit a group page')
-def test_group_view():
+def test_group_view(browser):
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)
 
 
 @then('I can join that group')
-def test_join_group():
+def test_join_group(browser):
     assert browser.is_element_present_by_name('join')
     browser.find_by_name('join')[0].click()
 
 
 @then('I can see group posts')
-def test_view_group_posts():
+def test_view_group_posts(browser):
     assert browser.is_text_present('forum')
 
 
 @scenario('features/groups.feature', 'Create Groups')
-def test_create_groups():
+def test_create_groups(browser):
     pass
 
 
 @when('I click on the create group button')
-def test_create_group_button_clicked():
+def test_create_group_button_clicked(browser):
     browser.find_link_by_partial_href('create_group')[0].click()
 
 
 @then('I will be taken to a create group page')
-def test_create_group_redirect():
+def test_create_group_redirect(browser):
     assert browser.url == ('http://ec2-52-27-184-229.us-west-2.compute'
                            '.amazonaws.com/group/create_group')
 
 
 @then('that group will be created with my specifications')
-def test_group_creation():
+def test_group_creation(browser):
     browser.find_by_name('group_name')[0].type('Spicy Food Lovers')
     browser.select('age_range', '18-24')
     browser.select('location', 'Eastside')
@@ -147,5 +152,5 @@ def test_group_creation():
 
 
 @then('I will be the admin of that group')
-def test_am_group_admin():
+def test_am_group_admin(browser):
     assert browser.find_link_by_partial_href('profile_detail')

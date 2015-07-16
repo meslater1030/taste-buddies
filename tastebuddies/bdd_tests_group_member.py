@@ -12,7 +12,11 @@ TEST_DATABASES_URL = os.environ.get(
 os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 os.environ['TESTING'] = "True"
 
-browser = Browser()
+
+@given('a browser', scope='module')
+def browser():
+    browser = Browser()
+    return browser
 
 
 @given('a group member', scope='module')
@@ -63,25 +67,25 @@ def test_group_member():
 
 
 @scenario('features/groups.feature', 'Leaving Groups')
-def test_leaving_groups():
+def test_leaving_groups(browser):
     pass
 
 
 @when('I visit a group page')
-def test_group_view():
+def test_group_view(browser):
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)
 
 
 @then('I can leave that group')
-def test_leave_group():
+def test_leave_group(browser):
     assert browser.is_element_present_by_name('leave')
     browser.find_by_name('leave')[0].click()
 
 
 @then('I cannot see group posts')
-def test_not_view_group_posts():
+def test_not_view_group_posts(browser):
     url = ('http://ec2-52-27-184-229.us-west-2'
            '.compute.amazonaws.com/group/1')
     browser.visit(url)
@@ -89,18 +93,29 @@ def test_not_view_group_posts():
 
 
 @scenario('features/groups.feature', 'Post in Groups')
-def test_post_groups():
+def test_post_groups(browser):
     pass
 
 
+@scenario('features/groups.feature', 'View Group Members')
+def test_view_group_members(browser):
+    pass
+
+
+@then('I will be able to see all the members of my group')
+def test_see_group_members(browser):
+    # update with group members id or class or whatever
+    assert browser.find_by_id('group_members')[0].is_text_present('')
+
+
 @then('I will be able to write a post')
-def test_write_post():
+def test_write_post(browser):
     # this needs to be updated for the name of the post/title?
     browser.find_by_name('post')[0].type('Spicy food is awesome!')
 
 
 @then('that post will be visible to other group members')
-def test_post_visible():
+def test_post_visible(browser):
     browser.find_by_name('logout')[0].click()
     browser.find_by_name('login')[0].click()
     browser.find_by_name('username')[0].type('admin')
@@ -111,37 +126,26 @@ def test_post_visible():
     assert browser.is_text_present('Spicy food is awesome!')
 
 
-@scenario('features/groups.feature', 'View Group Members')
-def test_view_group_members():
-    pass
-
-
-@then('I will be able to see all the members of my group')
-def test_see_group_members():
-    # update with group members id or class or whatever
-    assert browser.find_by_id('group_members')[0].is_text_present('')
-
-
 @scenario('features/groups.feature', 'Delete Group Posts')
-def test_delete_group_posts():
+def test_delete_group_posts(browser):
     pass
 
 
 @when('I have created a post')
-def test_create_post():
+def test_create_post(browser):
     # this needs to be updated with name of post/title
     browser.find_by_name('post')[0].type('Something Regrettable')
 
 
 @then('I will be able to delete my post')
-def test_delete_my_post():
+def test_delete_my_post(browser):
     # this needs to be updated with the delete plus a way
     # to find that specific post
     browser.find_by_name('delete')[0].click()
 
 
 @then('that post will not exist')
-def test_post_deleted():
+def test_post_deleted(browser):
     assert not browser.is_text_present('Something Regrettable')
 
 

@@ -3,18 +3,21 @@ Feature:  Public Views
 
 
 Scenario: Signing up
-    Given anyone on the web
+    Given a broswer
+    And anyone on the web
     When I go to the signup page
     Then I can create an account
     And I can log in
 
 Scenario: Anonymous View
-    Given anyone on the web
+    Given a browser
+    And anyone on the web
     When I visit a group page
     Then I can view that group
 
 Scenario: Create User Profile
-    Given anyone on the web
+    Given a browser
+    And anyone on the web
     When I go to the signup page
     Then I can create an account
     Then I will be taken to a create profile page
