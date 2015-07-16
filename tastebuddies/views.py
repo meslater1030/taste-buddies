@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from psycopg2 import IntegrityError
 
-from pyramid.security import remember, forget, Authenticated
+from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
 
@@ -66,9 +66,11 @@ def verify(request):
 
         if vcode == 1234:
             uid = request.authenticated_userid
+            user_obj = User.lookup_user_by_id(uid)
+            username = user_obj.username
 
             action = HTTPFound(
-                request.route_url('profile_detail', username=uid)
+                request.route_url('profile_detail', username=username)
             )
 
     return action
@@ -82,7 +84,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_user(username=entered_username)
+    user_obj = User.lookup_user_by_username(username=entered_username)
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -134,7 +136,7 @@ def login(request):
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
-                    username='1'),
+                    username=username),
                     headers=headers,
                 )
             else:
@@ -207,7 +209,7 @@ def group_detail_view(request):
         tmp[discussion.id] = []
     for post in posts:
         tmp[post.discussionpost].append((post.created, post.post_text))
-    for i in range(1, len(tmp)-1):
+    for i in range(1, len(tmp) - 1):
         tmp[i].sort(reverse=True)
     for id in tmp.iterkeys():
         for discussion in discussions:
@@ -221,7 +223,6 @@ def group_detail_view(request):
 
 
 @view_config(route_name='group_forum',
-             permission=Authenticated,
              renderer='templates/group_forum.jinja2')
 def group_forum_view(request):
     # Enters posts and/or discussions into the database
