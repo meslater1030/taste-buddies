@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-import models as m
+# import models as m
 
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
@@ -30,11 +30,15 @@ def user_create_view(request):
     if request.method == 'POST':
         try:
             manager = BCRYPTPasswordManager()
+
             username = request.params.get('username')
             password = request.params.get('password')
-            hashed = manager.encode(password)
             email = request.params.get('email')
-            m.User.write(username=username, password=hashed, email=email)
+
+            hashed = manager.encode(password)
+
+            User.write(username=username, password=hashed, email=email)
+
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
         except:
@@ -158,10 +162,10 @@ def profile_edit_view(request):
             diet = request.params.getall('diet')
             restaurant = request.params.get('restaurant')
             price = request.params.get('group_price')
-            m.User.change(username=username, firstname=firstname,
-                          lastname=lastname, location=location,
-                          taste=taste, diet=diet, price=price,
-                          restaurant=restaurant)
+            User.change(username=username, firstname=firstname,
+                        lastname=lastname, location=location,
+                        taste=taste, diet=diet, price=price,
+                        restaurant=restaurant)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
     return {}
