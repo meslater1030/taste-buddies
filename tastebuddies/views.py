@@ -203,44 +203,46 @@ def logout(request):
 @view_config(route_name='profile_detail',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-    selected = ''
 
-    for user in User.all():
-        if user.username == request.authenticated_userid:
-            selected = user
+    uname = request.authenticated_userid
+    udata = User.lookup_user_by_username(uname)
 
     tastes = []
     diets = []
     groups = []
 
-    for taste in selected.food_profile:
+    for taste in udata.food_profile:
         tastes.append(taste.taste)
 
-    for diet in selected.diet_restrict:
+    for diet in udata.diet_restrict:
         diets.append(diet.diet)
 
-    for group in selected.user_groups:
-        groups.append(group.name)
-
-    firstname = selected.firstname
-    lastname = selected.lastname
-    restaurant = selected.restaurants
-    food = selected.food
+    for group in udata.user_groups:
+        groups.append(group)
 
     try:
-        price = Cost.one(eid=selected.cost).cost
-        location = Location.one(eid=selected.user_location).city
-        age = AgeGroup.one(eid=selected.age).age_group
+        price = Cost.one(eid=udata.cost).cost
+        location = Location.one(eid=udata.user_location).city
+        age = AgeGroup.one(eid=udata.age).age_group
 
     except:
         price = '$',
         location = "Seattle"
         age = 27
 
-    return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
-            'diets': diets, 'age': age, 'location': location, 'price': price,
-            'food': food, 'restaurant': restaurant,
-            'username': request.authenticated_userid, 'groups': groups}
+    return {
+        'username': udata.username,
+        'firstname': udata.firstname,
+        'lastname': udata.lastname,
+        'food': udata.food,
+        'restaurant': udata.restaurants,
+        'tastes': tastes,
+        'diets': diets,
+        'groups': groups,
+        'age': age,
+        'location': location,
+        'price': price,
+    }
 
 
 @view_config(route_name='profile_edit',
