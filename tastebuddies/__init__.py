@@ -48,8 +48,7 @@ def main(global_config, **settings):
     config.add_route('user_create', '/create_user')
     config.add_route('user_login', '/login')
 
-    config.add_route('verify', '/verify',
-                     factory=RootFactory)
+    config.add_route('verify', '/verify')
     config.add_route('logout', '/logout',
                      factory=RootFactory)
     config.add_route('profile_detail', '/profile/{username}',
