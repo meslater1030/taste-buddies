@@ -1,12 +1,19 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-# import models as m
+
+import time
+import os
+
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+import smtplib
+from random import randint
 
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
 from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
-                    Group)
+                    Group, Diet)
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -28,32 +35,84 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+
     username = request.authenticated_userid
+
     if request.method == 'POST':
+
+        # import pdb; pdb.set_trace()
+
         try:
             manager = BCRYPTPasswordManager()
             username = request.params.get('username')
             password = request.params.get('password')
             hashed = manager.encode(password)
             email = request.params.get('email')
+
             User.write(username=username, password=hashed, email=email)
             headers = remember(request, username)
-            return HTTPFound(request.route_url('verify'), headers=headers)
+
+            time.sleep(1)
+
+            return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
             return {}
     return {'username': username}
 
 
+@view_config(route_name='send_email')
+def send_verify_email(request):
+
+    # import pdb; pdb.set_trace()
+
+    ver_code = randint(1000, 9999)
+
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    user_obj.write_ver_code(username=user_obj.username, ver_code=ver_code)
+
+    fromaddr = "tastebot@gmail.com"
+    toaddr = user_obj.email
+
+    msg = MIMEMultipart()
+    msg["From"] = fromaddr
+    msg["To"] = toaddr
+    msg["Subject"] = "Your Tastebuddies Verification Code"
+
+    body = ''
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    email_directory = os.path.join(here, 'static', 'email_templates')
+    body_template = os.path.join(email_directory, 'body.txt')
+    with open(body_template, 'r') as fh:
+        body = str(fh.read())
+
+    body = body.format(ver_code=ver_code)
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login("tastebot", 'TASTEBUDDIES')
+    text = msg.as_string()
+
+    server.sendmail(fromaddr, toaddr, text)
+
+    return HTTPFound(request.route_url('verify'))
+
+
 @view_config(route_name='verify',
              renderer='templates/verify.jinja2')
 def verify(request):
-    username = request.authenticated_userid
-    action = {'username': username}
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    action = {'username': uname}
 
     if request.method == "POST":
-        vcode = request.params.get('verify_code')
-        if vcode == 1234:
-            uname = request.authenticated_userid
+        user_vcode = int(request.params.get('verify_code'))
+        db_vcode = user_obj.ver_code
+
+        if user_vcode == db_vcode:
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
@@ -62,7 +121,6 @@ def verify(request):
 
 
 def do_login(request):
-    # import pdb; pdb.set_trace()
     login_result = False
     manager = BCRYPTPasswordManager()
 
@@ -148,22 +206,22 @@ def logout(request):
 def profile_detail_view(request):
     selected = ''
 
-    # import pdb; pdb.set_trace()
-
     for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user
 
-    # user = User.one(request.matchdict['username'])
-
     tastes = []
     diets = []
+    groups = []
 
     for taste in selected.food_profile:
         tastes.append(taste.taste)
 
     for diet in selected.diet_restrict:
         diets.append(diet.diet)
+
+    for group in selected.user_groups:
+        groups.append(group.name)
 
     firstname = selected.firstname
     lastname = selected.lastname
@@ -181,8 +239,9 @@ def profile_detail_view(request):
         age = 27
 
     return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
-            'age': age, 'location': location, 'price': price, 'food': food,
-            'restaurant': restaurant, 'username': request.authenticated_userid}
+            'diets': diets, 'age': age, 'location': location, 'price': price,
+            'food': food, 'restaurant': restaurant,
+            'username': request.authenticated_userid, 'groups': groups}
 
 
 @view_config(route_name='profile_edit',
@@ -199,7 +258,6 @@ def profile_edit_view(request):
             price = request.params.get('group_price')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
-
             User.change(username=username, firstname=firstname,
                         lastname=lastname, location=location,
                         taste=taste, diet=diet, price=price,
@@ -213,19 +271,66 @@ def profile_edit_view(request):
 
     username = request.authenticated_userid
     user = User.lookup_user_by_username(username)
-
     tastes = Profile.all()
+    diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-
     return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'username': username}
+            'price': price, 'username': username, 'diets': diet}
 
 
 @view_config(route_name='group_create',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    if request.method == 'POST':
+            username = request.authenticated_userid
+            group_name = request.params.get('group_name')
+            group_descrip = request.params.get('group_description')
+            location = request.params.get('location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('diet')
+            price = request.params.get('group_price')
+            age = request.params.get('age')
+            Group.write(name=group_name, description=group_descrip,
+                        location=location, food_profile=taste,
+                        diet_restrict=diet, cost=price, age=age,
+                        Admin=username)
+    tastes = Profile.all()
+    diet = Diet.all()
+    age = AgeGroup.all()
+    location = Location.all()
+    price = Cost.all()
+    return {'tastes': tastes, 'ages': age, 'location': location,
+            'price': price, 'diets': diet}
+
+
+@view_config(route_name='group_detail',
+             renderer='templates/group_detail.jinja2')
+def group_detail_view(request):
+
+    # selected = ''
+    # for group in Group.all():
+    #     if group.name == ??
+    #         selected = group
+
+    # tastes = []
+    # diets = []
+    # for taste in selected.food_profile:
+    #     tastes.append(taste.taste)
+    # for diet in selected.diet_restrict:
+    #     diets.append(diet.diet)
+    # name = selected.name
+    # description = selected.description
+
+    # try:
+    #     price = Cost.one(eid=selected.cost).cost
+    #     location = Location.one(eid=selected.group_location).city
+    #     age = AgeGroup.one(eid=selected.age).age_group
+
+    # return{'name': name, 'tastes': tastes, 'diets': diets, 'age': age,
+    #        'location': location, 'price': price, 'description': description}
+
     return {}
 
 

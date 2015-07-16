@@ -23,22 +23,39 @@
         value="{{ user.lastname }}">
     </div>
 
-    <label>Age</label>
+    <label>Age Group</label>
     <div class="field-group">
+
         <select name="age" class="age_range" />
             {% for age in ages %}
+            {% if age.id == user.age %}
+
+            <option value={{ age.id }} selected="selected">{{ age.age_group }}</option>
+
+            {% else %}
             <option value={{ age.id }}>{{ age.age_group }}</option>
+
+            {% endif %}
             {% endfor %}
         </select>
+
     </div>
 
     <label>Location</label>
     <div id="location" class="field-group">
+
         <select name="location" class="location"/>
             {% for city in location %}
+            {% if city.id == user.user_location %}
+            <option selected="selected" value={{ city.id }}>{{ city.city }}</option>
+
+            {% else %}
             <option value={{ city.id }}>{{ city.city }}</option>
+
+            {% endif %}
             {% endfor %}
         </select>
+
     </div>
 
     <div id="personal_taste" class="field-group">
@@ -47,8 +64,25 @@
         {% for taste in tastes %}
         {% if taste in user.food_profile %}
         <input type="checkbox" checked='checked' name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+
         {% else %}
         <input type="checkbox" name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <div id="dietary_restriction" class="field-group">
+        <label>Dietary Restrictions</label>
+
+        {% for diet in diets %}
+        {% if diet in user.diet_restrict %}
+        <input type="checkbox" checked='checked' name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+
+        {% else %}
+        <input type="checkbox" name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+
         {% endif %}
         {% endfor %}
 
@@ -57,7 +91,7 @@
     <label>Favorite Restaurants</label>
     <div class="field-group">
         <input type="text" name="favorite_restaurants" id="favorite_restaurants"
-        value="{{ user.restaurant }}"/>
+        value="{{ user.restaurants }}"/>
     </div>
 
     <label>Favorite Food</label>

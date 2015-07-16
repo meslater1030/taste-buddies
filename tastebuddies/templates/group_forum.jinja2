@@ -30,6 +30,16 @@
             <p><em>No one has planned anything yet. Start a discussion!</em></p>
         </div>
         {% endfor %}
+        <form action="{{ request.route_url('group_forum', group_id='group_id') }}" method='POST'>
+            <textarea
+                class="post"
+                name='write_post'
+                placeholder='Write a comment...'
+                cols="60"
+                rows="2"
+                value='{{ discussion[0] }}'></textarea>
+            <input id="save_post" type="submit" name="save_post" value='Post'>
+        </form>
     </article>
 
     <form id="leave-post-form" action="{{ request.route_url('group_forum', group_id='discussion.group_id', discussion_id='discussion.id') }}">
