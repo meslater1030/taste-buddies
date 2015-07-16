@@ -54,6 +54,13 @@
         <label>Price</label>
         {{ price }}
     </div>
+
+        <div id="groups" class="field-group">
+        <label>User Groups</label>
+        {% for group in groups %}
+        <div>{{group}}</div>
+        {% endfor %}
+    </div>
  </form>
 </div>
 

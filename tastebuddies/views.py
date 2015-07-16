@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import User, Cost, Location, AgeGroup, Profile, Diet
+from models import User, Cost, Location, AgeGroup, Profile, Diet, Group
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -145,22 +145,22 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     selected = ''
-
-
     for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user
 
-    # user = User.one(request.matchdict['username'])
-
     tastes = []
     diets = []
+    groups = []
 
     for taste in selected.food_profile:
         tastes.append(taste.taste)
 
     for diet in selected.diet_restrict:
         diets.append(diet.diet)
+
+    for group in selected.user_groups:
+        groups.append(group.name)
 
     firstname = selected.firstname
     lastname = selected.lastname
@@ -180,7 +180,7 @@ def profile_detail_view(request):
     return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
             'diets': diets, 'age': age, 'location': location, 'price': price,
             'food': food, 'restaurant': restaurant,
-            'username': request.authenticated_userid}
+            'username': request.authenticated_userid, 'groups': groups}
 
 
 @view_config(route_name='profile_edit',
@@ -222,15 +222,26 @@ def profile_edit_view(request):
 @view_config(route_name='group_create',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
-    username = request.authenticated_userid
-    user = User.lookup_user_by_username(username)
+    if request.method == 'POST':
+            username = request.authenticated_userid
+            group_name = request.params.get('group_name')
+            group_descrip = request.params.get('group_description')
+            location = request.params.get('location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('diet')
+            price = request.params.get('group_price')
+            age = request.params.get('age')
+            Group.write(name=group_name, description=group_descrip,
+                        location=location, food_profile=taste,
+                        diet_restrict=diet, cost=price, age=age,
+                        Admin=username)
     tastes = Profile.all()
     diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'username': username, 'diets': diet}
+    return {'tastes': tastes, 'ages': age, 'location': location,
+            'price': price, 'diets': diet}
 
 
 @view_config(route_name='group_detail',
