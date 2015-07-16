@@ -1,6 +1,13 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-# import models as m
+
+import time
+import os
+
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+import smtplib
+from random import randint
 
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
@@ -27,32 +34,84 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+
     username = request.authenticated_userid
+
     if request.method == 'POST':
+
+        # import pdb; pdb.set_trace()
+
         try:
             manager = BCRYPTPasswordManager()
             username = request.params.get('username')
             password = request.params.get('password')
             hashed = manager.encode(password)
             email = request.params.get('email')
+
             User.write(username=username, password=hashed, email=email)
             headers = remember(request, username)
-            return HTTPFound(request.route_url('verify'), headers=headers)
+
+            time.sleep(1)
+
+            return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
             return {}
     return {'username': username}
 
 
+@view_config(route_name='send_email')
+def send_verify_email(request):
+
+    # import pdb; pdb.set_trace()
+
+    ver_code = randint(1000, 9999)
+
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    user_obj.write_ver_code(username=user_obj.username, ver_code=ver_code)
+
+    fromaddr = "tastebot@gmail.com"
+    toaddr = user_obj.email
+
+    msg = MIMEMultipart()
+    msg["From"] = fromaddr
+    msg["To"] = toaddr
+    msg["Subject"] = "Your Tastebuddies Verification Code"
+
+    body = ''
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    email_directory = os.path.join(here, 'static', 'email_templates')
+    body_template = os.path.join(email_directory, 'body.txt')
+    with open(body_template, 'r') as fh:
+        body = str(fh.read())
+
+    body = body.format(ver_code=ver_code)
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login("tastebot", 'TASTEBUDDIES')
+    text = msg.as_string()
+
+    server.sendmail(fromaddr, toaddr, text)
+
+    return HTTPFound(request.route_url('verify'))
+
+
 @view_config(route_name='verify',
              renderer='templates/verify.jinja2')
 def verify(request):
-    username = request.authenticated_userid
-    action = {'username': username}
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    action = {'username': uname}
 
     if request.method == "POST":
-        vcode = request.params.get('verify_code')
-        if vcode == 1234:
-            uname = request.authenticated_userid
+        user_vcode = int(request.params.get('verify_code'))
+        db_vcode = user_obj.ver_code
+
+        if user_vcode == db_vcode:
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
@@ -145,6 +204,7 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     selected = ''
+
     for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user

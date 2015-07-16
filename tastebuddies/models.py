@@ -47,7 +47,9 @@ usercost_table = Table('user_cost', Base.metadata,
 
 
 groupdiscussion_table = Table('group_discussion', Base.metadata,
-                              Column('group', Integer, ForeignKey('groups.id')),
+                              Column('group',
+                                     Integer,
+                                     ForeignKey('groups.id')),
                               Column('discussion', Integer, ForeignKey(
                                      'discussion.id'))
                               )
@@ -125,6 +127,7 @@ class User(Base, _Table):
     firstname = Column(Text)
     lastname = Column(Text)
     confirmed = Column(Boolean, default=False)
+    ver_code = Column(Integer)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
     cost = Column(Integer, ForeignKey('cost.id'))
@@ -164,6 +167,15 @@ class User(Base, _Table):
             session = DBSession
         instance = cls.lookup_user_by_username(username=username)
         instance.user_groups.append(usergroup)
+        session.add(instance)
+        return instance
+
+    @classmethod
+    def write_ver_code(cls, username, ver_code, session=None):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_user_by_username(username)
+        instance.ver_code = int(ver_code)
         session.add(instance)
         return instance
 
