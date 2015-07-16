@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import User, Cost, Location, AgeGroup, Profile
+from models import User, Cost, Location, AgeGroup, Profile, Diet
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -61,7 +61,6 @@ def verify(request):
 
 
 def do_login(request):
-    # import pdb; pdb.set_trace()
     login_result = False
     manager = BCRYPTPasswordManager()
 
@@ -147,7 +146,6 @@ def logout(request):
 def profile_detail_view(request):
     selected = ''
 
-    # import pdb; pdb.set_trace()
 
     for user in User.all():
         if user.username == request.authenticated_userid:
@@ -180,8 +178,9 @@ def profile_detail_view(request):
         age = 27
 
     return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
-            'age': age, 'location': location, 'price': price, 'food': food,
-            'restaurant': restaurant, 'username': request.authenticated_userid}
+            'diets': diets, 'age': age, 'location': location, 'price': price,
+            'food': food, 'restaurant': restaurant,
+            'username': request.authenticated_userid}
 
 
 @view_config(route_name='profile_edit',
@@ -198,7 +197,6 @@ def profile_edit_view(request):
             price = request.params.get('group_price')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
-
             User.change(username=username, firstname=firstname,
                         lastname=lastname, location=location,
                         taste=taste, diet=diet, price=price,
@@ -212,20 +210,23 @@ def profile_edit_view(request):
 
     username = request.authenticated_userid
     user = User.lookup_user_by_username(username)
-
     tastes = Profile.all()
+    diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-
     return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'username': username}
+            'price': price, 'username': username, 'diets': diet}
 
 
 @view_config(route_name='group_create',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
-    return {}
+    age = AgeGroup.all()
+    location = Location.all()
+    tastes = Profile.all()
+    price = Cost.all()
+    return
 
 
 @view_config(route_name='group_detail',

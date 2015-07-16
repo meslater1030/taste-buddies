@@ -54,6 +54,19 @@
 
     </div>
 
+    <div id="dietary_restriction" class="field-group">
+        <label>Dietary Restrictions</label>
+
+        {% for diet in diets %}
+        {% if taste in user.diet_restrict %}
+        <input type="checkbox" checked='checked' name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+        {% else %}
+        <input type="checkbox" name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
     <label>Favorite Restaurants</label>
     <div class="field-group">
         <input type="text" name="favorite_restaurants" id="favorite_restaurants"
