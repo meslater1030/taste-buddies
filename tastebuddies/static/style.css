@@ -6,6 +6,13 @@
 
 h1 {
     font-family: 'Just Another Hand', cursive;
+    font-size: 35px;
+    text-align: center;
+}
+
+h2 {
+    font-family: 'Just Another Hand', cursive;
+    font-size: 30px;
     text-align: center;
 }
 
@@ -21,23 +28,26 @@ body {
     margin: 10px auto 10px auto;
     padding: 20px;
     border: 4px double #000;
-    background-color: #ffffff;}
+    background-color: #ffffff;
+}
 
 #logo {
     display:block;
     text-align: center;
-    margin: 2% 10% 0% 10%;}
+    margin: 2% 10% 0% 10%;
+}
 
 #form-container {
-    width: 100%;}
+    width: 100%;
+}
 
-#login-form, #create-user-form, #verification-form{
+#resend-email-form, #join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
-    margin-right: auto;}
+    margin-right: auto;
+}
 
-
-#create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
+#leave-comment-form, #create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
     text-align: left;
     margin-top: 5%;
     margin-bottom: 5%;
@@ -50,14 +60,12 @@ body {
     color: black;
     padding: 20px;
     border-radius: 6px
-
 }
 
-#login, #save_group, #create-account, #verify, #save_personal_profile {
+#save_comment, #login, #save_group, #create-account, #verify, #save_personal_profile{
     background-color: #7ab800;
     font-family:"Courier";
     color: #fff;
-    display: block;
     font-weight: 500;
     font-size: 16px;
     line-height: 42px;
@@ -70,6 +78,22 @@ body {
     display: inline-block;
 }
 
+#resend_email_button, #join_group_button {
+    background-color: #FF9819;
+    font-family:"Courier";
+    color: #fff;
+    display: inline-block;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 42px;
+    width: auto;
+    height: 42px;
+    margin: 12px 0 12px 0;
+    padding: 0 22px;
+    border-radius: 3px;
+    vertical-align: top;
+}
+
 ul {
     list-style-type: circle;
     width: 570px;
@@ -79,7 +103,6 @@ ul {
     border-bottom: 1px solid #952d98;
     text-align: center;
 }
-
 
 nav li {
     display: inline;
@@ -121,8 +144,6 @@ a:hover, a.on {
     list-style-type: none;
 }
 
-
-
 .selected {
      color: #cc3333;}
 
@@ -144,6 +165,25 @@ a:hover, a.on {
 
 }
 
+#members_container{
+width: 700px;
+height: 100px;
+overflow: hidden;
+  margin-left: auto ;
+  margin-right: auto ;
+/*white-space: nowrap;*/
+}
+
+.group-page-member-photo{
+    border-radius: 100%;
+    display: inline-block;
+    text-align: center;
+    max-width: 75px;
+    float: center;
+    clear: center;
+
+}
+
 
 #text_entry {
     display: block;
@@ -152,11 +192,6 @@ a:hover, a.on {
     margin-right: auto;
     font-family:  Courier, monospace;
     display: inline-block;}
-
-#restriction {
-    text-align: center;
-    font-weight: bold;
-}
 
 .field, .control_row {
     text-align:center;
@@ -204,7 +239,18 @@ footer {
     text-align: center;
     clear: both;
     padding-top: 10px;
-    color: #000;}
+    color: #000;
+}
+
+
+/*Group Taste Buttons/Profile*/
+
+#group_taste_buttons {
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    border-bottom: 1px solid #952d98;
+}
 
 
 .button.disabled {
@@ -223,7 +269,7 @@ footer {
 
 }
 
-.sour.button.disabled{
+.sour.button.disabled {
   background: linear-gradient(#f0ad4e,#eea236);
   text-shadow: 1px 1px 1px #eea236;
 }
@@ -254,17 +300,17 @@ footer {
   text-shadow: 1px 1px 1px #7A2952;
 }
 
-.indian.button.disabled{
+.indian.button.disabled {
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
 
-.chinese.button.disabled{
+.chinese.button.disabled {
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
-.american.button.disabled{
+.american.button.disabled {
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
@@ -376,6 +422,89 @@ footer {
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
+/*Group Price Button*/
+
+.cheap.button.disabled{
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+.moderate.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.average.button.disabled{
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.expensive.button.disabled{
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
+
+/*Group Age Range Button*/
+.eighteen_to_twentyfour.button.disabled{
+  background: linear-gradient(#f0ad4e,#eea236);
+  text-shadow: 1px 1px 1px #eea236;
+}
+
+.twentyfive_to_thirtyfour.button.disabled {
+  background: linear-gradient(#6BDB55,#57B245);
+  text-shadow: 1px 1px 1px #57B245;
+}
+
+.thirtyfive_to_fortyfour.button.disabled{
+  background: linear-gradient(#D60A0A,#B20808);
+  text-shadow: 1px 1px 1px #B20808;
+}
+
+.fortyfive_to_fiftyfour.button.disabled{
+  background: linear-gradient(#11A1D6,#0E86B2);
+  text-shadow: 1px 1px 1px #0E86B2;
+}
+.fiftyfive_to_sixtyfour.button.disabled{
+  background: linear-gradient(#337ab7,#2e6da4);
+  text-shadow: 1px 1px 1px ##2e6da4;
+}
+
+.sixtyfive_to_seventyfour.button.disabled {
+  background: linear-gradient(#993366,#7A2952);
+  text-shadow: 1px 1px 1px #7A2952;
+}
+
+.seventyfive_and_up.button.disabled{
+  background: linear-gradient(#FF9900,#FFB2B2);
+  text-shadow: 1px 1px 1px #FFB2B2;
+}
+
+/*Group Location Button*/
+.seattle.button.disabled {
+  background: linear-gradient(#FF6666,#FFA3A3);
+  text-shadow: 1px 1px 1px #FFA3A3;
+}
+
+.eastside.button.disabled {
+  background: linear-gradient(#9932CC,#A346D1);
+  text-shadow: 1px 1px 1px #A346D1;
+}
+
+/*from here haven't changed color*/
+.skagit.button.disabled {
+  background: linear-gradient(#A0522D,#AA6342);
+  text-shadow: 1px 1px 1px #AA6342;
+}
+
+.kitsap.button.disabled {
+  background: linear-gradient(#808000,#8D8D19);
+  text-shadow: 1px 1px 1px #8D8D19;
+}
+
+.south_king.button.disabled {
+  background: linear-gradient(#FFD700,#FFDB19);
+  text-shadow: 1px 1px 1px #FFDB19;
+}
 
 @media screen and (min-width: 480px) {
 

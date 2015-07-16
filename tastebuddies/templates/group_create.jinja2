@@ -16,28 +16,26 @@
         <input type="text" name="group_name" id="group_name"
         placeholder="Group Name"/>
     </div>
-
     <label>Age</label>
     <div class="field-group">
         <select class="group_age_range" />
-            <option>18-24</option>
-            <option>25-34</option>
-            <option>35-44</option>
-            <option>45-54</option>
-            <option>55-64</option>
-            <option>65-74</option>
-            <option>75+</option>
+            <option name='18-24'>18-24</option>
+            <option name='25-34'>25-34</option>
+            <option name='35-44'>35-44</option>
+            <option name='45-54'>45-54</option>
+            <option name='55-64'>55-64</option>
+            <option name='65-74'>65-74</option>
+            <option name='75+'>75+</option>
         </select>
     </div>
     <label>Location</label>
     <div class="field-group">
         <select class="group_location" />
-            <option>Seattle</option>
-            <option>Kitsap</option>
-            <option>Eastside</option>
-            <option>Skagit</option>
-            <option>South King</option>
-            <option>65-74</option>
+            <option name='Seattle'>Seattle</option>
+            <option name='Kitsap'>Kitsap</option>
+            <option name='Eastside'>Eastside</option>
+            <option name='Skagit'>Skagit</option>
+            <optionname name='South_King'>South King</option>
         </select>
     </div>
 
@@ -85,6 +83,15 @@
         <input type="radio" name="group_price" class="style" value="average">$$
         <input type="radio" name="group_price" class="style" value="moderate">$$$
         <input type="radio" name="group_price" class="style" value="expensive">$$$$
+    </div>
+        <label>Group Description</label>
+    <div class="field-group">
+        <textarea
+            id="text"
+            name="text"
+            placeholder="Write your group description here!!"
+            cols="60"
+            rows="8"></textarea>
     </div>
 
     <input id= "save_group" type="submit" name="profile_save" value="Save Group"/>
