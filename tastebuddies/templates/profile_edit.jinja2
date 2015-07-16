@@ -84,10 +84,10 @@
 
         {% for cost in price %}
           {% if user.cost == cost.id %}
-          <input type="radio" checked='checked' name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+          <input type="radio" checked='checked' name="personal_price_range" class="style" value={{ cost.id }}>{{ cost.cost }}
 
           {% else %}
-          <input type="radio" name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+          <input type="radio" name="personal_price_range" class="style" value={{ cost.id }}>{{ cost.cost }}
 
           {% endif %}
 
