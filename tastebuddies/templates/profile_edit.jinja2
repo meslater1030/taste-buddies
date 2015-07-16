@@ -4,59 +4,84 @@
 
 <div id="#form-container">
 <form method="POST" id="create-profile-form" action="{{ request.route_url('profile_edit', username='username') }}">
-`<h1>Edit your Personal Profile!</h1>
+
+<h1>Edit your Personal Profile!</h1>
+
 <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../../static/img/dog2.jpg" alt="Personal Profile Photo" class="profile-photo">
     </div>
+
     <label>First Name</label>
     <div class="field-group">
         <input type="text" name="first_name" id="first_name"
-        placeholder="First Name"/>
+        value="{{ user.firstname }}"/>
     </div>
+
     <label>Last Name</label>
     <div class="field-group">
         <input type="text" name="last_name" id="last_name"
-        placeholder="Last Name"/>
+        value="{{ user.lastname }}">
     </div>
 
     <label>Age</label>
     <div class="field-group">
         <select name="age" class="age_range" />
             {% for age in ages %}
-            <option value={{age.id}}>{{age.age_group}}</option>
+            <option value={{ age.id }}>{{ age.age_group }}</option>
             {% endfor %}
         </select>
     </div>
+
     <label>Location</label>
     <div id="location" class="field-group">
         <select name="location" class="location"/>
             {% for city in location %}
-            <option value={{city.id}}>{{city.city}}</option>
+            <option value={{ city.id }}>{{ city.city }}</option>
             {% endfor %}
         </select>
     </div>
+
     <div id="personal_taste" class="field-group">
         <label>Taste</label>
+
         {% for taste in tastes %}
-        <input type="checkbox" name="personal_taste" class="style" value={{taste.id}}> {{taste.taste}}
+        {% if taste in user.food_profile %}
+        <input type="checkbox" checked='checked' name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+        {% else %}
+        <input type="checkbox" name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+        {% endif %}
         {% endfor %}
+
     </div>
+
     <label>Favorite Restaurants</label>
     <div class="field-group">
         <input type="text" name="favorite_restaurants" id="favorite_restaurants"
-        placeholder="Favorite Restaurants"/>
+        value="{{ user.restaurant }}"/>
     </div>
+
     <label>Favorite Food</label>
     <div class="field-group">
     <input type="text" name="favorite_food" id="favorite_food"
-    placeholder="Favorite Food"/>
+    value="{{ user.food }}"/>
     </div>
+
     <div id="personal_price_range" class="field-group">
         <label>Price</label>
+
         {% for cost in price %}
-        <input type="radio" name="group_price" class="style" value={{cost.id}}>{{cost.cost}}
+          {% if user.cost == cost.id %}
+          <input type="radio" checked='checked' name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+
+          {% else %}
+          <input type="radio" name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+
+          {% endif %}
+
         {% endfor %}
+
     </div>
+
     <input id="save_personal_profile" type="submit" name="profile_save" value="Save Profile"/>
 </form>
 </div>
