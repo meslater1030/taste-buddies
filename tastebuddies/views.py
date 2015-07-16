@@ -66,7 +66,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_user(username=entered_username)
+    user_obj = User.lookup_user_by_username(username=entered_username)
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -157,9 +157,14 @@ def profile_detail_view(request):
     lastname = selected.lastname
     restaurant = selected.restaurants
     food = selected.food
-    price = m.Cost.one(eid=selected.cost).cost
-    location = m.Location.one(eid=selected.user_location).city
-    age = m.AgeGroup.one(eid=selected.age).age_group
+    try:
+        price = m.Cost.one(eid=selected.cost).cost
+        location = m.Location.one(eid=selected.user_location).city
+        age = m.AgeGroup.one(eid=selected.age).age_group
+    except:
+        price = 1,
+        location = "Seattle"
+        age = 27
     return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
             'age': age, 'location': location, 'price': price, 'food': food,
             'restaurant': restaurant}
