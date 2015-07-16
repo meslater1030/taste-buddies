@@ -5,6 +5,8 @@ import models as m
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
+from models import User
+
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
 # def my_view(request):
@@ -27,10 +29,12 @@ def home_view(request):
 def user_create_view(request):
     if request.method == 'POST':
         try:
+            manager = BCRYPTPasswordManager()
             username = request.params.get('username')
             password = request.params.get('password')
+            hashed = manager.encode(password)
             email = request.params.get('email')
-            m.User.write(username=username, password=password, email=email)
+            m.User.write(username=username, password=hashed, email=email)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
         except:
@@ -41,21 +45,34 @@ def user_create_view(request):
 @view_config(route_name='verify',
              renderer='templates/verify.jinja2')
 def verify(request):
-    return {}
+    action = {}
+
+    if request.method == "POST":
+        vcode = request.params.get('verify_code')
+        if vcode == 1234:
+            uid = request.authenticated_userid
+            action = HTTPFound(
+                request.route_url('profile_detail', username=uid)
+            )
+
+    return action
 
 
 def do_login(request):
-    username = request.params.get('username', None)
-    password = request.params.get('password', None)
+    # import pdb; pdb.set_trace()
     login_result = False
-
-    settings = request.registry.settings
     manager = BCRYPTPasswordManager()
 
-    if username == settings.get('auth.username', ''):
-        hashed = settings.get('auth.password', '')
-        # manager.check returns bool
-        login_result = manager.check(hashed, password)
+    entered_username = request.params.get('username', None)
+    entered_password = request.params.get('password', None)
+
+    user_obj = User.lookup_user(username=entered_username)
+    db_username = user_obj.username
+
+    if entered_username == db_username:
+        db_hashed = user_obj.password
+        # manager.check returns BOOL
+        login_result = manager.check(db_hashed, entered_password)
 
     return login_result
 
