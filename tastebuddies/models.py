@@ -46,26 +46,6 @@ usercost_table = Table('user_cost', Base.metadata,
                        )
 
 
-groupdiscussion_table = Table('group_discussion', Base.metadata,
-                              Column('group', Integer, ForeignKey('group.id')),
-                              Column('discussion', Integer, ForeignKey(
-                                     'discussion.id'))
-                              )
-
-grouppost_table = Table('group_post', Base.metadata,
-                        Column('group', Integer, ForeignKey('group.id')),
-                        Column('post', Integer, ForeignKey(
-                               'post.id'))
-                        )
-
-discussiopost_table = Table('discussion_post',
-                            Base.metadata,
-                            Column('discussion', Integer,
-                                   ForeignKey('discussion.id')),
-                            Column('post', Integer, ForeignKey(
-                                   'post.id'))
-                            )
-
 groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
                        ForeignKey('group.id')), Column('agegroup', Integer,
                        ForeignKey('agegroup.id'))
@@ -197,8 +177,8 @@ class Group(Base, _Table):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
-    discussion = relationship('Discussion', secondary=groupdiscussion_table,
-                              backref='group')
+    discussion = relationship('Discussion', backref='group')
+    post = relationship('Post', backref='group')
     group_admin = relationship("Admin", uselist=False, backref='group')
 
     def __repr__(self):
@@ -208,7 +188,9 @@ class Group(Base, _Table):
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     discussion_title = Column(Text)
-    groupdiscussion = Column(Integer, ForeignKey('group.id'))
+    posts = relationship('Post', backref='discussion')
+    group_id = Column(Integer, ForeignKey('group.id'))
+    group = relationship('Group', backref='discussion')
 
     @classmethod
     def group_lookup(cls, id=None, session=None):
@@ -222,11 +204,13 @@ class Discussion(Base, _Table):
 
 class Post(Base, _Table):
     __tablename__ = 'post'
-    discussionpost = Column(Integer, ForeignKey('discussion.id'))
-    grouppost = Column(Integer, ForeignKey('group.id'))
+    discussion_id = Column(Integer, ForeignKey('discussion.id'))
+    group_id = Column(Integer, ForeignKey('group.id'))
     post_text = Column(Text)
     created = Column(DateTime, nullable=False,
                      default=datetime.datetime.utcnow)
+    discussion = relationship('Discussion', backref='post')
+    group = relationship('Group', backref='discussion')
 
     @classmethod
     def group_lookup(cls, id=None, session=None):

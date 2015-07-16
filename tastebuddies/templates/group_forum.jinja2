@@ -2,15 +2,11 @@
 <h2> Want to start an event? Leave a comment!!</h2>
 
 <div id="#form-container">
-<form id="leave-comment-form" action="{{ request.route_url('profile_detail', username='username') }}">
-
-    <label>Name</label>
+<form id="begin-discussion-form" action="{{ request.route_url('group_forum', group_id='group_id') }}" method='POST'>
+    <label>Discussion</label>
+    <input type="text" size="30" name="discussion" id="discussion"/>
     <div class="field-group">
-        <input type="text" name="first_name" id="first_name"
-        placeholder="First Name"/>
-    </div>
-    <label>Comment</label>
-    <div class="field-group">
+        <label>Post</label>
         <textarea
             id="text"
             name="text"
@@ -18,7 +14,7 @@
             cols="60"
             rows="8"></textarea>
     </div>
-    <input id="save_comment" type="submit" name="save_comment" value="Comment"/>
+    <input id="save_discussion" type="submit" name="save_discussion" value="Comment"/>
 </form>
 
 </div>
@@ -38,6 +34,16 @@
             <p><em>No one has planned anything yet. Start a discussion!</em></p>
         </div>
         {% endfor %}
+        <form action="{{ request.route_url('group_forum', group_id='group_id') }}" method='POST'>
+            <textarea
+                class="post"
+                name='write_post'
+                placeholder='Write a comment...'
+                cols="60"
+                rows="2"
+                value='{{ discussion[0] }}'></textarea>
+            <input id="save_post" type="submit" name="save_post" value='Post'>
+        </form>
     </article>
     {% endfor %}
 </section>
