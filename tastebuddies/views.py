@@ -2,6 +2,8 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 # import models as m
 
+from psycopg2 import IntegrityError
+
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
@@ -27,23 +29,28 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+    action = {}
+
     if request.method == 'POST':
+        manager = BCRYPTPasswordManager()
+
+        username = request.params.get('username')
+        password = request.params.get('password')
+        email = request.params.get('email')
+
+        hashed = manager.encode(password)
+
         try:
-            manager = BCRYPTPasswordManager()
-
-            username = request.params.get('username')
-            password = request.params.get('password')
-            email = request.params.get('email')
-
-            hashed = manager.encode(password)
-
             User.write(username=username, password=hashed, email=email)
 
             headers = remember(request, username)
-            return HTTPFound(request.route_url('verify'), headers=headers)
-        except:
-            return {}
-    return {}
+            action = HTTPFound(request.route_url('verify'), headers=headers)
+
+        # WHY ISN'T THIS CATCHING THE INTEGRITYERROR?
+        except Exception:
+            action = {}
+
+    return action
 
 
 @view_config(route_name='verify',
@@ -53,8 +60,10 @@ def verify(request):
 
     if request.method == "POST":
         vcode = request.params.get('verify_code')
+
         if vcode == 1234:
             uid = request.authenticated_userid
+
             action = HTTPFound(
                 request.route_url('profile_detail', username=uid)
             )
