@@ -32,6 +32,14 @@
         {% endfor %}
     </div>
 
+    <div id="diet" class="field-group">
+        <label>Dietary Restriction</label>
+        {% for diet in diets %}
+        <div>{{diet}}</div>
+        {% endfor %}
+    </div>
+
+
     <label>Favorite Restaurants</label>
     <div class="field-group">
         {{ restaurant }}

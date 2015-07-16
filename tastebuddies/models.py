@@ -156,7 +156,7 @@ class User(Base, _Table):
             instance.food_profile.append(session.query(Profile).filter
                                          (Profile.id == eid).all()[0])
         for eid in dietid:
-            instance.food_profile.append(session.query(Diet).filter
+            instance.diet_restrict.append(session.query(Diet).filter
                                          (Diet.id == eid).all()[0])
         instance.cost = int(kwargs.get("price"))
         instance.user_location = int(kwargs.get("location"))
