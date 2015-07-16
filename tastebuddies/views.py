@@ -4,7 +4,7 @@ from pyramid.httpexceptions import HTTPFound
 
 from psycopg2 import IntegrityError
 
-from pyramid.security import remember, forget, Authenticated
+from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
 from models import User
@@ -63,9 +63,11 @@ def verify(request):
 
         if vcode == 1234:
             uid = request.authenticated_userid
+            user_obj = User.lookup_user_by_id(uid)
+            username = user_obj.username
 
             action = HTTPFound(
-                request.route_url('profile_detail', username=uid)
+                request.route_url('profile_detail', username=username)
             )
 
     return action
@@ -79,7 +81,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_user(username=entered_username)
+    user_obj = User.lookup_user_by_username(username=entered_username)
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -128,11 +130,11 @@ def login(request):
 
         if authn is True:
             headers = remember(request, username)
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
-                    username='1'),
+                    username=username),
                     headers=headers,
                 )
             else:
