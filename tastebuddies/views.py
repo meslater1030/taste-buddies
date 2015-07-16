@@ -194,7 +194,7 @@ def profile_edit_view(request):
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
             restaurant = request.params.get('favorite_restaurants')
-            price = request.params.get('group_price')
+            price = request.params.get('personal_price_range')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
             User.change(username=username, firstname=firstname,
@@ -276,6 +276,14 @@ def group_detail_view(request):
 @view_config(route_name='group_edit',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
+    # if request.method == 'POST':
+    #     name = request.params.get('group_name')
+    #     location = request.params.get('group_location')
+    #     age = request.params.get('group_age_range')
+    #     diet = request.params.getall('group_diet')
+    #     price = request.params.get('group_price')
+    #     description = request.params.get('group_description')
+    #     taste = request.params.getall('group_taste')
     return {}
 
 
