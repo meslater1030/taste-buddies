@@ -164,6 +164,7 @@ class User(Base, _Table):
         for eid in dietid:
             instance.diet_restrict.append(session.query(Diet).filter
                                           (Diet.id == eid).all()[0])
+
         instance.cost = int(kwargs.get("price"))
         instance.user_location = int(kwargs.get("location"))
         instance.age = int(kwargs.get("age"))
@@ -221,9 +222,9 @@ class Group(Base, _Table):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
-    discussion = relationship('Discussion', backref='group')
-    post = relationship('Post', backref='group')
-    group_admin = relationship("Admin", uselist=False, backref='group')
+    discussion = relationship('Discussion')
+    post = relationship('Post')
+    group_admin = relationship("Admin", uselist=False)
 
     def __repr__(self):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
@@ -232,9 +233,9 @@ class Group(Base, _Table):
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     discussion_title = Column(Text)
-    posts = relationship('Post', backref='discussion')
+    posts = relationship('Post')
     group_id = Column(Integer, ForeignKey('group.id'))
-    group = relationship('Group', backref='discussion')
+    group = relationship('Group')
 
     @classmethod
     def group_lookup(cls, id=None, session=None):
@@ -254,7 +255,7 @@ class Post(Base, _Table):
     created = Column(DateTime, nullable=False,
                      default=datetime.datetime.utcnow)
     discussion = relationship('Discussion', backref='post')
-    group = relationship('Group', backref='discussion')
+    group = relationship('Group')
 
     @classmethod
     def group_lookup(cls, id=None, session=None):
