@@ -26,14 +26,13 @@
 </div>
 
 <section id="forum">
-    {% for discussion in final_forum %}
+    {% for discussion in sorted_forum.iterkeys() %}
     <article class="discussion" id="{{ discussion[0] }}">
-        <h3>{{ discussion[0] }}</a></h3>
+        <h3>{{ discussion.title }}</a></h3>
         <hr/>
-        {% for post in discussion[1] %}
+        {% for post in sorted_forum[discussion] %}
         <div class="post">
-            {{ post[1] }}
-            <p class="dateline">{{ post[0]('%b. %d, %Y') }}</p>
+            {{ post.text }}
         </div>
         {% else %}
         <div class="entry">

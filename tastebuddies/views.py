@@ -5,7 +5,8 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import User, Cost, Location, AgeGroup, Profile, Post, Discussion
+from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
+                    Group)
 from collections import OrderedDict
 
 
@@ -238,33 +239,29 @@ def group_edit_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    """Pulls all discussions for this group and posts from the database.
-    Orders the disucssions according to when they began.
-    Associates all posts to the appropriate discussion.
-    Sorts the posts in reverse chronological order.
-    Reverses the ordered dictionary so that the most recent
-    discussions appear first.  Returns a list.
+    """Finds the appropriate group and its associated discussions.
+    creates an ordered dictionary with the discussion title as key
+    and the post texts as values in a list.  Reverses the ordered
+    dictionary so that the most recent discussions appear first.
     """
-    id = request.matchdict['group_id']
-    tmp = OrderedDict()
-    discussions = Discussion.group_lookup(id)
-    posts = Post.group_lookup()
+    group = ''
+    for group in Group.all():
+        if group.id == request.matchdict['group_id']:
+            group = group
+
+    discussions = group.discussions
+
     forum = OrderedDict()
+
     for discussion in discussions:
-        tmp[discussion.id] = []
-    for post in posts:
-        tmp[post.discussionpost].append((post.created, post.post_text))
-    for i in range(1, len(tmp)-1):
-        tmp[i].sort(reverse=True)
-    for id in tmp.iterkeys():
-        for discussion in discussions:
-            if id == discussion.id:
-                forum[discussion.discussion_title] = tmp[id]
-                del tmp[id]
-    final_forum = []
+        forum[discussion.title] = []
+        for post in discussions.posts:
+            forum[discussion.title].append(post.text)
+
+    sorted_forum = []
     for i in range(len(forum)):
-        final_forum.append(forum.popitem(last=True))
-    return final_forum
+        sorted_forum.append(forum.popitem(last=True))
+    return sorted_forum
 
 
 @view_config(route_name='group_forum',
