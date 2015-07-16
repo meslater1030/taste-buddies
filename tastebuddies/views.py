@@ -143,7 +143,26 @@ def logout(request):
 @view_config(route_name='profile_detail',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-    return {}
+    selected = ''
+    for user in m.User.all():
+        if user.username == request.authenticated_userid:
+            selected = user
+    tastes = []
+    diets = []
+    for taste in selected.food_profile:
+        tastes.append(taste.taste)
+    for diet in selected.diet_restrict:
+        diets.append(diet.diet)
+    firstname = selected.firstname
+    lastname = selected.lastname
+    restaurant = selected.restaurants
+    food = selected.food
+    price = m.Cost.one(eid=selected.cost).cost
+    location = m.Location.one(eid=selected.user_location).city
+    age = m.AgeGroup.one(eid=selected.age).age_group
+    return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
+            'age': age, 'location': location, 'price': price, 'food': food,
+            'restaurant': restaurant}
 
 
 @view_config(route_name='profile_edit',
@@ -156,15 +175,22 @@ def profile_edit_view(request):
             location = request.params.get('location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
-            restaurant = request.params.get('restaurant')
+            restaurant = request.params.get('favorite_restaurants')
             price = request.params.get('group_price')
+            food = request.params.get('favorite_food')
+            age = request.params.get('age')
             m.User.change(username=username, firstname=firstname,
                           lastname=lastname, location=location,
                           taste=taste, diet=diet, price=price,
-                          restaurant=restaurant)
+                          restaurant=restaurant, food=food, age=age)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
-    return {}
+    tastes = m.Profile.all()
+    age = m.AgeGroup.all()
+    location = m.Location.all()
+    price = m.Cost.all()
+    return {'tastes': tastes, 'ages': age, 'location': location,
+            'price': price}
 
 
 @view_config(route_name='group_create',
