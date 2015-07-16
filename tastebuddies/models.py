@@ -44,29 +44,6 @@ usercost_table = Table('user_cost', Base.metadata,
                        Column('profile', Integer, ForeignKey('cost.id'))
                        )
 
-
-groupdiscussion_table = Table('group_discussion', Base.metadata,
-                              Column('group',
-                                     Integer,
-                                     ForeignKey('groups.id')),
-                              Column('discussion', Integer, ForeignKey(
-                                     'discussion.id'))
-                              )
-
-grouppost_table = Table('group_post', Base.metadata,
-                        Column('group', Integer, ForeignKey('groups.id')),
-                        Column('post', Integer, ForeignKey(
-                               'post.id'))
-                        )
-
-discussiopost_table = Table('discussion_post',
-                            Base.metadata,
-                            Column('discussion', Integer,
-                                   ForeignKey('discussion.id')),
-                            Column('post', Integer, ForeignKey(
-                                   'post.id'))
-                            )
-
 groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
                        ForeignKey('groups.id')), Column('agegroup', Integer,
                        ForeignKey('agegroup.id'))
@@ -255,8 +232,7 @@ class Group(Base):
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
     discussions = relationship('Discussion',
-                               primaryjoin="(Group.id==Discussion.group_id)",
-                               back_populates='group')
+                               primaryjoin="(Group.id==Discussion.group_id)")
 
     group_admin = relationship("Admin", uselist=False, backref='group')
 
@@ -299,10 +275,9 @@ class Group(Base):
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     title = Column(Text)
-    group_id = Column(Integer, ForeignKey('group.id'))
+    group_id = Column(Integer, ForeignKey('groups.id'))
     posts = relationship('Post',
-                         primaryjoin="(Discussion.id==Post.discussion_id)",
-                         back_populates='discussion')
+                         primaryjoin="(Discussion.id==Post.discussion_id)")
 
     def __repr__(self):
         return "<Discussion(%s)>" % (self.title)
