@@ -308,30 +308,14 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-
-    # selected = ''
-    # for group in Group.all():
-    #     if group.name == ??
-    #         selected = group
-
-    # tastes = []
-    # diets = []
-    # for taste in selected.food_profile:
-    #     tastes.append(taste.taste)
-    # for diet in selected.diet_restrict:
-    #     diets.append(diet.diet)
-    # name = selected.name
-    # description = selected.description
-
-    # try:
-    #     price = Cost.one(eid=selected.cost).cost
-    #     location = Location.one(eid=selected.group_location).city
-    #     age = AgeGroup.one(eid=selected.age).age_group
-
-    # return{'name': name, 'tastes': tastes, 'diets': diets, 'age': age,
-    #        'location': location, 'price': price, 'description': description}
-
-    return {}
+    group = Group.one(request.matchdict['group_id'])
+    members = User.all()
+    group_members = []
+    for member in members:
+        for group in member.user_groups:
+            if group == member.user_groups:
+                group_members.append(group)
+    return {'group': group, 'members': members}
 
 
 @view_config(route_name='group_edit',
