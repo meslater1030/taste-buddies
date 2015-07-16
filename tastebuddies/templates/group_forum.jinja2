@@ -4,7 +4,7 @@
 <h2> Want to plan an event? Start a discussion!!!</h2>
 
 <div id="#form-container">
-<form id="leave-comment-form" action="{{ request.route_url('group_forum', group_id='group.id') }}">
+<form id="leave-comment-form" action="{{ request.route_url('group_forum', group_id='discussion.group_id') }}">
     <label>Discussion Topic</label>
     <div class="field-group">
         <input type="text" name="title" placeholder="What do you want to do?"/>
@@ -15,6 +15,7 @@
 </div>
 
 <section id="forum">
+
     {% for discussion in sorted_forum.iterkeys() %}
     <article class="discussion" id="{{ discussion.id }}">
         <h3>{{ discussion.title }}</a></h3>
@@ -30,10 +31,10 @@
         {% endfor %}
     </article>
 
-    <form id="leave-post-form" action="{{ request.route_url('group_forum', group_id='group.id', discussion_id='discussion.id') }}">
+    <form id="leave-post-form" action="{{ request.route_url('group_forum', group_id='discussion.group_id', discussion_id='discussion.id') }}">
     <label>Comment</label>
     <div class="field-group">
-        <textarea name="text" id="text" rows="2" cols="80" placeholder='Write a comment...'></textarea>
+        <textarea name="text" id="{{ post.id }}" rows="2" cols="80" placeholder='Write a comment...'></textarea>
     </div>
     <input id="save_post" type="submit" name="save_post" value="post"/>
     </form>
