@@ -1,11 +1,11 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-import models as m
+# import models as m
 
-from pyramid.security import remember, forget, Authenticated
+from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import User
+from models import User, Cost, Location, AgeGroup, Profile
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -34,7 +34,7 @@ def user_create_view(request):
             password = request.params.get('password')
             hashed = manager.encode(password)
             email = request.params.get('email')
-            m.User.write(username=username, password=hashed, email=email)
+            User.write(username=username, password=hashed, email=email)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
         except:
@@ -144,7 +144,7 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     selected = ''
-    for user in m.User.all():
+    for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user
     tastes = []
@@ -158,9 +158,9 @@ def profile_detail_view(request):
     restaurant = selected.restaurants
     food = selected.food
     try:
-        price = m.Cost.one(eid=selected.cost).cost
-        location = m.Location.one(eid=selected.user_location).city
-        age = m.AgeGroup.one(eid=selected.age).age_group
+        price = Cost.one(eid=selected.cost).cost
+        location = Location.one(eid=selected.user_location).city
+        age = AgeGroup.one(eid=selected.age).age_group
     except:
         price = 1,
         location = "Seattle"
@@ -184,16 +184,16 @@ def profile_edit_view(request):
             price = request.params.get('group_price')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
-            m.User.change(username=username, firstname=firstname,
-                          lastname=lastname, location=location,
-                          taste=taste, diet=diet, price=price,
-                          restaurant=restaurant, food=food, age=age)
+            User.change(username=username, firstname=firstname,
+                        lastname=lastname, location=location,
+                        taste=taste, diet=diet, price=price,
+                        restaurant=restaurant, food=food, age=age)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
-    tastes = m.Profile.all()
-    age = m.AgeGroup.all()
-    location = m.Location.all()
-    price = m.Cost.all()
+    tastes = Profile.all()
+    age = AgeGroup.all()
+    location = Location.all()
+    price = Cost.all()
     return {'tastes': tastes, 'ages': age, 'location': location,
             'price': price}
 
