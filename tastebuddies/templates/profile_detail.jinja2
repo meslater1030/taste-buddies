@@ -9,37 +9,39 @@
     <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../static/img/dog2.jpg" alt="Pesonal Profile Photo" class="profile-photo">
     </div>
-    <label>First Name</label>
+
+    <label>Name</label>
     <div class="field-group">
-        {{firstname}}
-    </div>
-    <label>Last Name</label>
-    <div class="field-group">
-        {{lastname}}
+        {{firstname}} {{lastname}}
     </div>
 
-    <label>Age</label>
+    <label>Age Group</label>
     <div class="field-group">
         {{age}}
     </div>
+
     <label>Location</label>
     <div class="field-group">
         {{location}}
     </div>
+
     <div id="personal_taste" class="field-group">
-        <label>Taste</label>
+        <label>Taste Preferences</label>
         {% for taste in tastes %}
         <div>{{taste}}</div>
         {% endfor %}
     </div>
+
     <label>Favorite Restaurants</label>
     <div class="field-group">
         {{ restaurant }}
     </div>
+
     <label>Favorite Food</label>
     <div class="field-group">
         {{ food }}
     </div>
+
     <div id="personal_price_range" class="field-group">
         <label>Price</label>
         {{ price }}
@@ -49,13 +51,18 @@
 
 <nav>
     <ul>
+    <ul>
     <li><a href="{{ request.route_url('group_detail', group_id=0) }}"> +Your Groups</a></li>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=1) }}"> +Administer Your Groups</a></li>
+    <li><a href="{{ request.route_url('profile_edit', username='username') }}">+Edit Profile</a></li>
+
+    </ul>
+    <ul>
 
     <li><a href="{{ request.route_url('group_create') }}">+Create Group</a></li>
 
-    <li><a href="{{ request.route_url('profile_edit', username='username') }}">+Edit Profile</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_id=1) }}"> +Administer Your Groups</a></li>
+    </ul>
     </ul>
 </nav>
 
