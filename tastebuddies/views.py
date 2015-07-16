@@ -1,16 +1,11 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-# import models as m
+import models as m
 
-from psycopg2 import IntegrityError
-
-from pyramid.security import remember, forget
+from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-
-from models import Discussion, Post, User
-
-from collections import OrderedDict
+from models import User
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -32,28 +27,19 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
-    action = {}
-
     if request.method == 'POST':
-        manager = BCRYPTPasswordManager()
-
-        username = request.params.get('username')
-        password = request.params.get('password')
-        email = request.params.get('email')
-
-        hashed = manager.encode(password)
-
         try:
-            User.write(username=username, password=hashed, email=email)
-
+            manager = BCRYPTPasswordManager()
+            username = request.params.get('username')
+            password = request.params.get('password')
+            hashed = manager.encode(password)
+            email = request.params.get('email')
+            m.User.write(username=username, password=hashed, email=email)
             headers = remember(request, username)
-            action = HTTPFound(request.route_url('verify'), headers=headers)
-
-        # WHY ISN'T THIS CATCHING THE INTEGRITYERROR?
-        except Exception:
-            action = {}
-
-    return action
+            return HTTPFound(request.route_url('verify'), headers=headers)
+        except:
+            return {}
+    return {}
 
 
 @view_config(route_name='verify',
@@ -63,14 +49,10 @@ def verify(request):
 
     if request.method == "POST":
         vcode = request.params.get('verify_code')
-
         if vcode == 1234:
             uid = request.authenticated_userid
-            user_obj = User.lookup_user_by_id(uid)
-            username = user_obj.username
-
             action = HTTPFound(
-                request.route_url('profile_detail', username=username)
+                request.route_url('profile_detail', username=uid)
             )
 
     return action
@@ -133,10 +115,11 @@ def login(request):
 
         if authn is True:
             headers = remember(request, username)
+
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
-                    username=username),
+                    username='1'),
                     headers=headers,
                 )
             else:
@@ -160,7 +143,31 @@ def logout(request):
 @view_config(route_name='profile_detail',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-    return {}
+    selected = ''
+    for user in m.User.all():
+        if user.username == request.authenticated_userid:
+            selected = user
+    tastes = []
+    diets = []
+    for taste in selected.food_profile:
+        tastes.append(taste.taste)
+    for diet in selected.diet_restrict:
+        diets.append(diet.diet)
+    firstname = selected.firstname
+    lastname = selected.lastname
+    restaurant = selected.restaurants
+    food = selected.food
+    try:
+        price = m.Cost.one(eid=selected.cost).cost
+        location = m.Location.one(eid=selected.user_location).city
+        age = m.AgeGroup.one(eid=selected.age).age_group
+    except:
+        price = 1,
+        location = "Seattle"
+        age = 27
+    return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
+            'age': age, 'location': location, 'price': price, 'food': food,
+            'restaurant': restaurant}
 
 
 @view_config(route_name='profile_edit',
@@ -173,15 +180,22 @@ def profile_edit_view(request):
             location = request.params.get('location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
-            restaurant = request.params.get('restaurant')
+            restaurant = request.params.get('favorite_restaurants')
             price = request.params.get('group_price')
-            User.change(username=username, firstname=firstname,
-                        lastname=lastname, location=location,
-                        taste=taste, diet=diet, price=price,
-                        restaurant=restaurant)
+            food = request.params.get('favorite_food')
+            age = request.params.get('age')
+            m.User.change(username=username, firstname=firstname,
+                          lastname=lastname, location=location,
+                          taste=taste, diet=diet, price=price,
+                          restaurant=restaurant, food=food, age=age)
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
-    return {}
+    tastes = m.Profile.all()
+    age = m.AgeGroup.all()
+    location = m.Location.all()
+    price = m.Cost.all()
+    return {'tastes': tastes, 'ages': age, 'location': location,
+            'price': price}
 
 
 @view_config(route_name='group_create',
@@ -193,47 +207,7 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    """Pulls all discussions for this group and posts from the database.
-    Orders the disucssions according to when they began.
-    Associates all posts to the appropriate discussion.
-    Sorts the posts in reverse chronological order.
-    Reverses the ordered dictionary so that the most recent
-    discussions appear first.  Returns a list.
-    """
-    id = request.matchdict['group_id']
-    tmp = OrderedDict()
-    discussions = Discussion.group_lookup(id)
-    posts = Post.group_lookup()
-    forum = OrderedDict()
-    for discussion in discussions:
-        tmp[discussion.id] = []
-    for post in posts:
-        tmp[post.discussionpost].append((post.created, post.post_text))
-    for i in range(1, len(tmp) - 1):
-        tmp[i].sort(reverse=True)
-    for id in tmp.iterkeys():
-        for discussion in discussions:
-            if id == discussion.id:
-                forum[discussion.discussion_title] = tmp[id]
-                del tmp[id]
-    final_forum = []
-    for i in range(len(forum)):
-        final_forum.append(forum.popitem(last=True))
-    return final_forum
-
-
-@view_config(route_name='group_forum',
-             renderer='templates/group_forum.jinja2')
-def group_forum_view(request):
-    # Enters posts and/or discussions into the database
-    if request.method == 'POST':
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.write(title=title)
-        if request.params.get('text'):
-            text = request.params.get('text')
-            Post.write(text=text)
-    return HTTPFound(request.route_url('group_detail'))
+    return {}
 
 
 @view_config(route_name='group_edit',

@@ -40,12 +40,6 @@ userdiet_table = Table('user_diet', Base.metadata,
                        )
 
 
-usercost_table = Table('user_cost', Base.metadata,
-                       Column('users', Integer, ForeignKey('users.id')),
-                       Column('profile', Integer, ForeignKey('cost.id'))
-                       )
-
-
 groupdiscussion_table = Table('group_discussion', Base.metadata,
                               Column('group', Integer, ForeignKey('group.id')),
                               Column('discussion', Integer, ForeignKey(
@@ -93,6 +87,18 @@ class _Table(object):
         session.add(instance)
         return instance
 
+    @classmethod
+    def all(cls, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).all()
+
+    @classmethod
+    def one(cls, eid=None, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(cls.id == eid).one()
+
 
 class User(Base, _Table):
     __tablename__ = 'users'
@@ -104,15 +110,15 @@ class User(Base, _Table):
     confirmed = Column(Boolean, default=False)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
+    cost = Column(Integer, ForeignKey('cost.id'))
     food_profile = relationship('Profile', secondary=usertaste_table,
                                 backref='users')
     diet_restrict = relationship('Diet', secondary=userdiet_table,
                                  backref='users')
-    cost_restrict = relationship('Cost', secondary=usercost_table,
-                                 backref='users')
-    user_groups = relationship('Group', secondary=groupuser_table,
+    user_grouups = relationship('Group', secondary=groupuser_table,
                                backref='users')
     restaurants = Column(Text)
+    food = Column(Text)
 
     @validates('email')
     def validate_email(self, key, email):
@@ -127,7 +133,7 @@ class User(Base, _Table):
     def lookup_user_by_username(cls, username, session=None):
         if session is None:
             session = DBSession
-        return session.query(cls).filter(cls.username == username).one()
+        return session.query(cls).filter(User.username == username).one()
 
     @classmethod
     def lookup_user_by_id(cls, uid, session=None):
@@ -139,10 +145,22 @@ class User(Base, _Table):
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls.lookup_user(username=kwargs["username"])
+        instance = cls.lookup_user_by_username(username=kwargs["username"])
         instance.firstname = kwargs.get("firstname")
         instance.lastname = kwargs.get("lastname")
         instance.restaurants = kwargs.get("restaurant")
+        instance.food = kwargs.get("food")
+        tasteid = map(int, kwargs.get("taste"))
+        dietid = map(int, kwargs.get("diet"))
+        for eid in tasteid:
+            instance.food_profile.append(session.query(Profile).filter
+                                         (Profile.id == eid).all()[0])
+        for eid in dietid:
+            instance.food_profile.append(session.query(Diet).filter
+                                         (Diet.id == eid).all()[0])
+        instance.cost = int(kwargs.get("price"))
+        instance.user_location = int(kwargs.get("location"))
+        instance.age = int(kwargs.get("age"))
         session.add(instance)
         return instance
 
