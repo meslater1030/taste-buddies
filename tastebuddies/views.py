@@ -1,6 +1,9 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
+import time
+import os
+
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 import smtplib
@@ -28,11 +31,47 @@ def home_view(request):
     return {'username': request.authenticated_userid}
 
 
-def email_verify():
+@view_config(route_name='user_create',
+             renderer='templates/user_create.jinja2')
+def user_create_view(request):
+
+    username = request.authenticated_userid
+
+    if request.method == 'POST':
+
+        # import pdb; pdb.set_trace()
+
+        try:
+            manager = BCRYPTPasswordManager()
+            username = request.params.get('username')
+            password = request.params.get('password')
+            hashed = manager.encode(password)
+            email = request.params.get('email')
+
+            User.write(username=username, password=hashed, email=email)
+            headers = remember(request, username)
+
+            time.sleep(1)
+
+            return HTTPFound(request.route_url('send_email'), headers=headers)
+        except:
+            return {}
+    return {'username': username}
+
+
+@view_config(route_name='send_email')
+def send_verify_email(request):
+
+    # import pdb; pdb.set_trace()
+
     ver_code = randint(1000, 9999)
 
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    user_obj.write_ver_code(username=user_obj.username, ver_code=ver_code)
+
     fromaddr = "tastebot@gmail.com"
-    toaddr = "tanner.lake@gmail.com"
+    toaddr = user_obj.email
 
     msg = MIMEMultipart()
     msg["From"] = fromaddr
@@ -40,10 +79,14 @@ def email_verify():
     msg["Subject"] = "Your Tastebuddies Verification Code"
 
     body = ''
-    with open('/static/email_templates/body.txt', 'r') as fh:
-        body = fh.read()
 
-    body.format(ver_code=ver_code)
+    here = os.path.dirname(os.path.abspath(__file__))
+    email_directory = os.path.join(here, 'static', 'email_templates')
+    body_template = os.path.join(email_directory, 'body.txt')
+    with open(body_template, 'r') as fh:
+        body = str(fh.read())
+
+    body = body.format(ver_code=ver_code)
 
     msg.attach(MIMEText(body, 'plain'))
 
@@ -54,36 +97,21 @@ def email_verify():
 
     server.sendmail(fromaddr, toaddr, text)
 
-
-@view_config(route_name='user_create',
-             renderer='templates/user_create.jinja2')
-def user_create_view(request):
-    username = request.authenticated_userid
-    if request.method == 'POST':
-        try:
-            manager = BCRYPTPasswordManager()
-            username = request.params.get('username')
-            password = request.params.get('password')
-            hashed = manager.encode(password)
-            email = request.params.get('email')
-            User.write(username=username, password=hashed, email=email)
-            headers = remember(request, username)
-            return HTTPFound(request.route_url('verify'), headers=headers)
-        except:
-            return {}
-    return {'username': username}
+    return HTTPFound(request.route_url('verify'))
 
 
 @view_config(route_name='verify',
              renderer='templates/verify.jinja2')
 def verify(request):
-    username = request.authenticated_userid
-    action = {'username': username}
+    uname = request.authenticated_userid
+    user_obj = User.lookup_user_by_username(uname)
+    action = {'username': uname}
 
     if request.method == "POST":
-        vcode = request.params.get('verify_code')
-        if vcode == 1234:
-            uname = request.authenticated_userid
+        user_vcode = int(request.params.get('verify_code'))
+        db_vcode = user_obj.ver_code
+
+        if user_vcode == db_vcode:
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
