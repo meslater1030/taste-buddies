@@ -7,8 +7,6 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from security import RootFactory
-
 from .models import (
     DBSession,
     Base,
@@ -49,18 +47,12 @@ def main(global_config, **settings):
     config.add_route('user_login', '/login')
 
     config.add_route('verify', '/verify')
-    config.add_route('logout', '/logout',
-                     factory=RootFactory)
-    config.add_route('profile_detail', '/profile/{username}',
-                     factory=RootFactory)
-    config.add_route('profile_edit', '/profile/edit/{username}',
-                     factory=RootFactory)
-    config.add_route('group_create', '/group/create_group',
-                     factory=RootFactory)
-    config.add_route('group_detail', '/group/{group_id}',
-                     factory=RootFactory)
-    config.add_route('group_edit', '/group/edit/{group_id}',
-                     factory=RootFactory)
+    config.add_route('logout', '/logout')
+    config.add_route('profile_detail', '/profile/{username}')
+    config.add_route('profile_edit', '/profile/edit/{username}')
+    config.add_route('group_create', '/group/create_group')
+    config.add_route('group_detail', '/group/{group_id}')
+    config.add_route('group_edit', '/group/edit/{group_id}')
 
     config.scan()
 
