@@ -184,17 +184,24 @@ def profile_edit_view(request):
             price = request.params.get('group_price')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
+
             User.change(username=username, firstname=firstname,
                         lastname=lastname, location=location,
                         taste=taste, diet=diet, price=price,
                         restaurant=restaurant, food=food, age=age)
+
             headers = remember(request, username)
             return HTTPFound(request.route_url('verify'), headers=headers)
+
+    username = request.authenticated_userid
+    user = User.lookup_user_by_username(username)
+
     tastes = Profile.all()
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'tastes': tastes, 'ages': age, 'location': location,
+
+    return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
             'price': price}
 
 
