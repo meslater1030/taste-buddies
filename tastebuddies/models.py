@@ -226,13 +226,8 @@ class Group(Base, _Table):
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     discussion_title = Column(Text)
-    groupdiscussion = Column(Integer, ForeignKey('group.id'))
-
-    @classmethod
-    def group_lookup(cls, id=None, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(id == cls.groupdiscussion).all()
+    group_id = Column(Integer, ForeignKey('group.id'))
+    posts = relationship('Post', order_by='post.created', backref='discussion')
 
     def __repr__(self):
         return "<Discussion(%s)>" % (self.discussion_title)
@@ -240,17 +235,12 @@ class Discussion(Base, _Table):
 
 class Post(Base, _Table):
     __tablename__ = 'post'
-    discussionpost = Column(Integer, ForeignKey('discussion.id'))
-    grouppost = Column(Integer, ForeignKey('group.id'))
+    discussion_id = Column(Integer, ForeignKey('discussion.id'))
+    group_id = Column(Integer, ForeignKey('group.id'))
+
     post_text = Column(Text)
     created = Column(DateTime, nullable=False,
                      default=datetime.datetime.utcnow)
-
-    @classmethod
-    def group_lookup(cls, id=None, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(id == cls.grouppost).all()
 
     def __repr__(self):
         return "<Post(%s)>" % (self.post_text)
