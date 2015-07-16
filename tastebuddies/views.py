@@ -21,7 +21,7 @@ from models import User, Cost, Location, AgeGroup, Profile
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
 def home_view(request):
-    return {}
+    return {'username': request.authenticated_userid}
 
 
 @view_config(route_name='user_create',
@@ -50,9 +50,9 @@ def verify(request):
     if request.method == "POST":
         vcode = request.params.get('verify_code')
         if vcode == 1234:
-            uid = request.authenticated_userid
+            uname = request.authenticated_userid
             action = HTTPFound(
-                request.route_url('profile_detail', username=uid)
+                request.route_url('profile_detail', username=uname)
             )
 
     return action
@@ -119,7 +119,7 @@ def login(request):
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
-                    username='1'),
+                    username=username),
                     headers=headers,
                 )
             else:
@@ -144,30 +144,38 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     selected = ''
+
     for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user
+
     tastes = []
     diets = []
+
     for taste in selected.food_profile:
         tastes.append(taste.taste)
+
     for diet in selected.diet_restrict:
         diets.append(diet.diet)
+
     firstname = selected.firstname
     lastname = selected.lastname
     restaurant = selected.restaurants
     food = selected.food
+
     try:
         price = Cost.one(eid=selected.cost).cost
         location = Location.one(eid=selected.user_location).city
         age = AgeGroup.one(eid=selected.age).age_group
+
     except:
-        price = 1,
+        price = '$',
         location = "Seattle"
         age = 27
+
     return {'firstname': firstname, 'lastname': lastname, 'tastes': tastes,
             'age': age, 'location': location, 'price': price, 'food': food,
-            'restaurant': restaurant}
+            'restaurant': restaurant, 'username': request.authenticated_userid}
 
 
 @view_config(route_name='profile_edit',
@@ -191,7 +199,10 @@ def profile_edit_view(request):
                         restaurant=restaurant, food=food, age=age)
 
             headers = remember(request, username)
-            return HTTPFound(request.route_url('verify'), headers=headers)
+            return HTTPFound(request.route_url(
+                             'profile_detail', username=username
+                             ),
+                             headers=headers)
 
     username = request.authenticated_userid
     user = User.lookup_user_by_username(username)
@@ -202,7 +213,7 @@ def profile_edit_view(request):
     price = Cost.all()
 
     return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price}
+            'price': price, 'username': username}
 
 
 @view_config(route_name='group_create',
