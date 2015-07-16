@@ -236,19 +236,16 @@ def group_edit_view(request):
     return {}
 
 
-@view_config(route_name='group_detail',
-             renderer='templates/group_detail.jinja2')
+@view_config(route_name='group_forum',
+             renderer='templates/group_forum.jinja2')
 def group_detail_view(request):
     """Finds the appropriate group and its associated discussions.
     creates an ordered dictionary with the discussion title as key
     and the post texts as values in a list.  Reverses the ordered
     dictionary so that the most recent discussions appear first.
     """
-    group = ''
-    for group in Group.all():
-        if group.id == request.matchdict['group_id']:
-            group = group
 
+    group = Group.one(request.matchdict['group_id'])
     discussions = group.discussions
 
     forum = OrderedDict()
@@ -257,10 +254,9 @@ def group_detail_view(request):
         forum[discussion.title] = []
         for post in discussions.posts:
             forum[discussion.title].append(post.text)
-
-    sorted_forum = []
+    sorted_forum = OrderedDict()
     for i in range(len(forum)):
-        sorted_forum.append(forum.popitem(last=True))
+        sorted_forum.update(forum.popitem(last=True))
     return sorted_forum
 
 
@@ -268,13 +264,17 @@ def group_detail_view(request):
              renderer='templates/group_forum.jinja2')
 def group_forum_view(request):
     # Enters posts and/or discussions into the database
+
+    group = Group.one(request.matchdict['group_id'])
+
     if request.method == 'POST':
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title)
+            Discussion.write(title=title, group_id=group.id)
         if request.params.get('text'):
+            discussion = Discussion.one(request.matchdict['discussion_id'])
             text = request.params.get('text')
-            Post.write(text=text)
+            Post.write(text=text, discussion_id=discussion.id)
     return HTTPFound(request.route_url('group_detail'))
 
 

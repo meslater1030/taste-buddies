@@ -1,33 +1,22 @@
 {% extends "group_detail.jinja2" %}
 
 {% block forumbody %}
-<h2> Want to start an event? Leave a comment!!</h2>
+<h2> Want to plan an event? Start a discussion!!!</h2>
 
 <div id="#form-container">
-<form id="leave-comment-form" action="{{ request.route_url('profile_detail', username='username') }}">
-
-    <label>Name</label>
+<form id="leave-comment-form" action="{{ request.route_url('group_forum', group_id='group.id') }}">
+    <label>Discussion Topic</label>
     <div class="field-group">
-        <input type="text" name="first_name" id="first_name"
-        placeholder="First Name"/>
+        <input type="text" name="title" placeholder="What do you want to do?"/>
     </div>
-    <label>Comment</label>
-    <div class="field-group">
-        <textarea
-            id="text"
-            name="text"
-            placeholder="Want to create an event? Leave a comment here"
-            cols="60"
-            rows="8"></textarea>
-    </div>
-    <input id="save_comment" type="submit" name="save_comment" value="Comment"/>
+    <input id="save_discussion" type="submit" name="save_discussion" value="discussion"/>
 </form>
 
 </div>
 
 <section id="forum">
     {% for discussion in sorted_forum.iterkeys() %}
-    <article class="discussion" id="{{ discussion[0] }}">
+    <article class="discussion" id="{{ discussion.id }}">
         <h3>{{ discussion.title }}</a></h3>
         <hr/>
         {% for post in sorted_forum[discussion] %}
@@ -40,6 +29,16 @@
         </div>
         {% endfor %}
     </article>
+
+    <form id="leave-post-form" action="{{ request.route_url('group_forum', group_id='group.id', discussion_id='discussion.id') }}">
+    <label>Comment</label>
+    <div class="field-group">
+        <textarea name="text" id="text" rows="2" cols="80" placeholder='Write a comment...'></textarea>
+    </div>
+    <input id="save_post" type="submit" name="save_post" value="post"/>
+    </form>
     {% endfor %}
+
 </section>
+
 {% endblock %}

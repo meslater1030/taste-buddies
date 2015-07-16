@@ -204,7 +204,7 @@ class Group(Base, _Table):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
 
 
-class Discussion(Base):
+class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     title = Column(Text)
     group_id = Column(Integer, ForeignKey('group.id'))
@@ -216,7 +216,7 @@ class Discussion(Base):
         return "<Discussion(%s)>" % (self.title)
 
 
-class Post(Base):
+class Post(Base, _Table):
     __tablename__ = 'post'
     text = Column(Text)
 
