@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import datetime
+
 from sqlalchemy import (
     Table,
     Column,
@@ -8,7 +8,6 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     Boolean,
-    DateTime
 )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -44,29 +43,6 @@ usercost_table = Table('user_cost', Base.metadata,
                        Column('users', Integer, ForeignKey('users.id')),
                        Column('profile', Integer, ForeignKey('cost.id'))
                        )
-
-
-groupdiscussion_table = Table('group_discussion', Base.metadata,
-                              Column('group',
-                                     Integer,
-                                     ForeignKey('groups.id')),
-                              Column('discussion', Integer, ForeignKey(
-                                     'discussion.id'))
-                              )
-
-grouppost_table = Table('group_post', Base.metadata,
-                        Column('group', Integer, ForeignKey('groups.id')),
-                        Column('post', Integer, ForeignKey(
-                               'post.id'))
-                        )
-
-discussiopost_table = Table('discussion_post',
-                            Base.metadata,
-                            Column('discussion', Integer,
-                                   ForeignKey('discussion.id')),
-                            Column('post', Integer, ForeignKey(
-                                   'post.id'))
-                            )
 
 groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
                        ForeignKey('groups.id')), Column('agegroup', Integer,
@@ -255,7 +231,11 @@ class Group(Base):
     name = Column(Text, unique=True, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
-    discussion = relationship('Discussion')
+    discussions = relationship('Discussion',
+                               primaryjoin="(Group.id==Discussion.group_id)")
+
+    group_admin = relationship("Admin", uselist=False, backref='group')
+
     food_profile = relationship('Profile', secondary=grouptaste_table,
                                 backref='group')
     diet_restrict = relationship('Diet', secondary=groupdiet_table,
@@ -300,39 +280,24 @@ class Group(Base):
 
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
-    discussion_title = Column(Text)
-    posts = relationship('Post')
+    title = Column(Text)
     group_id = Column(Integer, ForeignKey('groups.id'))
-    group = relationship('Group')
-
-    @classmethod
-    def group_lookup(cls, id=None, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(id == cls.groupdiscussion).all()
+    posts = relationship('Post',
+                         primaryjoin="(Discussion.id==Post.discussion_id)")
 
     def __repr__(self):
-        return "<Discussion(%s)>" % (self.discussion_title)
+        return "<Discussion(%s)>" % (self.title)
 
 
 class Post(Base, _Table):
     __tablename__ = 'post'
+    text = Column(Text)
+
     discussion_id = Column(Integer, ForeignKey('discussion.id'))
     group_id = Column(Integer, ForeignKey('groups.id'))
-    post_text = Column(Text)
-    created = Column(DateTime, nullable=False,
-                     default=datetime.datetime.utcnow)
-    discussion = relationship('Discussion', backref='post')
-    group = relationship('Group')
-
-    @classmethod
-    def group_lookup(cls, id=None, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(id == cls.grouppost).all()
 
     def __repr__(self):
-        return "<Post(%s)>" % (self.post_text)
+        return "<Post(%s)>" % (self.text)
 
 
 class Admin(Base, _Table):

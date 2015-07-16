@@ -54,7 +54,7 @@ def main(global_config, **settings):
     config.add_route('group_create', '/group/create_group')
     config.add_route('group_detail', '/group/{group_id}')
     config.add_route('group_edit', '/group/edit/{group_id}')
-    config.add_route('group_forum', '/group/{group_id}')
+    config.add_route('group_forum', '/group/{group_id}/{}')
 
     config.scan()
 
