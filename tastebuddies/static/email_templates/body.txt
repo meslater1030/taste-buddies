@@ -1,0 +1,4 @@
+
+Sample email body, generated from a file.
+
+Your verification code is {ver_code}!

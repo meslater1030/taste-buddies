@@ -1,6 +1,10 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-# import models as m
+
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+import smtplib
+from random import randint
 
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
@@ -22,6 +26,33 @@ from models import User, Cost, Location, AgeGroup, Profile, Diet
              renderer='templates/home.jinja2')
 def home_view(request):
     return {'username': request.authenticated_userid}
+
+
+def email_verify():
+    ver_code = randint(1000, 9999)
+
+    fromaddr = "tastebot@gmail.com"
+    toaddr = "tanner.lake@gmail.com"
+
+    msg = MIMEMultipart()
+    msg["From"] = fromaddr
+    msg["To"] = toaddr
+    msg["Subject"] = "Your Tastebuddies Verification Code"
+
+    body = ''
+    with open('/static/email_templates/body.txt', 'r') as fh:
+        body = fh.read()
+
+    body.format(ver_code=ver_code)
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login("tastebot", 'TASTEBUDDIES')
+    text = msg.as_string()
+
+    server.sendmail(fromaddr, toaddr, text)
 
 
 @view_config(route_name='user_create',
@@ -145,7 +176,6 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     selected = ''
-
 
     for user in User.all():
         if user.username == request.authenticated_userid:
