@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="create-profile-form" action="{{ request.route_url('profile_detail', username='username') }}">
+<form method="POST" id="create-profile-form" action="{{ request.route_url('profile_edit', username='username') }}">
 `<h1>Edit your Personal Profile!</h1>
 <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../../static/img/dog2.jpg" alt="Personal Profile Photo" class="profile-photo">
@@ -21,7 +21,7 @@
 
     <label>Age</label>
     <div class="field-group">
-        <select class="age_range" />
+        <select name="age" class="age_range" />
             <option>18-24</option>
             <option>25-34</option>
             <option>35-44</option>
@@ -32,14 +32,13 @@
         </select>
     </div>
     <label>Location</label>
-    <div class="field-group">
-        <select class="location" />
+    <div id="location" class="field-group">
+        <select name="location" class="location"/>
             <option>Seattle</option>
             <option>Kitsap</option>
             <option>Eastside</option>
             <option>Skagit</option>
             <option>South King</option>
-            <option>65-74</option>
         </select>
     </div>
     <div id="personal_taste" class="field-group">
@@ -73,11 +72,11 @@
         <input type="checkbox" name="personal_taste" class="style" value="Jamaican">Jamaican
         <input type="checkbox" name="personal_taste" class="style" value="Mexican">Mexican
         <input type="checkbox" name="personal_taste" class="style" value="Korean">Korean
-        <label>Diet</label>
-        <input type="checkbox" name="personal_taste" class="style" value="Vegetarian">Vegetarian
-        <input type="checkbox" name="personal_taste" class="style" value="Vegan">Vegan
-        <input type="checkbox" name="personal_taste" class="style" value="Gluten_Free">Gluten Free
-        <input type="checkbox" name="personal_taste" class="style" value="Low_Carb">Low Carb
+        <label>Dietary Restrictions</label>
+        <input type="checkbox" name="diet" class="style" value="Vegetarian">Vegetarian
+        <input type="checkbox" name="diet" class="style" value="Vegan">Vegan
+        <input type="checkbox" name="diet" class="style" value="Gluten_Free">Gluten Free
+        <input type="checkbox" name="diet" class="style" value="Low_Carb">Low Carb
     </div>
     <label>Favorite Restaurants</label>
     <div class="field-group">

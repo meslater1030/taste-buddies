@@ -1,8 +1,11 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
+# import models as m
 
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
+
+from models import User
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -24,35 +27,56 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+    if request.method == 'POST':
+        try:
+            manager = BCRYPTPasswordManager()
+
+            username = request.params.get('username')
+            password = request.params.get('password')
+            email = request.params.get('email')
+
+            hashed = manager.encode(password)
+
+            User.write(username=username, password=hashed, email=email)
+
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('verify'), headers=headers)
+        except:
+            return {}
     return {}
 
 
 @view_config(route_name='verify',
-             permission=Authenticated,
              renderer='templates/verify.jinja2')
 def verify(request):
-    return {}
+    action = {}
 
+    if request.method == "POST":
+        vcode = request.params.get('verify_code')
+        if vcode == 1234:
+            uid = request.authenticated_userid
+            action = HTTPFound(
+                request.route_url('profile_detail', username=uid)
+            )
 
-@view_config(route_name='profile_create',
-             permission=Authenticated,
-             renderer='templates/profile_create.jinja2')
-def profile_create_view(request):
-    return {}
+    return action
 
 
 def do_login(request):
-    username = request.params.get('username', None)
-    password = request.params.get('password', None)
+    # import pdb; pdb.set_trace()
     login_result = False
-
-    settings = request.registry.settings
     manager = BCRYPTPasswordManager()
 
-    if username == settings.get('auth.username', ''):
-        hashed = settings.get('auth.password', '')
-        # manager.check returns bool
-        login_result = manager.check(hashed, password)
+    entered_username = request.params.get('username', None)
+    entered_password = request.params.get('password', None)
+
+    user_obj = User.lookup_user(username=entered_username)
+    db_username = user_obj.username
+
+    if entered_username == db_username:
+        db_hashed = user_obj.password
+        # manager.check returns BOOL
+        login_result = manager.check(db_hashed, entered_password)
 
     return login_result
 
@@ -114,43 +138,52 @@ def login(request):
     return result
 
 
-@view_config(route_name='logout',
-             permission=Authenticated,)
+@view_config(route_name='logout',)
 def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',
-             permission=Authenticated,
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     return {}
 
 
 @view_config(route_name='profile_edit',
-             permission=Authenticated,
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
+    if request.method == 'POST':
+            username = request.authenticated_userid
+            firstname = request.params.get('first_name')
+            lastname = request.params.get('last_name')
+            location = request.params.get('location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('diet')
+            restaurant = request.params.get('restaurant')
+            price = request.params.get('group_price')
+            User.change(username=username, firstname=firstname,
+                        lastname=lastname, location=location,
+                        taste=taste, diet=diet, price=price,
+                        restaurant=restaurant)
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('verify'), headers=headers)
     return {}
 
 
 @view_config(route_name='group_create',
-             permission=Authenticated,
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
     return {}
 
 
 @view_config(route_name='group_detail',
-             permission=Authenticated,
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
     return {}
 
 
 @view_config(route_name='group_edit',
-             permission=Authenticated,
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     return {}

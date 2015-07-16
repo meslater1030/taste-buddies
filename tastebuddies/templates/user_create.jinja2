@@ -5,11 +5,13 @@
 <h1>Join Our Family!</h1>
 
 <div id="#form-container">
-<form id="create-user-form" action="{{ request.route_url('verify') }}">
+<form method="POST" id="create-user-form" action="{{ request.route_url('user_create') }}">
     <input class="input" type="text" name="username" id="username"
     placeholder="Username"/>
-    <input class="input" type="text" name="password" id="password"
+    <input class="input" type="password" name="password" id="password"
     placeholder="Password"/>
+    <input class="input" type="text" name="email" id="email"
+    placeholder="E-mail"/>
     <input id="create-account" type="submit" name="submit" placeholder="Create Account"/>
 </form>
 </div>
