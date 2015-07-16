@@ -4,6 +4,10 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import remember, forget, Authenticated
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
+from models import Discussion, Post
+
+from collections import OrderedDict
+
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
 # def my_view(request):
@@ -95,7 +99,6 @@ def login(request):
 
         if authn is True:
             headers = remember(request, username)
-            import pdb; pdb.set_trace()
             if passes_verification(request):
                 result = HTTPFound(request.route_url(
                     'profile_detail',
@@ -146,7 +149,48 @@ def group_create_view(request):
              permission=Authenticated,
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    return {}
+    """Pulls all discussions for this group and posts from the database.
+    Orders the disucssions according to when they began.
+    Associates all posts to the appropriate discussion.
+    Sorts the posts in reverse chronological order.
+    Reverses the ordered dictionary so that the most recent
+    discussions appear first.  Returns a list.
+    """
+    id = request.matchdict['group_id']
+    tmp = OrderedDict()
+    discussions = Discussion.group_lookup(id)
+    posts = Post.group_lookup()
+    forum = OrderedDict()
+    for discussion in discussions:
+        tmp[discussion.id] = []
+    for post in posts:
+        tmp[post.discussionpost].append((post.created, post.post_text))
+    for i in range(1, len(tmp)-1):
+        tmp[i].sort(reverse=True)
+    for id in tmp.iterkeys():
+        for discussion in discussions:
+            if id == discussion.id:
+                forum[discussion.discussion_title] = tmp[id]
+                del tmp[id]
+    final_forum = []
+    for i in range(len(forum)):
+        final_forum.append(forum.popitem(last=True))
+    return final_forum
+
+
+@view_config(route_name='group_forum',
+             permission=Authenticated,
+             renderer='templates/group_forum.jinja2')
+def group_forum_view(request):
+    # Enters posts and/or discussions into the database
+    if request.method == 'POST':
+        if request.params.get('title'):
+            title = request.params.get('title')
+            Discussion.write(title=title)
+        if request.params.get('text'):
+            text = request.params.get('text')
+            Post.write(text=text)
+    return HTTPFound(request.route_url('group_detail'))
 
 
 @view_config(route_name='group_edit',
