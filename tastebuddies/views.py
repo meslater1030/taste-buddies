@@ -238,33 +238,16 @@ def group_edit_view(request):
 
 @view_config(route_name='group_forum',
              renderer='templates/group_forum.jinja2')
-def group_detail_view(request):
-    """Finds the appropriate group and its associated discussions.
-    creates an ordered dictionary with the discussion title as key
-    and the post texts as values in a list.  Reverses the ordered
-    dictionary so that the most recent discussions appear first.
-    """
-
-    group = Group.one(request.matchdict['group_id'])
-    discussions = group.discussions
-
-    forum = OrderedDict()
-
-    for discussion in discussions:
-        forum[discussion.title] = []
-        for post in discussions.posts:
-            forum[discussion.title].append(post.text)
-    sorted_forum = OrderedDict()
-    for i in range(len(forum)):
-        sorted_forum.update(forum.popitem(last=True))
-    return sorted_forum
-
-
-@view_config(route_name='group_forum',
-             renderer='templates/group_forum.jinja2')
 def group_forum_view(request):
-    # Enters posts and/or discussions into the database
-
+    """
+    If the request method is POST then writes either the discussion or
+    the post to the database.
+    If the request method is GET finds the appropriate group and its
+    associated discussions.  creates an ordered dictionary with the
+    discussion title as key and the post texts as values in a list.
+    Reverses the ordered dictionary so that the most recent discussions
+    appear first.
+    """
     group = Group.one(request.matchdict['group_id'])
 
     if request.method == 'POST':
@@ -275,7 +258,19 @@ def group_forum_view(request):
             discussion = Discussion.one(request.matchdict['discussion_id'])
             text = request.params.get('text')
             Post.write(text=text, discussion_id=discussion.id)
-    return HTTPFound(request.route_url('group_detail'))
+
+    discussions = group.discussions
+    posts = discussions.posts
+    # forum = OrderedDict()
+    # for discussion in discussions:
+    #     forum[discussion.title] = []
+    #     for post in discussions.posts:
+    #         forum[discussion.title].append(post.text)
+    # sorted_forum = OrderedDict()
+    # for i in range(len(forum)):
+    #     sorted_forum.update(forum.popitem(last=True))
+    return {'discussions': discussions, 'posts': posts}
+    # return sorted_forum
 
 
 conn_err_msg = """
