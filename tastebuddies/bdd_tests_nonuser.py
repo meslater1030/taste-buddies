@@ -83,15 +83,19 @@ def test_create_profile_redirect(browser):
 
 
 @then('I will create a profile')
-def test_profile_creation(browser):
-    browser.find_by_name('first_name')[0].type('Sally')
-    browser.find_by_name('last_name')[0].type('Hemmingway')
-    browser.select('age_range', '45-54')
+def test_profile_creation():
+    browser.find_by_name('first_name')[0].type('Johnson')
+    browser.find_by_name('last_name')[0].type('Jew')
+    browser.select('age_range', '25-34')
     browser.select('location', 'Seattle')
     browser.find_by_value('Salty').check
+    assert browser.find_by_value('Salty').checked
     browser.find_by_value('Persian').check
+    assert browser.find_by_value('Persian').checked
     browser.find_by_value('Soul').check
+    assert browser.find_by_value('Soul').checked
     browser.find_by_value('Vegan').check
+    assert browser.find_by_value('Vegan').checked
     browser.find_by_value('Low_Carb').check
     assert browser.find_by_value('Low_Carb').checked
     browser.find_by_name('favorite_restaurants')[0].type('Chipotle')
@@ -103,7 +107,7 @@ def test_profile_creation(browser):
 @then('that profile will populate to my page')
 def test_profile_population(browser):
     assert browser.url == ('http://ec2-2-27-184-229.us-west-2.compute.'
-                           'amazonaws.com/profile/SexyGal23')
+                           'amazonaws.com/profile/JohnsonJew')
     assert browser.is_text_present('Sally')
     assert not browser.is_text_present('Vietnamese')
     assert browser.is_text_present('45-54')
@@ -123,8 +127,8 @@ def test_group_view(browser):
 
 
 @then('I can view that group')
-def test_group_view_privilege(browser):
-    assert browser.is_text_present('Name')
+def test_group_view_privilege():
+    assert browser.is_text_present('Spicy Food Lovers')
     assert browser.is_text_present('Description')
     assert not browser.is_text_present('join')
     assert not browser.is_text_present('Edit Group')

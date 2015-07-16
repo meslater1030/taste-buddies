@@ -40,29 +40,10 @@ Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac to
 </form>
 </div>
 
-<h2> Want to start an event? Leave a comment!!</h2>
+<section id='forum'>
+{% block body %}{% endblock %}
+</section>
 
-<div id="#form-container">
-<form id="leave-comment-form" action="{{ request.route_url('profile_detail', username='username') }}">
-
-    <label>Name</label>
-    <div class="field-group">
-        <input type="text" name="first_name" id="first_name"
-        placeholder="First Name"/>
-    </div>
-    <label>Comment</label>
-    <div class="field-group">
-        <textarea
-            id="text"
-            name="text"
-            placeholder="Want to create an event? Leave a comment here"
-            cols="60"
-            rows="8"></textarea>
-    </div>
-    <input id="save_comment" type="submit" name="save_comment" value="Comment"/>
-</form>
-
-</div>
 <nav>
     <ul>
     <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>
