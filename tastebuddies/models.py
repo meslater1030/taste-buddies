@@ -114,6 +114,7 @@ class User(Base, _Table):
     firstname = Column(Text)
     lastname = Column(Text)
     confirmed = Column(Boolean, default=False)
+    ver_code = Column(Integer)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
     cost = Column(Integer, ForeignKey('cost.id'))
@@ -146,6 +147,15 @@ class User(Base, _Table):
         if session is None:
             session = DBSession
         return session.query(cls).filter(cls.id == uid).one()
+
+    @classmethod
+    def write_ver_code(cls, username, ver_code, session=None):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_user_by_username(username)
+        instance.ver_code = int(ver_code)
+        session.add(instance)
+        return instance
 
     @classmethod
     def change(cls, session=None, **kwargs):
