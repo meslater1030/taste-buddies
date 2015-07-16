@@ -222,11 +222,15 @@ def profile_edit_view(request):
 @view_config(route_name='group_create',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    username = request.authenticated_userid
+    user = User.lookup_user_by_username(username)
+    tastes = Profile.all()
+    diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
-    tastes = Profile.all()
     price = Cost.all()
-    return
+    return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
+            'price': price, 'username': username, 'diets': diet}
 
 
 @view_config(route_name='group_detail',

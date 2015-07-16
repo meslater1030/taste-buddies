@@ -219,11 +219,13 @@ class Diet(Base, _Table):
 
 class Group(Base, _Table):
     __tablename__ = 'group'
-    name = Column(Text, nullable=False)
+    name = Column(Text, unique=True, nullable=False)
     description = Column(Text, nullable=False)
     location = Column(Integer, ForeignKey('location.id'))
     discussion = relationship('Discussion')
     post = relationship('Post')
+    cost = Column(Integer, ForeignKey('cost.id'))
+    age = Column(Integer, ForeignKey('agegroup.id'))
     group_admin = relationship("Admin", uselist=False)
 
     def __repr__(self):

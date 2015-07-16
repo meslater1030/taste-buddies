@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="create-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
+<form method="POST" id="create-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
     <h1>Create your group!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
@@ -15,71 +15,37 @@
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="group_age_range" />
-            <option name='18-24'>18-24</option>
-            <option name='25-34'>25-34</option>
-            <option name='35-44'>35-44</option>
-            <option name='45-54'>45-54</option>
-            <option name='55-64'>55-64</option>
-            <option name='65-74'>65-74</option>
-            <option name='75+'>75+</option>
+        <select name="age" class="group_age_range" />
+            {% for age in ages %}
+            <option value={{ age.id }}>{{ age.age_group }}</option>
+            {% endfor %}
         </select>
     </div>
     <label>Location</label>
-    <div class="field-group">
-        <select class="group_location" />
-            <option name='Seattle'>Seattle</option>
-            <option name='Kitsap'>Kitsap</option>
-            <option name='Eastside'>Eastside</option>
-            <option name='Skagit'>Skagit</option>
-            <optionname name='South_King'>South King</option>
+    <div id="location" class="field-group">
+        <select name="location" class="location"/>
+            {% for city in location %}
+            <option value={{ city.id }}>{{ city.city }}</option>
+            {% endfor %}
         </select>
     </div>
-
-    <div id="group_taste" class="field-group">
+    <div id="personal_taste" class="field-group">
         <label>Taste</label>
-        <input type="checkbox" name="group_taste" class="style" value="Sour"> Sour
-        <input type="checkbox" name="group_taste" class="style" value="Sweet"> Sweet
-        <input type="checkbox" name="group_taste" class="style" value="Salty"> Salty
-        <input type="checkbox" name="group_taste" class="style" value="Spicy"> Spicy
-        <input type="checkbox" name="group_taste" class="style" value="Bitter"> Bitter
-        <input type="checkbox" name="group_taste" class="style" value="Italian"> Italian
-        <input type="checkbox" name="group_taste" class="style" value="Indian"> Indian
-        <input type="checkbox" name="group_taste" class="style" value="Chinese"> Chinese
-        <input type="checkbox" name="group_taste" class="style" value="American_Classic"> American Classic
-        <input type="checkbox" name="group_taste" class="style" value="German"> German
-        <input type="checkbox" name="group_taste" class="style" value="British"> British
-        <input type="checkbox" name="group_taste" class="style" value="French"> French
-        <input type="checkbox" name="group_taste" class="style" value="Vietnamese"> Vietnamese
-        <input type="checkbox" name="group_taste" class="style" value="Japanese"> Japanese
-        <input type="checkbox" name="group_taste" class="style" value="Pub"> Pub
-        <input type="checkbox" name="group_taste" class="style" value="Persian"> Persian
-        <input type="checkbox" name="group_taste" class="style" value="Mediterranian"> Mediterranian
-        <input type="checkbox" name="group_taste" class="style" value="Greek"> Greek
-        <input type="checkbox" name="group_taste" class="style" value="Afghan">Afghan
-        <input type="checkbox" name="group_taste" class="style" value="Somolian">Somolian
-        <input type="checkbox" name="group_taste" class="style" value="Thai">
-        Thai
-        <input type="checkbox" name="group_taste" class="style" value="Barbecue">Barbecue
-        <input type="checkbox" name="group_taste" class="style" value="Soul">
-        Soul
-        <input type="checkbox" name="group_taste" class="style" value="Ethiopian">Ethiopian
-        <input type="checkbox" name="group_taste" class="style" value="Jamaican">Jamaican
-        <input type="checkbox" name="group_taste" class="style" value="Mexican">Mexican
-        <input type="checkbox" name="group_taste" class="style" value="Korean">Korean
-        <label>Diet</label>
-        <input type="checkbox" name="group_taste" class="style" value="Vegetarian">Vegetarian
-        <input type="checkbox" name="group_taste" class="style" value="Vegan">Vegan
-        <input type="checkbox" name="group_taste" class="style" value="Meat_Eater">Meat Eater
-        <input type="checkbox" name="group_taste" class="style" value="Gluten_Free">Gluten Free
-        <input type="checkbox" name="group_taste" class="style" value="Low_Carb">Low Carb
+        {% for taste in tastes %}
+        <input type="checkbox" name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+        {% endfor %}
     </div>
-    <div class="field-group">
+    <div id="dietary_restriction" class="field-group">
+        <label>Dietary Restrictions</label>
+        {% for diet in diets %}
+        <input type="checkbox" name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+        {% endfor %}
+    </div>
+    <div id="personal_price_range" class="field-group">
         <label>Price</label>
-        <input type="radio" name="group_price" class="style" value="cheap">$
-        <input type="radio" name="group_price" class="style" value="average">$$
-        <input type="radio" name="group_price" class="style" value="moderate">$$$
-        <input type="radio" name="group_price" class="style" value="expensive">$$$$
+        {% for cost in price %}
+          <input type="radio" name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+        {% endfor %}
     </div>
         <label>Group Description</label>
     <div class="field-group">
