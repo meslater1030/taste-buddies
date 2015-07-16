@@ -288,6 +288,12 @@ class Group(Base):
         session.add(instance)
         return instance
 
+    @classmethod
+    def lookup_group_by_id(cls, gid, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(cls.id == gid).one()
+
     def __repr__(self):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
 
