@@ -16,15 +16,16 @@
 
 <section id="forum">
 
-    {% for discussion in sorted_forum.iterkeys() %}
+    {% for discussion in discussions %}
     <article class="discussion" id="{{ discussion.id }}">
         <h3>{{ discussion.title }}</a></h3>
         <hr/>
-        {% for post in sorted_forum[discussion] %}
-        <div class="post">
-            {{ post.text }}
-        </div>
-        {% else %}
+        {% for post in posts %}
+            {% if post.discussion_id == discussion.id %}
+            <div class="post">
+                {{ post.text }}
+            </div>
+            {% endif %}
         <div class="entry">
             <p><em>No one has planned anything yet. Start a discussion!</em></p>
         </div>

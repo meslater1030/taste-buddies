@@ -7,7 +7,6 @@ from cryptacular.bcrypt import BCRYPTPasswordManager
 
 from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
                     Group)
-from collections import OrderedDict
 
 
 # @view_config(route_name='home', renderer='templates/test.jinja2')
@@ -261,16 +260,7 @@ def group_forum_view(request):
 
     discussions = group.discussions
     posts = discussions.posts
-    # forum = OrderedDict()
-    # for discussion in discussions:
-    #     forum[discussion.title] = []
-    #     for post in discussions.posts:
-    #         forum[discussion.title].append(post.text)
-    # sorted_forum = OrderedDict()
-    # for i in range(len(forum)):
-    #     sorted_forum.update(forum.popitem(last=True))
     return {'discussions': discussions, 'posts': posts}
-    # return sorted_forum
 
 
 conn_err_msg = """
