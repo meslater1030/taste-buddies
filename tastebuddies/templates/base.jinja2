@@ -18,7 +18,7 @@
       <li><a href="{{ request.route_url('home') }}" class="selected">Home</a></li>
 
     {% if request.authenticated_userid %}
-      <li><a href="{{ request.route_url('profile_detail', username='username') }}">Profile</a></li>
+      <li><a href="{{ request.route_url('profile_detail', username=username) }}">Profile</a></li>
     {% endif %}
 
     {% if not request.authenticated_userid %}
