@@ -27,6 +27,7 @@ def home_view(request):
 @view_config(route_name='user_create',
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
+    username = request.authenticated_userid
     if request.method == 'POST':
         try:
             manager = BCRYPTPasswordManager()
@@ -39,13 +40,14 @@ def user_create_view(request):
             return HTTPFound(request.route_url('verify'), headers=headers)
         except:
             return {}
-    return {}
+    return {'username': username}
 
 
 @view_config(route_name='verify',
              renderer='templates/verify.jinja2')
 def verify(request):
-    action = {}
+    username = request.authenticated_userid
+    action = {'username': username}
 
     if request.method == "POST":
         vcode = request.params.get('verify_code')
@@ -145,9 +147,13 @@ def logout(request):
 def profile_detail_view(request):
     selected = ''
 
+    # import pdb; pdb.set_trace()
+
     for user in User.all():
         if user.username == request.authenticated_userid:
             selected = user
+
+    # user = User.one(request.matchdict['username'])
 
     tastes = []
     diets = []
