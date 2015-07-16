@@ -106,10 +106,16 @@ class User(Base, _Table):
             raise TypeError('Please enter a vaild email address')
 
     @classmethod
-    def lookup_user(cls, username, session=None):
+    def lookup_user_by_username(cls, username, session=None):
         if session is None:
             session = DBSession
         return session.query(cls).filter(cls.username == username).one()
+
+    @classmethod
+    def lookup_user_by_id(cls, uid, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(cls.id == uid).one()
 
     @classmethod
     def change(cls, session=None, **kwargs):
