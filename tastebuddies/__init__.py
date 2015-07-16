@@ -64,6 +64,8 @@ def main(global_config, **settings):
                      factory=RootFactory)
     config.add_route('group_edit', '/group/edit/{group_id}',
                      factory=RootFactory)
+    config.add_route('group_forum', '/group/{group_id}',
+                     factory=RootFactory)
 
     config.scan()
 

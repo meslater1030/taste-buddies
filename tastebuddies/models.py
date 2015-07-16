@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import datetime
 from sqlalchemy import (
     Table,
     Column,
     Integer,
     Text,
     ForeignKey,
-    Boolean
-    )
+    Boolean,
+    DateTime
+)
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -14,7 +18,7 @@ from sqlalchemy.orm import (
     sessionmaker,
     relationship,
     validates,
-    )
+)
 
 
 from zope.sqlalchemy import ZopeTransactionExtension
@@ -48,6 +52,20 @@ groupdiscussion_table = Table('group_discussion', Base.metadata,
                                      'discussion.id'))
                               )
 
+grouppost_table = Table('group_post', Base.metadata,
+                        Column('group', Integer, ForeignKey('group.id')),
+                        Column('post', Integer, ForeignKey(
+                               'post.id'))
+                        )
+
+discussiopost_table = Table('discussion_post',
+                            Base.metadata,
+                            Column('discussion', Integer,
+                                   ForeignKey('discussion.id')),
+                            Column('post', Integer, ForeignKey(
+                                   'post.id'))
+                            )
+
 groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
                        ForeignKey('group.id')), Column('agegroup', Integer,
                        ForeignKey('agegroup.id'))
@@ -56,6 +74,11 @@ groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
 groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
                         ForeignKey('group.id')), Column('users', Integer,
                         ForeignKey('users.id'))
+                        )
+
+groupcost_table = Table('group_cost', Base.metadata, Column('group_id',
+                        Integer, ForeignKey('group.id')),
+                        Column('cost_id', Integer, ForeignKey('cost.id'))
                         )
 
 
@@ -74,10 +97,10 @@ class _Table(object):
 class User(Base, _Table):
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
-    firstname = Column(Text, nullable=False)
-    lastname = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
+    firstname = Column(Text)
+    lastname = Column(Text)
     confirmed = Column(Boolean)
     age = Column(Integer, ForeignKey('agegroup.id'))
     user_location = Column(Integer, ForeignKey('location.id'))
@@ -168,6 +191,13 @@ class Group(Base, _Table):
 class Discussion(Base, _Table):
     __tablename__ = 'discussion'
     discussion_title = Column(Text)
+    groupdiscussion = Column(Integer, ForeignKey('group.id'))
+
+    @classmethod
+    def group_lookup(cls, id=None, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(id == cls.groupdiscussion).all()
 
     def __repr__(self):
         return "<Discussion(%s)>" % (self.discussion_title)
@@ -176,9 +206,19 @@ class Discussion(Base, _Table):
 class Post(Base, _Table):
     __tablename__ = 'post'
     discussionpost = Column(Integer, ForeignKey('discussion.id'))
+    grouppost = Column(Integer, ForeignKey('group.id'))
+    post_text = Column(Text)
+    created = Column(DateTime, nullable=False,
+                     default=datetime.datetime.utcnow)
+
+    @classmethod
+    def group_lookup(cls, id=None, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).filter(id == cls.grouppost).all()
 
     def __repr__(self):
-        return "<Post(%s)>" % (self.discussionpost)
+        return "<Post(%s)>" % (self.post_text)
 
 
 class Admin(Base, _Table):

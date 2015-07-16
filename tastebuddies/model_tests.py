@@ -12,8 +12,6 @@ TEST_DATABASES_URL = os.environ.get(
 os.environ['DATABASE_URL'] = TEST_DATABASES_URL
 
 
-# you will want to make a fixture that creates an app
-
 @pytest.fixture(scope='session')
 def connection(request):
     engine = create_engine(TEST_DATABASES_URL)

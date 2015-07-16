@@ -27,20 +27,59 @@
         <img src="../static/img/taste_buddies_banner.png" alt="taste buddies banner" />
     </div>
     </header>
-    <h1> We're Taste Buddies</h1>
+    <h1> Group Description</h1>
 
-    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,
-      fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
-      Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
 
-    <h1> Our Service</h1>
+<div id="group-page-profile-photo">
+<img src="../static/img/dog3.jpg" alt="Pesonal Profile Photo" class="group-page-profile-photo">
+<div>
+<div>
+<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
+Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
+</div>
+<div>
+    <a class="sweet button disabled" href="#">Sweet</a>
+    <a class="spicy button disabled" href="#">Spicy</a>
+    <a class="salty button disabled" href="#">Salty</a>
+    <a class="sour button disabled" href="#">Sour</a>
+    <a class="bitter button disabled" href="#">Bitter</a>
+    <a class="italian button disabled" href="#">Italian</a>
+    <a class="american button disabled" href="#">American</a>
+    <a class="german button disabled" href="#">German</a>
+    <a class="british button disabled" href="#">British</a>
+    <a class="french button disabled" href="#">French</a>
+    <a class="vegetarian button disabled" href="#">Vegetarian</a>
+    <a class="vegan button disabled" href="#">Vegan</a>
+</div>
 
-    <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,
-      fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
-      Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
-    <main>
-    </main>
-    <nav>
+
+
+
+
+
+<!--
+<p>Things to be displayed in this group:</p>
+
+<ul>
+    <li>Name</li>
+    <li>Description</li>
+    <li>Age Range</li>
+    <li>List of Members</li>
+    <li>Location</li>
+    <li>Admin</li>
+    <li>Taste Profile</li>
+    <li>Price Range</li>
+    <li>Group Picture</li>
+    <li>Comments</li>
+</ul> -->
+
+<nav>
+    <ul>
+    <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>
+
+    <li><a href="{{ request.route_url('profile_detail', username='username') }}"> +Delete Group hide admin</a><li>
+    </ul>
+</nav>
         <ul>
           <li><a href="/">Home</a></li>
         </ul>
