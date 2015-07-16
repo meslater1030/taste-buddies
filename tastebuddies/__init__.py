@@ -47,6 +47,7 @@ def main(global_config, **settings):
     config.add_route('user_login', '/login')
 
     config.add_route('verify', '/verify')
+    config.add_route('send_email', '/send_email')
     config.add_route('logout', '/logout')
     config.add_route('profile_detail', '/profile/{username}')
     config.add_route('profile_edit', '/profile/edit/{username}')
