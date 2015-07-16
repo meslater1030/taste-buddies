@@ -6,15 +6,17 @@
 
 <div id="#form-container">
 <form id="verification-form" method="POST"
-      action="{{ request.route_url('verify') }}">
+      action="{{ request.route_url('profile_detail', username=username) }}">
+
     <input class="input" type="text" name="verify_code" id="verify_text"
     placeholder="Verification Code"/>
+
     <input id="verify" type="submit" name="Submit" value="Verify"/>
 </form>
-<!-- <a href="{{ request.route_url('verify') }}">Resend Email</a> -->
+
 <div id="#form-container">
-<form id="resend-email-form" action="{{ request.route_url('verify') }}">
-<input id="resend_email_button" type="submit" name="resend_email" value="Resend Email"/>
+    <form id="resend-email-form" action="{{ request.route_url('verify') }}">
+    <input id="resend_email_button" type="submit" name="resend_email" value="Resend Email"/>
 </form>
 </div>
 
@@ -22,15 +24,3 @@
 {% endblock %}
 
 
-
-
-
-
-
-
-<!--
-<div id="#form-container">
-<form id="resend-email-form" action="{{ request.route_url('verify') }}">
-<input id="resend_email_button" type="submit" name="resend_email" value="Resend Email"/>
-</form>
-</div> -->

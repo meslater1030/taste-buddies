@@ -4,11 +4,13 @@
             box-sizing: border-box;
 }
 
+
 h1 {
     font-family: 'Just Another Hand', cursive;
     font-size: 35px;
     text-align: center;
 }
+
 
 h2 {
     font-family: 'Just Another Hand', cursive;
@@ -16,11 +18,14 @@ h2 {
     text-align: center;
 }
 
+
 body {
         font-size: 80%;
         font-family: "Courier New", Courier, monospace;
         letter-spacing: 0.15em;
-        background-color: #ffffff;}
+        background-color: #ffffff;
+}
+
 
 #page {
     max-width: 940px;
@@ -31,21 +36,25 @@ body {
     background-color: #ffffff;
 }
 
+
 #logo {
     display:block;
     text-align: center;
     margin: 2% 10% 0% 10%;
 }
 
+
 #form-container {
     width: 100%;
 }
+
 
 #resend-email-form, #join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
+
 
 #leave-comment-form, #create-group-form, #create-profile-form, #view-personal-profile-form, #view-group-form{
     text-align: left;
@@ -59,8 +68,9 @@ body {
     font-size: 16px;
     color: black;
     padding: 20px;
-    border-radius: 6px
+    border-radius: 6px;
 }
+
 
 #save_comment, #login, #save_group, #create-account, #verify, #save_personal_profile{
     background-color: #7ab800;
@@ -78,6 +88,7 @@ body {
     display: inline-block;
 }
 
+
 #resend_email_button, #join_group_button {
     background-color: #FF9819;
     font-family:"Courier";
@@ -94,31 +105,43 @@ body {
     vertical-align: top;
 }
 
+
 ul {
-    list-style-type: circle;
+    list-style-type: none;
     width: 570px;
     padding: 15px;
     margin: 0px auto 0px auto;
     border-top: 2px solid #952d98;
-    border-bottom: 1px solid #952d98;
     text-align: center;
 }
+
+ul ul {
+  border-top: 0;
+  border-bottom: 0;
+}
+
 
 nav li {
     display: inline;
     margin: 50px 3px;
-    }
+}
+
 
 p {
     text-align: center;
     width: 600px;
     margin: 20px auto 20px auto;
-    font-weight: normal;}
+    font-weight: normal;
+}
+
+
 a {
     color: #000;
     text-transform: uppercase;
     text-decoration: none;
-    padding: 6px 18px 5px 18px;}
+    padding: 6px 18px 5px 18px;
+}
+
 
 label {
   line-height: 150%;
@@ -131,18 +154,23 @@ label {
   font-weight: bold;
 }
 
+
 a:hover, a.on {
     color: #cc3333;
     background-color: #ffffff;
 }
 
+
 #banner {
     margin-top: 25px;
-    text-align: center;}
+    text-align: center;
+}
+
 
 #user-controls {
     list-style-type: none;
 }
+
 
 .selected {
      color: #cc3333;}
@@ -156,6 +184,7 @@ a:hover, a.on {
 
 }
 
+
 .group-page-profile-photo{
     border-radius: 100%;
     display:block;
@@ -165,14 +194,16 @@ a:hover, a.on {
 
 }
 
+
 #members_container{
-width: 700px;
-height: 100px;
-overflow: hidden;
+  width: 700px;
+  height: 100px;
+  overflow: hidden;
   margin-left: auto ;
   margin-right: auto ;
-/*white-space: nowrap;*/
+
 }
+
 
 .group-page-member-photo{
     border-radius: 100%;
@@ -181,7 +212,6 @@ overflow: hidden;
     max-width: 75px;
     float: center;
     clear: center;
-
 }
 
 
@@ -191,7 +221,9 @@ overflow: hidden;
     margin-left: auto;
     margin-right: auto;
     font-family:  Courier, monospace;
-    display: inline-block;}
+    display: inline-block;
+}
+
 
 .field, .control_row {
     text-align:center;
@@ -217,7 +249,6 @@ overflow: hidden;
   font-family: Courier;
   margin: 2% auto;
   padding: 10px 15px;
-/*  width: 88%;*/
   display: block;
 }
 
@@ -227,12 +258,14 @@ button {
     background-color: #7ab800;
 }
 
+
 #new-entry-button, #edit_entry-button, #delete_entry-button {
     list-style: none;
     font-weight: bold;
     font-family: Courier, monospace;
     display: inline;
 }
+
 
 footer {
     font-size: 0.9em;
@@ -269,20 +302,24 @@ footer {
 
 }
 
+
 .sour.button.disabled {
   background: linear-gradient(#f0ad4e,#eea236);
   text-shadow: 1px 1px 1px #eea236;
 }
+
 
 .sweet.button.disabled {
   background: linear-gradient(#6BDB55,#57B245);
   text-shadow: 1px 1px 1px #57B245;
 }
 
+
 .spicy.button.disabled{
   background: linear-gradient(#D60A0A,#B20808);
   text-shadow: 1px 1px 1px #B20808;
 }
+
 
 .salty.button.disabled{
   background: linear-gradient(#11A1D6,#0E86B2);
@@ -295,25 +332,30 @@ footer {
   text-shadow: 1px 1px 1px ##2e6da4;
 }
 
+
 .italian.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
+
 
 .indian.button.disabled {
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
 
+
 .chinese.button.disabled {
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
+
 .american.button.disabled {
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
+
 
 /*from here haven't changed color*/
 .german.button.disabled {
@@ -321,101 +363,126 @@ footer {
   text-shadow: 1px 1px 1px #AA6342;
 }
 
+
 .british.button.disabled{
   background: linear-gradient(#808000,#8D8D19);
   text-shadow: 1px 1px 1px #8D8D19;
 }
 
+
 .french.button.disabled{
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
+
+
 .vietnamese.button.disabled{
   background: linear-gradient(#f0ad4e,#eea236);
   text-shadow: 1px 1px 1px #eea236;
 }
+
 
 .japanese.button.disabled {
   background: linear-gradient(#6BDB55,#57B245);
   text-shadow: 1px 1px 1px #57B245;
 }
 
+
 .pub.button.disabled{
   background: linear-gradient(#D60A0A,#B20808);
   text-shadow: 1px 1px 1px #B20808;
 }
 
+
 .persian.button.disabled{
   background: linear-gradient(#11A1D6,#0E86B2);
   text-shadow: 1px 1px 1px #0E86B2;
 }
+
+
 .mediterranian.button.disabled{
   background: linear-gradient(#337ab7,#2e6da4);
   text-shadow: 1px 1px 1px ##2e6da4;
 }
+
 
 .greek.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
 
+
 .afghan.button.disabled{
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
 
+
 .somalian.button.disabled{
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
+
+
 .thai.button.disabled{
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
+
 
 .barbeque.button.disabled {
   background: linear-gradient(#A0522D,#AA6342);
   text-shadow: 1px 1px 1px #AA6342;
 }
 
+
 .soul.button.disabled{
   background: linear-gradient(#808000,#8D8D19);
   text-shadow: 1px 1px 1px #8D8D19;
 }
 
+
 .ethiopian.button.disabled{
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
+
+
 .jamaican.button.disabled{
   background: linear-gradient(#f0ad4e,#eea236);
   text-shadow: 1px 1px 1px #eea236;
 }
+
 
 .mexian.button.disabled {
   background: linear-gradient(#6BDB55,#57B245);
   text-shadow: 1px 1px 1px #57B245;
 }
 
+
 .korean.button.disabled{
   background: linear-gradient(#D60A0A,#B20808);
   text-shadow: 1px 1px 1px #B20808;
 }
+
 
 .vegan.button.disabled{
   background: linear-gradient(#337ab7,#2e6da4);
   text-shadow: 1px 1px 1px ##2e6da4;
 }
 
+
 .gluten_free.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
 
+
 .low_carb.button.disabled{
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
+
 
 .vegetarian.button.disabled{
   background: linear-gradient(#FF6666,#FFA3A3);
@@ -429,20 +496,24 @@ footer {
   text-shadow: 1px 1px 1px #A346D1;
 }
 
+
 .moderate.button.disabled {
   background: linear-gradient(#A0522D,#AA6342);
   text-shadow: 1px 1px 1px #AA6342;
 }
+
 
 .average.button.disabled{
   background: linear-gradient(#808000,#8D8D19);
   text-shadow: 1px 1px 1px #8D8D19;
 }
 
+
 .expensive.button.disabled{
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
+
 
 /*Group Age Range Button*/
 .eighteen_to_twentyfour.button.disabled{
@@ -450,34 +521,42 @@ footer {
   text-shadow: 1px 1px 1px #eea236;
 }
 
+
 .twentyfive_to_thirtyfour.button.disabled {
   background: linear-gradient(#6BDB55,#57B245);
   text-shadow: 1px 1px 1px #57B245;
 }
+
 
 .thirtyfive_to_fortyfour.button.disabled{
   background: linear-gradient(#D60A0A,#B20808);
   text-shadow: 1px 1px 1px #B20808;
 }
 
+
 .fortyfive_to_fiftyfour.button.disabled{
   background: linear-gradient(#11A1D6,#0E86B2);
   text-shadow: 1px 1px 1px #0E86B2;
 }
+
+
 .fiftyfive_to_sixtyfour.button.disabled{
   background: linear-gradient(#337ab7,#2e6da4);
   text-shadow: 1px 1px 1px ##2e6da4;
 }
+
 
 .sixtyfive_to_seventyfour.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
 
+
 .seventyfive_and_up.button.disabled{
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
+
 
 /*Group Location Button*/
 .seattle.button.disabled {
@@ -485,10 +564,12 @@ footer {
   text-shadow: 1px 1px 1px #FFA3A3;
 }
 
+
 .eastside.button.disabled {
   background: linear-gradient(#9932CC,#A346D1);
   text-shadow: 1px 1px 1px #A346D1;
 }
+
 
 /*from here haven't changed color*/
 .skagit.button.disabled {
@@ -496,15 +577,18 @@ footer {
   text-shadow: 1px 1px 1px #AA6342;
 }
 
+
 .kitsap.button.disabled {
   background: linear-gradient(#808000,#8D8D19);
   text-shadow: 1px 1px 1px #8D8D19;
 }
 
+
 .south_king.button.disabled {
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
+
 
 @media screen and (min-width: 480px) {
 
