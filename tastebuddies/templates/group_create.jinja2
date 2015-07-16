@@ -15,7 +15,7 @@
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="group_age_range" />
+        <select class="group_age_range" name="group_age_range" />
             <option name='18-24'>18-24</option>
             <option name='25-34'>25-34</option>
             <option name='35-44'>35-44</option>
@@ -27,7 +27,7 @@
     </div>
     <label>Location</label>
     <div class="field-group">
-        <select class="group_location" />
+        <select class="group_location" name="group_location" />
             <option name='Seattle'>Seattle</option>
             <option name='Kitsap'>Kitsap</option>
             <option name='Eastside'>Eastside</option>
@@ -74,7 +74,7 @@
         <input type="checkbox" name="group_taste" class="style" value="Gluten_Free">Gluten Free
         <input type="checkbox" name="group_taste" class="style" value="Low_Carb">Low Carb
     </div>
-    <div class="field-group">
+    <div class="field-group" id="group_price_range">
         <label>Price</label>
         <input type="radio" name="group_price" class="style" value="cheap">$
         <input type="radio" name="group_price" class="style" value="average">$$
@@ -82,7 +82,7 @@
         <input type="radio" name="group_price" class="style" value="expensive">$$$$
     </div>
         <label>Group Description</label>
-    <div class="field-group">
+    <div class="field-group" id="group_description">
         <textarea
             id="text"
             name="text"

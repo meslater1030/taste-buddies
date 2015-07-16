@@ -121,8 +121,8 @@ class User(Base, _Table):
                                 backref='users')
     diet_restrict = relationship('Diet', secondary=userdiet_table,
                                  backref='users')
-    user_grouups = relationship('Group', secondary=groupuser_table,
-                                backref='users')
+    user_groups = relationship('Group', secondary=groupuser_table,
+                               backref='users')
     restaurants = Column(Text)
     food = Column(Text)
 
