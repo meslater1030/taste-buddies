@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<h1> Group Description</h1>
+<h1>{{ group.name }}</h1>
 <div id="group-page-profile-photo">
 <img src="../static/img/dog3.jpg" alt="Pesonal Profile Photo" class="group-page-profile-photo">
 <div>
@@ -11,15 +11,19 @@
 <p>{{ group.description }}</p>
 </div>
 
-<h3>Group Food Profile</h3>
+<h1>Group Food Profile</h1>
 <div id="group_taste_buttons">
 <p>
 {% for taste in group.food_profile %}
-    {{ group.food_profile.taste }}
+    {{ taste.taste }}
+{% endfor %}
+{% for diet in group.diet_restrict %}
+    {{ diet.diet }}
 {% endfor %}
 </p>
-<p>{{ group.cost }}</p>
-<p>{{ group.location }}</p>
+<p>{{ price }}</p>
+<p>{{ location }}</p>
+<p>{{ age }}</p>
 
 </div>
 

@@ -319,7 +319,12 @@ def group_detail_view(request):
         for group in member.user_groups:
             if group == member.user_groups:
                 group_members.append(group)
-    return {'group': group, 'members': members}
+
+    price = Cost.one(eid=group.cost).cost
+    location = Location.one(eid=group.location).city
+    age = AgeGroup.one(eid=group.age).age_group
+    return {'group': group, 'members': members,
+            'age': age, 'location': location, 'price': price}
 
 
 @view_config(route_name='group_edit',
