@@ -222,7 +222,7 @@ a:hover, a.on {
 
 #members_container{
   width: 700px;
-  height: 100px;
+  /*height: 100px;*/
   overflow: hidden;
   margin-left: auto ;
   margin-right: auto ;

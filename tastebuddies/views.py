@@ -338,14 +338,14 @@ def group_create_view(request):
 def group_detail_view(request):
     error_msg = None
     username = request.authenticated_userid
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    grp_obj = Group.lookup_group_by_id(request.matchdict['group_id'])
 
     if request.method == 'POST':
-        User.addgroup(username=username, usergroup=group)
+        User.addgroup(username=username, usergroup=grp_obj)
 
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
+            Discussion.write(title=title, group_id=grp_obj.id)
 
             for discussions in Discussion.all():
 
@@ -364,18 +364,20 @@ def group_detail_view(request):
             text = request.params.get('text')
             Post.write(text=text, discussion_id=discussion.id)
 
-    members = User.all()
-    group_members = []
+    members = grp_obj.users
 
-    for member in members:
-        for group in member.user_groups:
-            if group == member.user_groups:
-                group_members.append(group)
+    import pdb; pdb.set_trace()
+    # group_members = []
+
+    # for member in members:
+    #     for group in member.user_groups:
+    #         if group == member.user_groups:
+    #             group_members.append(group)
 
     tmp_discussions = []
 
     for discussion in Discussion.all():
-        if discussion.group_id == group.id:
+        if discussion.group_id == grp_obj.id:
             tmp_discussions.append(discussion)
 
     discussions = []
@@ -384,14 +386,14 @@ def group_detail_view(request):
         discussions.append(tmp_discussions.pop())
 
     posts = Post.all()
-    price = Cost.one(eid=group.cost).cost
-    location = Location.one(eid=group.location).city
-    age = AgeGroup.one(eid=group.age).age_group
+    price = Cost.one(eid=grp_obj.cost).cost
+    location = Location.one(eid=grp_obj.location).city
+    age = AgeGroup.one(eid=grp_obj.age).age_group
 
     return {
         'username': username,
         'error_msg': error_msg,
-        'group': group,
+        'group': grp_obj,
         'members': members,
         'age': age,
         'location': location,
@@ -428,7 +430,7 @@ def group_discussion_view(request):
             if group == member.user_groups:
                 group_members.append(group)
 
-    tmp_discussions = []
+    tmp_discussions = group.discussions
 
     for discussion in Discussion.all():
 
@@ -439,6 +441,8 @@ def group_discussion_view(request):
 
     for discussion in tmp_discussions:
         discussions.append(tmp_discussions.pop())
+
+    import pdb; pdb.set_trace()
 
     posts = Post.all()
     price = Cost.one(eid=group.cost).cost
@@ -491,10 +495,17 @@ def group_edit_view(request):
     food_profiles = Profile.all()
     diets = Diet.all()
     costs = Cost.all()
-    id = group.id
-    return {'username': username, 'group': group, 'ages': ages,
-            'locations': locations, 'food_profiles': food_profiles,
-            'diets': diets, 'costs': costs}
+    # id = group.id
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': group,
+        'ages': ages,
+        'locations': locations,
+        'food_profiles': food_profiles,
+        'diets': diets,
+        'costs': costs
+    }
 
 
 conn_err_msg = """

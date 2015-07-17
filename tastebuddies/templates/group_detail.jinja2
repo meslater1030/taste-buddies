@@ -50,14 +50,17 @@
         <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
         <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
     <!-- only list 8 -->
+        <ul>
         {% for member in members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
         {% endfor %}
+        </uL>
 
     </div>
 
     <div id="#form-container">
     <form method="POST" id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+    <input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
     </form>
     </div>
 
@@ -99,7 +102,7 @@
                 <p>{{ post.text }}</p>
             {% endif %}
             </div>
-        {% endfor %}
+    {% endfor %}
 
     </article>
     <form id="leave-post-form" action="{{ request.route_url('group_discussion', group_id=group.id, discussion_id=discussion.id) }}" method='POST'>
