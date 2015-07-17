@@ -327,8 +327,10 @@ def group_detail_view(request):
         for group in member.user_groups:
             if group == member.user_groups:
                 group_members.append(group)
-
-    tmp_discussions = group.discussions
+    tmp_discussions = []
+    for discussion in Discussion.all():
+        if discussion.group_id == group.id:
+            tmp_discussions.append(discussion)
     discussions = []
     for discussion in tmp_discussions:
         discussions.append(tmp_discussions.pop())
@@ -360,7 +362,13 @@ def group_discussion_view(request):
             if group == member.user_groups:
                 group_members.append(group)
 
-    discussions = group.discussions
+    tmp_discussions = []
+    for discussion in Discussion.all():
+        if discussion.group_id == group.id:
+            tmp_discussions.append(discussion)
+    discussions = []
+    for discussion in tmp_discussions:
+        discussions.append(tmp_discussions.pop())
     posts = Post.all()
     price = Cost.one(eid=group.cost).cost
     location = Location.one(eid=group.location).city
