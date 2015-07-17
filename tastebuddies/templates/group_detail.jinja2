@@ -41,12 +41,12 @@
 
     <h2> Members </h2>
     <div id = "members_container">
-    <ul>
+
     <!-- only list 8 -->
         {% for member in members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
         {% endfor %}
-    </ul>
+
     </div>
 
     <div id="#form-container">
