@@ -25,6 +25,7 @@ def home_view(request):
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
 
+    error_msg = None
     username = request.authenticated_userid
 
     if request.method == 'POST':
@@ -49,7 +50,8 @@ def user_create_view(request):
             return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
             return {}
-    return {'username': username}
+    return {'username': username,
+            'error_msg': error_msg}
 
 
 @view_config(route_name='send_email', permission='authn')
@@ -95,9 +97,9 @@ def send_verify_email(request):
              permission='authn',
              renderer='templates/verify.jinja2')
 def verify(request):
+    error_msg = None
     uname = request.authenticated_userid
     user_obj = User.lookup_user_by_username(uname)
-    action = {'username': uname}
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
@@ -109,6 +111,8 @@ def verify(request):
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
+
+    action = {'username': uname, 'error_msg': error_msg}
 
     return action
 
@@ -156,19 +160,19 @@ def passes_verification(request):
 @view_config(route_name='user_login',
              renderer='templates/login.jinja2')
 def login(request):
+    error_msg = None
     username = request.params.get('username', '')
-    error = ''
-    result = ''
+    result = None
 
     if request.method == 'POST':
-        error = 'Login Failed'
+        error_msg = 'Login Failed'
         authn = False
 
         try:
             authn = passes_authentication(request)
 
         except ValueError as e:
-            error = str(e)
+            error_msg = str(e)
 
         if authn is True:
             headers = remember(request, username)
@@ -186,7 +190,7 @@ def login(request):
                 )
 
     if not result:
-        result = {'error': error, 'username': username}
+        result = {'error_msg': error_msg, 'username': username}
 
     return result
 
@@ -201,6 +205,7 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
 
+    error_msg = None
     if not (request.has_permission('owner')
             or request.has_permission('connect')):
         return HTTPForbidden()
@@ -227,6 +232,7 @@ def profile_detail_view(request):
 
     return {
         'username': request.authenticated_userid,
+        'error_msg': error_msg,
         'firstname': udata.firstname,
         'lastname': udata.lastname,
         'food': udata.food,
@@ -244,6 +250,7 @@ def profile_detail_view(request):
              permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
+    error_msg = None
     if request.method == 'POST':
             username = request.authenticated_userid
             firstname = request.params.get('first_name')
@@ -273,14 +280,23 @@ def profile_edit_view(request):
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'username': username, 'diets': diet}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'user': user,
+        'tastes': tastes,
+        'ages': age,
+        'location': location,
+        'price': price,
+        'diets': diet
+    }
 
 
 @view_config(route_name='group_create',
              permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    error_msg = None
     username = request.authenticated_userid
 
     if request.method == 'POST':
@@ -308,6 +324,7 @@ def group_create_view(request):
     price = Cost.all()
     return {
         'username': username,
+        'error_msg': error_msg,
         'tastes': tastes,
         'ages': age,
         'location': location,
@@ -319,6 +336,7 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
+    error_msg = None
     username = request.authenticated_userid
     gid = Group.lookup_group_by_id(request.matchdict['group_id'])
 
@@ -343,14 +361,22 @@ def group_detail_view(request):
     price = Cost.one(eid=gid.cost).cost
     location = Location.one(eid=gid.location).city
     age = AgeGroup.one(eid=gid.age).age_group
-    return {'username': username, 'group': gid, 'members': members,
-            'age': age, 'location': location, 'price': price}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': gid,
+        'members': members,
+        'age': age,
+        'location': location,
+        'price': price
+    }
 
 
 @view_config(route_name='group_edit',
              permission='authn',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
+    error_msg = None
     username = request.authenticated_userid
 
     if request.method == 'POST':
@@ -381,9 +407,16 @@ def group_edit_view(request):
     diets = Diet.all()
     costs = Cost.all()
 
-    return {'username': username, 'group': group, 'ages': ages,
-            'locations': locations, 'food_profiles': food_profiles,
-            'diets': diets, 'costs': costs}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': group,
+        'ages': ages,
+        'locations': locations,
+        'food_profiles': food_profiles,
+        'diets': diets,
+        'costs': costs,
+    }
 
 
 @view_config(route_name='group_forum',
@@ -399,6 +432,7 @@ def group_forum_view(request):
     Reverses the ordered dictionary so that the most recent discussions
     appear first.
     """
+    error_msg = None
     username = request.authenticated_userid
     group = Group.lookup_group_by_id(request.matchdict['group_id'])
 
@@ -413,7 +447,12 @@ def group_forum_view(request):
 
     discussions = group.discussions
     posts = discussions.posts
-    return {'username': username, 'discussions': discussions, 'posts': posts}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'discussions': discussions,
+        'posts': posts
+    }
 
 
 conn_err_msg = """
