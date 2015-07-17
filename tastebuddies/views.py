@@ -52,7 +52,7 @@ def user_create_view(request):
     return {'username': username}
 
 
-@view_config(route_name='send_email')
+@view_config(route_name='send_email', permission='authn')
 def send_verify_email(request):
 
     ver_code = randint(1000, 9999)
@@ -92,6 +92,7 @@ def send_verify_email(request):
 
 
 @view_config(route_name='verify',
+             permission='authn',
              renderer='templates/verify.jinja2')
 def verify(request):
     uname = request.authenticated_userid
@@ -190,17 +191,15 @@ def login(request):
     return result
 
 
-@view_config(route_name='logout',)
+@view_config(route_name='logout', permission='authn')
 def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',
-             # permission='view',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-    # import pdb; pdb.set_trace()
 
     if not (request.has_permission('owner')
             or request.has_permission('connect')):
@@ -227,7 +226,7 @@ def profile_detail_view(request):
     age = AgeGroup.one(eid=udata.age).age_group
 
     return {
-        'username': udata.username,
+        'username': request.authenticated_userid,
         'firstname': udata.firstname,
         'lastname': udata.lastname,
         'food': udata.food,
@@ -242,6 +241,7 @@ def profile_detail_view(request):
 
 
 @view_config(route_name='profile_edit',
+             permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
     if request.method == 'POST':
@@ -278,6 +278,7 @@ def profile_edit_view(request):
 
 
 @view_config(route_name='group_create',
+             permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
     username = request.authenticated_userid
@@ -318,9 +319,12 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
+    username = request.authenticated_userid
     gid = Group.lookup_group_by_id(request.matchdict['group_id'])
+
+    # import pdb; pdb.set_trace()
+
     if request.method == 'POST':
-        username = request.authenticated_userid
         User.addgroup(username=username, usergroup=gid)
         return HTTPFound(request.route_url(
             'group_detail',
@@ -328,23 +332,27 @@ def group_detail_view(request):
         ))
 
     members = gid.users
-    group_members = []
-    for member in members:
-        for group in member.user_groups:
-            if group == member.user_groups:
-                group_members.append(group)
+    # group_members = []
+    # for member in members:
+    #     for group in member.user_groups:
+    #         if group == member.user_groups:
+    #             group_members.append(group)
+
+    # import pdb; pdb.set_trace()
 
     price = Cost.one(eid=gid.cost).cost
     location = Location.one(eid=gid.location).city
     age = AgeGroup.one(eid=gid.age).age_group
-    return {'group': gid, 'members': members,
+    return {'username': username, 'group': gid, 'members': members,
             'age': age, 'location': location, 'price': price}
 
 
 @view_config(route_name='group_edit',
+             permission='authn',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     username = request.authenticated_userid
+
     if request.method == 'POST':
         group_name = request.params.get('group_name')
         group_descrip = request.params.get('group_description')
@@ -358,23 +366,28 @@ def group_edit_view(request):
                     diet_restrict=diet, cost=price, age=age,
                     Admin=username)
         all_groups = Group.all()
+
         for group in all_groups:
             if group.name == group_name:
                 group_id = group.id
+
         return HTTPFound(request.route_url('group_detail',
                          group_id=group_id))
+
     group = Group.lookup_group_by_id(request.matchdict['group_id'])
     ages = AgeGroup.all()
     locations = Location.all()
     food_profiles = Profile.all()
     diets = Diet.all()
     costs = Cost.all()
-    return {'group': group, 'ages': ages,
+
+    return {'username': username, 'group': group, 'ages': ages,
             'locations': locations, 'food_profiles': food_profiles,
             'diets': diets, 'costs': costs}
 
 
 @view_config(route_name='group_forum',
+             permission='authn',
              renderer='templates/group_forum.jinja2')
 def group_forum_view(request):
     """
@@ -386,6 +399,7 @@ def group_forum_view(request):
     Reverses the ordered dictionary so that the most recent discussions
     appear first.
     """
+    username = request.authenticated_userid
     group = Group.lookup_group_by_id(request.matchdict['group_id'])
 
     if request.method == 'POST':
@@ -399,7 +413,7 @@ def group_forum_view(request):
 
     discussions = group.discussions
     posts = discussions.posts
-    return {'discussions': discussions, 'posts': posts}
+    return {'username': username, 'discussions': discussions, 'posts': posts}
 
 
 conn_err_msg = """

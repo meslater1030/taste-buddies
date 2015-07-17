@@ -42,31 +42,39 @@
 
 </div>
 
-<h2> Members </h2>
-<div id = "members_container">
-<ul>
-<!-- only list 8 -->
-    {% for member in members %}
-    <li><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
-    {% endfor %}
-</ul>
-</div>
+{% if request.has_permission('authn') %}
 
-<div id="#form-container">
-<form method="POST" id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
-<input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
-</form>
-</div>
-
-<section id='forum'>
-{% block forumbody %}{% endblock %}
-</section>
-
-<nav>
-<!-- Only for admin! -->
+    <h2> Members </h2>
+    <div id = "members_container">
     <ul>
-    <li><a href="{{ request.route_url('group_edit', group_id=group.id) }}">Edit Group</a></li>
-    <li><a href="{{ request.route_url('profile_detail', username='admin.username') }}">Delete Group</a><li>
+    <!-- only list 8 -->
+        {% for member in members %}
+        <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
+        {% endfor %}
     </ul>
-</nav>
+    </div>
+
+    <div id="#form-container">
+    <form method="POST" id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+    <input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
+    </form>
+    </div>
+
+    <section id='forum'>
+    {% block forumbody %}{% endblock %}
+    </section>
+
+{% endif %}
+
+{% if request.has_permission('authn') %}
+    <nav>
+    <!-- Only for admin! -->
+        <ul>
+        <li><a href="{{ request.route_url('group_edit', group_id=group.id) }}">Edit Group</a></li>
+        <!-- <li><a href="{{ request.route_url('profile_detail', username='admin.username') }}">Delete Group</a><li> -->
+        </ul>
+    </nav>
+{% endif %}
+
 {% endblock %}
+>>>>>>> sec
