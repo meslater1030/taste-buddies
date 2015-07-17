@@ -4,55 +4,80 @@
 
 
 <div id="#form-container">
-    <form id="view-personal-profile-form">
-<h1>Your Profile!</h1>
+  <form id="view-personal-profile-form">
+    <h1>Your Profile!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../static/img/dog2.jpg" alt="Pesonal Profile Photo" class="profile-photo">
     </div>
 
     <label>Name</label>
     <div class="field-group">
-        {{firstname}} {{lastname}}
+        {{ firstname }} {{ lastname }}
     </div>
 
     <label>Age Group</label>
     <div class="field-group">
-        {{age}}
+        {{ age }}
     </div>
 
     <label>Location</label>
     <div class="field-group">
-        {{location}}
+        {{ location }}
     </div>
 
     <div id="personal_taste" class="field-group">
         <label>Taste Preferences</label>
+
         {% for taste in tastes %}
-        <div>{{taste}}</div>
+        <div>{{ taste }}</div>
+
         {% endfor %}
     </div>
+
+    <div id="diet" class="field-group">
+        <label>Dietary Restriction</label>
+
+        {% for diet in diets %}
+        <div>{{ diet }}</div>
+
+        {% endfor %}
+    </div>
+
 
     <label>Favorite Restaurants</label>
     <div class="field-group">
         {{ restaurant }}
     </div>
 
-    <label>Favorite Food</label>
+    <label>Favorite Foods</label>
     <div class="field-group">
         {{ food }}
     </div>
 
     <div id="personal_price_range" class="field-group">
-        <label>Price</label>
+        <label>Price Preference</label>
         {{ price }}
     </div>
- </form>
+
+    <div id="groups" class="field-group">
+        <label>User Groups</label>
+
+        <ul class="group-links-list">
+
+            {% for group in groups %}
+            <li><a href="{{ request.route_url('group_detail', group_id=group.id) }}">{{ group.name }}</a></li>
+
+            {% endfor %}
+
+        </ul>
+    </div>
+  </form>
 </div>
 
 <nav>
     <ul>
     <ul>
-    <li><a href="{{ request.route_url('group_detail', group_id=0) }}"> +Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_id=0) }}">+Your Groups</a></li>
 
     <li><a href="{{ request.route_url('profile_edit', username=username) }}">+Edit Profile</a></li>
 
@@ -61,7 +86,7 @@
 
     <li><a href="{{ request.route_url('group_create') }}">+Create Group</a></li>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=1) }}"> +Administer Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_id=1) }}">+Administer Your Groups</a></li>
     </ul>
     </ul>
 </nav>
