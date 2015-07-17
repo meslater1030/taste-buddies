@@ -332,6 +332,25 @@ def group_detail_view(request):
 @view_config(route_name='group_edit',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
+    username = request.authenticated_userid
+    if request.method == 'POST':
+        group_name = request.params.get('group_name')
+        group_descrip = request.params.get('group_description')
+        location = request.params.get('location')
+        taste = request.params.getall('personal_taste')
+        diet = request.params.getall('diet')
+        price = request.params.get('group_price')
+        age = request.params.get('age')
+        Group.write(name=group_name, description=group_descrip,
+                    location=location, food_profile=taste,
+                    diet_restrict=diet, cost=price, age=age,
+                    Admin=username)
+        all_groups = Group.all()
+        for group in all_groups:
+            if group.name == group_name:
+                group_id = group.id
+        return HTTPFound(request.route_url('group_detail',
+                         group_id=group_id))
     group = Group.one(request.matchdict['group_id'])
     ages = AgeGroup.all()
     locations = Location.all()

@@ -15,7 +15,7 @@
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="group_age_range" />
+        <select class="age" />
         {% for age in ages %}
             {% if age.age_group == group.age %}
                 <option selected='selected'>{{ group.age }}</option>
@@ -27,7 +27,7 @@
     </div>
     <label>Location</label>
     <div class="field-group">
-        <select class="group_location" />
+        <select id="location" />
         {% for location in locations %}
             {% if location.city == group.location %}
                 <option selected='selected'>{{ group.location }}</option>
@@ -42,10 +42,10 @@
         <label>Taste</label>
         {% for food_profile in food_profiles %}
             {% if food_profile.taste == group.food_profile %}
-                <input type="checkbox" name="group_taste" class="style"
+                <input type="checkbox" name="group_taste" class="personal_taste"
                        value="{{ group.food_profile }}" checked="checked">{{ group.food_profile }}
             {% else %}
-                <input type="checkbox" name="group_taste" class="style" value="{{ food_profile.taste }}">{{ food_profile.taste }}
+                <input type="checkbox" class="personal_taste" value="{{ food_profile.taste }}">{{ food_profile.taste }}
             {% endif %}
         {% endfor %}
 
@@ -53,10 +53,10 @@
         <label>Diet</label>
         {% for diet in diets %}
             {% if diet.diet == group.diet_restrict %}
-                <input type="checkbox" name="group_taste" class="style"
+                <input type="checkbox" class="diet"
                        value="{{ group.diet_restrict }}" checked="checked">{{ group.diet_restrict }}
             {% else %}
-                <input type="checkbox" name="group_taste" class="style" value="{{ diet.diet }}">{{ diet.diet }}
+                <input type="checkbox" class="diet" value="{{ diet.diet }}">{{ diet.diet }}
             {% endif %}
         {% endfor %}
     </div>
@@ -75,7 +75,7 @@
     <div class="field-group">
         <label>Group Description</label>
         <textarea
-            id="text"
+            id="group_description"
             name="text"
             cols="60"
             rows="8">{{ group.description }}</textarea>
