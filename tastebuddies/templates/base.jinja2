@@ -32,7 +32,16 @@
   <div id="banner">
         <img src="/static/img/taste_buddies_banner.png" alt="taste buddies banner" />
   </div>
+
 </header>
+
+{% if error_msg %}
+
+<div id='error_msg'>
+<p>{{ error_msg }}</p>
+</div>
+
+{% endif %}
 
   {% block body %}
   {% endblock %}

@@ -53,6 +53,15 @@ body {
     width: 100%;
 }
 
+#error_msg {
+    background-color: #ebb;
+    border: 1px solid #b88;
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+    text-align: center;
+    margin: 2% 30% 0% 30%;
+}
 
 #resend-email-form, #join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
