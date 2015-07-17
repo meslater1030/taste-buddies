@@ -297,8 +297,13 @@ def group_create_view(request):
                         location=location, food_profile=taste,
                         diet_restrict=diet, cost=price, age=age,
                         Admin=username)
-            return HTTPFound(request.route_url('profile_detail',
-                             username=username))
+            all_groups = Group.all()
+            for group in all_groups:
+                if group.name == group_name:
+                    group_id = group.id
+            import pdb; pdb.set_trace()
+            return HTTPFound(request.route_url('group_detail',
+                             id=group_id))
     tastes = Profile.all()
     diet = Diet.all()
     age = AgeGroup.all()

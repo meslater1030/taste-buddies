@@ -271,6 +271,12 @@ class Group(Base):
         return instance
 
     @classmethod
+    def all(cls, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).all()
+
+    @classmethod
     def lookup_group_by_id(cls, gid, session=None):
         if session is None:
             session = DBSession
