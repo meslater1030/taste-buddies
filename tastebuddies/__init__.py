@@ -12,6 +12,11 @@ from .models import (
     Base,
 )
 
+from security import groupfinder, UserFactory
+
+# for group in self.user_groups:
+#             acl.append((Allow, 'group:{}'.format(group.id), 'view'))
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -20,21 +25,26 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
 
+    auth_secret = os.environ.get('TASTEBUDDIES_AUTH_SECRET', 'tastynoms')
+
+    authn_policy = AuthTktAuthenticationPolicy(
+        secret=auth_secret,
+        hashalg='sha512',
+        callback=groupfinder,
+    )
+
+    authz_policy = ACLAuthorizationPolicy()
+
     settings['auth.username'] = os.environ.get('AUTH_USERNAME', 'admin')
     manager = BCRYPTPasswordManager()
     settings['auth.password'] = os.environ.get(
         'AUTH_PASSWORD', manager.encode('secret')
     )
 
-    auth_secret = os.environ.get('TASTEBUDDIES_AUTH_SECRET', 'tastynoms')
-
     config = Configurator(
         settings=settings,
-        authentication_policy=AuthTktAuthenticationPolicy(
-            secret=auth_secret,
-            hashalg='sha512',
-        ),
-        authorization_policy=ACLAuthorizationPolicy(),
+        authentication_policy=authn_policy,
+        authorization_policy=authz_policy,
     )
 
     config.include('pyramid_jinja2')
@@ -49,7 +59,8 @@ def main(global_config, **settings):
     config.add_route('verify', '/verify')
     config.add_route('send_email', '/send_email')
     config.add_route('logout', '/logout')
-    config.add_route('profile_detail', '/profile/{username}')
+    config.add_route('profile_detail', '/profile/{username}',
+                     factory=UserFactory, traverse='/{username}')
     config.add_route('profile_edit', '/profile/edit/{username}')
     config.add_route('group_create', '/group/create_group')
     config.add_route('group_detail', '/group/{group_id}')

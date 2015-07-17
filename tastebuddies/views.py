@@ -197,6 +197,7 @@ def logout(request):
 
 
 @view_config(route_name='profile_detail',
+             permission='view',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
 
@@ -292,7 +293,6 @@ def group_create_view(request):
             for group in all_groups:
                 if group.name == group_name:
                     group_id = group.id
-            import pdb; pdb.set_trace()
             return HTTPFound(request.route_url('group_detail',
                              id=group_id))
     tastes = Profile.all()
