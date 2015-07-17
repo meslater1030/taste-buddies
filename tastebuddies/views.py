@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
 import os
 
@@ -197,8 +197,14 @@ def logout(request):
 
 
 @view_config(route_name='profile_detail',
+             # permission='view',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
+    # import pdb; pdb.set_trace()
+
+    if not (request.has_permission('owner')
+            or request.has_permission('connect')):
+        return HTTPForbidden()
 
     uname = request.matchdict['username']
     udata = User.lookup_user_by_username(uname)
@@ -292,9 +298,8 @@ def group_create_view(request):
             for group in all_groups:
                 if group.name == group_name:
                     group_id = group.id
-            import pdb; pdb.set_trace()
             return HTTPFound(request.route_url('group_detail',
-                             id=group_id))
+                             group_id=group_id))
     tastes = Profile.all()
     diet = Diet.all()
     age = AgeGroup.all()
@@ -313,14 +318,27 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-    members = User.all()
+    gid = Group.lookup_group_by_id(request.matchdict['group_id'])
+    if request.method == 'POST':
+        username = request.authenticated_userid
+        User.addgroup(username=username, usergroup=gid)
+        return HTTPFound(request.route_url(
+            'group_detail',
+            group_id=request.matchdict['group_id']
+        ))
+
+    members = gid.users
     group_members = []
     for member in members:
         for group in member.user_groups:
             if group == member.user_groups:
                 group_members.append(group)
-    return {'group': group, 'members': members}
+
+    price = Cost.one(eid=gid.cost).cost
+    location = Location.one(eid=gid.location).city
+    age = AgeGroup.one(eid=gid.age).age_group
+    return {'group': gid, 'members': members,
+            'age': age, 'location': location, 'price': price}
 
 
 @view_config(route_name='group_edit',

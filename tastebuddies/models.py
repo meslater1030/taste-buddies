@@ -19,6 +19,7 @@ from sqlalchemy.orm import (
     validates,
 )
 
+from pyramid.security import Allow, Deny, Everyone, ALL_PERMISSIONS
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -189,6 +190,21 @@ class User(Base, _Table):
         instance.age = int(kwargs.get("age"))
         session.add(instance)
         return instance
+
+    @property
+    def __acl__(self):
+        acl = []
+        # url_name = self.request.matchdict['username']
+        # cur_name = self.request.authenticated_userid
+
+        # if url_name == cur_name:
+        acl.append((Allow, self.username, 'owner'))
+        for group in self.user_groups:
+            acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
+
+        acl.append((Deny, Everyone, ALL_PERMISSIONS))
+
+        return acl
 
     def __repr__(self):
         return "<User({} {}, username={})>".format(self.firstname,
