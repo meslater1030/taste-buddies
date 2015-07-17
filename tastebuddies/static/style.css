@@ -20,10 +20,10 @@ h2 {
 
 
 body {
-        font-size: 80%;
-        font-family: "Courier New", Courier, monospace;
-        letter-spacing: 0.15em;
-        background-color: #ffffff;
+    font-size: 80%;
+    font-family: "Courier New", Courier, monospace;
+    letter-spacing: 0.15em;
+    background-color: #ffffff;
 }
 
 
@@ -115,9 +115,20 @@ ul {
     text-align: center;
 }
 
+.group-links-list {
+    border: none;
+    text-align: left;
+    margin-left: -30px;
+    margin-top: -15px;
+}
+
+.group-links-list li {
+  margin: 0px 0px 10px;
+}
+
 ul ul {
-  border-top: 0;
-  border-bottom: 0;
+    border-top: 0;
+    border-bottom: 0;
 }
 
 
