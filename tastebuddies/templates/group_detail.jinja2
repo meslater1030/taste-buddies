@@ -50,11 +50,11 @@
         <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
         <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
     <!-- only list 8 -->
-        <ul>
+        <ol>
         {% for member in members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
         {% endfor %}
-        </uL>
+        </ol>
 
     </div>
 
