@@ -41,7 +41,14 @@
 
     <h2> Members </h2>
     <div id = "members_container">
-
+        <img src="../static/img/dog4.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog5.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog6.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog7.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog8.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog9.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
     <!-- only list 8 -->
         {% for member in members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
