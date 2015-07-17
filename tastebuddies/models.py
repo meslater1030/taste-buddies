@@ -156,6 +156,15 @@ class User(Base, _Table):
         return instance
 
     @classmethod
+    def confirm_user(cls, username, session=None):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_user_by_username(username)
+        instance.confirmed = True
+        session.add(instance)
+        return instance
+
+    @classmethod
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
