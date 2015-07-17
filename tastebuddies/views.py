@@ -319,7 +319,7 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    group = Group.one(request.matchdict['group_id'])
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
     members = User.all()
     group_members = []
     for member in members:
@@ -351,7 +351,7 @@ def group_edit_view(request):
                 group_id = group.id
         return HTTPFound(request.route_url('group_detail',
                          group_id=group_id))
-    group = Group.one(request.matchdict['group_id'])
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
     ages = AgeGroup.all()
     locations = Location.all()
     food_profiles = Profile.all()
@@ -374,7 +374,7 @@ def group_forum_view(request):
     Reverses the ordered dictionary so that the most recent discussions
     appear first.
     """
-    group = Group.one(request.matchdict['group_id'])
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
 
     if request.method == 'POST':
         if request.params.get('title'):
