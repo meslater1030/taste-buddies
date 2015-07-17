@@ -434,7 +434,7 @@ footer {
 }
 
 
-.somalian.button.disabled{
+.somolian.button.disabled{
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
@@ -446,7 +446,7 @@ footer {
 }
 
 
-.barbeque.button.disabled {
+.barbecue.button.disabled {
   background: linear-gradient(#A0522D,#AA6342);
   text-shadow: 1px 1px 1px #AA6342;
 }
@@ -489,13 +489,13 @@ footer {
 
 /*Dietary Restrictions*/
 
-.gluten_free.button.disabled {
+.gluten.free.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
 
 
-.low_carb.button.disabled{
+.low.carb.button.disabled{
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
@@ -601,7 +601,7 @@ footer {
 }
 
 
-.south_king.button.disabled {
+.south.king.button.disabled {
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
