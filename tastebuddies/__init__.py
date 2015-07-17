@@ -12,7 +12,8 @@ from .models import (
     Base,
 )
 
-from security import groupfinder, Root, UserFactory, GroupFactory
+from security import groupfinder, Root, UserFactory
+from pyramid.view import forbidden_view_config
 
 # for group in self.user_groups:
 #             acl.append((Allow, 'group:{}'.format(group.id), 'view'))
@@ -21,6 +22,11 @@ from security import groupfinder, Root, UserFactory, GroupFactory
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+
+    @forbidden_view_config(renderer='templates/forbidden.jinja2')
+    def forbidden(request):
+        return {}
+
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
@@ -51,8 +57,6 @@ def main(global_config, **settings):
     config.include('pyramid_tm')
 
     config.add_static_view('static', 'static', cache_max_age=3600)
-
-    config.add_route('forbidden', '/forbidden')
 
     config.add_route('home', '/')
     config.add_route('user_create', '/create_user')
