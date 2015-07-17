@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
 import os
 
@@ -197,12 +197,15 @@ def logout(request):
 
 
 @view_config(route_name='profile_detail',
-             permission='view',
+             # permission='view',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-
+    # import pdb; pdb.set_trace()
     uname = request.matchdict['username']
     udata = User.lookup_user_by_username(uname)
+
+    if not request.has_permission('owner'):
+        return HTTPForbidden()
 
     tastes = []
     diets = []
