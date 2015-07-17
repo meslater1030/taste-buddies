@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="view-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+<form id="view-group-form" action="{{ request.route_url('group_edit', group_id=group.id) }}" method='POST'>
     <h1>Edit your group!</h1>
      <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
@@ -15,24 +15,23 @@
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="age" />
+        <select class="group_age" name="group_age" />
         {% for age in ages %}
             {% if age.age_group == group.age %}
-                <option selected='selected'>{{ group.age }}</option>
+                <option selected='selected' value='{{ age.id }}' name="group_age" class="group_age">{{ group.age }}</option>
             {% else %}
-                <option>{{ age.age_group }}</option>
+                <option value='{{ age.id }}' name="group_age" class="group_age">{{ age.age_group }}</option>
             {% endif %}
         {% endfor %}
         </select>
     </div>
     <label>Location</label>
-    <div class="field-group">
-        <select id="location" />
+        <select class="group_location" name="group_location"/>
         {% for location in locations %}
             {% if location.city == group.location %}
-                <option selected='selected'>{{ group.location }}</option>
+                <option selected='selected' value='{{ location.id }}' name='group_location' class="group_location">{{ group.location }}</option>
             {% else %}
-                <option>{{ location.city }}</option>
+                <option value='{{ location.id }}' name='group_location' class="group_location">{{ location.city }}</option>
             {% endif %}
         {% endfor %}
         </select>
@@ -43,10 +42,10 @@
         {% for food_profile in food_profiles %}
             {% for group_food_taste in group.food_profile %}
                 {% if group_food_taste.taste == food_profile.taste %}
-                    <input type="checkbox" name="group_taste" class="personal_taste"
-                           value="{{ food_profile.taste }}" checked="checked">{{ food_profile.taste }}
+                    <input type="checkbox" name="personal_taste" class="personal_taste"
+                           value="{{ food_profile.id }}" checked="checked">{{ food_profile.taste }}
                 {% else %}
-                    <input type="checkbox" class="personal_taste" value="{{ food_profile.taste }}">{{ food_profile.taste }}
+                    <input type="checkbox" name="personal_taste" class="personal_taste" value="{{ food_profile.id }}">{{ food_profile.taste }}
                 {% endif %}
             {% endfor %}
         {% endfor %}
@@ -56,9 +55,9 @@
             {% for group_diet in group.diet_restrict %}
                 {% if group_diet.diet == diet.diet %}
                     <input type="checkbox" class="diet"
-                           value="{{ diet.diet }}" checked="checked">{{ diet.diet }}
+                           value="{{ diet.id }}" checked="checked" name="group_diet">{{ diet.diet }}
                 {% else %}
-                    <input type="checkbox" class="diet" value="{{ diet.diet }}">{{ diet.diet }}
+                    <input type="checkbox" class="diet" value="{{ diet.id }}" name="group_diet">{{ diet.diet }}
                 {% endif %}
             {% endfor %}
         {% endfor %}
@@ -69,20 +68,23 @@
         {% for cost in costs %}
             {% if group.cost == cost.id %}
                 <input type="radio" name="group_price" class="style"
-                       value="{{ cost.cost }}" checked="checked">{{ cost.cost }}
+                       value="{{ cost.id }}" checked="checked">{{ cost.cost }}
             {% else %}
-                <input type="radio" name="group_price" class="style" value="{{ cost.cost }}">{{ cost.cost }}
+                <input type="radio" name="group_price" class="style" value="{{ cost.id }}">{{ cost.cost }}
             {% endif %}
         {% endfor %}
     </div>
-    <div class="field-group">
         <label>Group Description</label>
+    <div class="group_description" id="group_description" name="group_description">
         <textarea
-            id="group_description"
-            name="text"
+            id="text"
+            name="group_description"
+            class="group_description"
             cols="60"
-            rows="8">{{ group.description }}</textarea>
+            rows="8"
+            value="{{ group.description }}">{{ group.description }}</textarea>
     </div>
+
     <input id="save_group" type="submit" name="profile_save" value="Save Group"/>
 </form>
 </div>

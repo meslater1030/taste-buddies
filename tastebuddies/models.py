@@ -189,6 +189,7 @@ class User(Base, _Table):
         instance.cost = int(kwargs.get("price"))
         instance.user_location = int(kwargs.get("location"))
         instance.age = int(kwargs.get("age"))
+
         session.add(instance)
         return instance
 
@@ -269,6 +270,31 @@ class Group(Base):
                                  backref='group')
     cost = Column(Integer, ForeignKey('cost.id'))
     age = Column(Integer, ForeignKey('agegroup.id'))
+
+    @classmethod
+    def change(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_group_by_id(gid=kwargs["id"])
+        instance.name = kwargs.get("name")
+        instance.description = kwargs.get("description")
+        instance.user_location = int(kwargs.get("location"))
+        if kwargs.get("discussions"):
+            instance.discussions = kwargs.get("discussions")
+        instance.age = int(kwargs.get("age"))
+        instance.cost = int(kwargs.get("cost"))
+        tasteid = map(int, kwargs.get("taste"))
+        dietid = map(int, kwargs.get("diet"))
+        instance.food_profile = []
+        instance.diet_restrict = []
+        for eid in tasteid:
+            instance.food_profile.append(session.query(Profile).filter
+                                         (Profile.id == eid).all()[0])
+        for eid in dietid:
+            instance.diet_restrict.append(session.query(Diet).filter
+                                          (Diet.id == eid).all()[0])
+        session.add(instance)
+        return instance
 
     @classmethod
     def write(cls, session=None, **kwargs):

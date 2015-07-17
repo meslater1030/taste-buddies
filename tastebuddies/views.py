@@ -401,27 +401,26 @@ def group_discussion_view(request):
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     username = request.authenticated_userid
-
     if request.method == 'POST':
-        group_name = request.params.get('group_name')
-        group_descrip = request.params.get('group_description')
-        location = request.params.get('location')
-        taste = request.params.getall('personal_taste')
-        diet = request.params.getall('diet')
-        price = request.params.get('group_price')
-        age = request.params.get('age')
-        Group.write(name=group_name, description=group_descrip,
-                    location=location, food_profile=taste,
-                    diet_restrict=diet, cost=price, age=age,
-                    Admin=username)
-        all_groups = Group.all()
-
-        for group in all_groups:
-            if group.name == group_name:
-                group_id = group.id
-
-        return HTTPFound(request.route_url('group_detail',
-                         group_id=group_id))
+            group = Group.lookup_group_by_id(request.matchdict['group_id'])
+            group_name = request.params.get('group_name')
+            group_descrip = request.params.get('group_description')
+            location = request.params.get('group_location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('group_diet')
+            price = request.params.get('group_price')
+            age = request.params.get('group_age')
+            username = request.authenticated_userid
+            Group.change(name=group_name, description=group_descrip,
+                         location=location, taste=taste,
+                         diet=diet, cost=price, age=age,
+                         Admin=username, id=group.id)
+            all_groups = Group.all()
+            for group in all_groups:
+                if group.name == group_name:
+                    group_id = group.id
+            return HTTPFound(request.route_url('group_detail',
+                             group_id=group_id))
 
     group = Group.lookup_group_by_id(request.matchdict['group_id'])
     ages = AgeGroup.all()
@@ -429,6 +428,7 @@ def group_edit_view(request):
     food_profiles = Profile.all()
     diets = Diet.all()
     costs = Cost.all()
+    id = group.id
     return {'username': username, 'group': group, 'ages': ages,
             'locations': locations, 'food_profiles': food_profiles,
             'diets': diets, 'costs': costs}
