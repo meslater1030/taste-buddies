@@ -1,54 +1,125 @@
 {% extends "base.jinja2" %}
 
 {% block body %}
-<h1> Group Description</h1>
+
+<h1>{{ group.name }}</h1>
 <div id="group-page-profile-photo">
 <img src="../static/img/dog3.jpg" alt="Pesonal Profile Photo" class="group-page-profile-photo">
 <div>
+
 <div>
-<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras diam sem,fringilla vel lectus in, pulvinar viverra massa. Nunc rutrum leo id tincidunt porta.
-Nullam felis mi, volutpat quis justo nec, varius bibendum dolor. Phasellus ac tortor nisi. Nam eget ultrices nibh, sed dapibus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.</p>
+<p>{{ group.description }}</p>
 </div>
-<!-- only show the first 5 tastes -->
+
+<h1>Group Food Profile</h1>
 <div id="group_taste_buttons">
-    <a class="french button disabled" href="#">French</a>
-    <a class="spicy button disabled" href="#">Spicy</a>
-    <a class="salty button disabled" href="#">Salty</a>
-    <a class="sour button disabled" href="#">Sour</a>
-    <a class="italian button disabled" href="#">Italian</a>
-<!-- only show one price button -->
-    <a class="moderate button disabled" href="#">$$$</a>
-<!-- only show one age range button -->
-    <a class="eastside button disabled" href="#">Eastside</a>
-</div>
+<p>
+{% for taste in group.food_profile %}
+    <span class="button disabled {{ taste.taste.lower() }}">
+    {{ taste.taste }}
+    </span>
+{% endfor %}
+{% for diet in group.diet_restrict %}
+    <span class="button disabled {{ diet.diet.lower() }}">
+    {{ diet.diet }}
+    </span>
+{% endfor %}
 
-<!-- only show 8 members -->
-<h2> Members </h2>
-<div id = "members_container">
-<img src="../static/img/dog4.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog5.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog6.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog7.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog8.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog9.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-<img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
-</div>
-<div id="#form-container">
-<form id="join-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
-<input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
-</form>
-</div>
 
-<section id='forum'>
-{% block forumbody %}{% endblock %}
-</section>
+    <span class="button disabled {{ price.lower() }}">{{ price }}
+    </span>
 
-<nav>
-    <ul>
-    <li><a href="{{ request.route_url('group_edit', group_id=1) }}"> +Edit Group hide x admin</a></li>
+    <span class="button disabled {{ location.lower() }}">
+    {{ location }}
+    </span>
+    <span class="button disabled {{ age.lower() }}">
+    {{ age }}
+    </span>
+</p>
 
-    <li><a href="{{ request.route_url('profile_detail', username='username') }}"> +Delete Group x admin</a><li>
-    </ul>
-</nav>
+{% if request.has_permission('authn') %}
+
+    <h2> Members </h2>
+    <div id = "members_container">
+        <img src="../static/img/dog4.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog5.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog6.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog7.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog8.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog9.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+    <!-- only list 8 -->
+        <ol>
+        {% for member in members %}
+        <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
+        {% endfor %}
+        </ol>
+
+    </div>
+
+    <div id="#form-container">
+    <form method="POST" id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+    <input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
+    </form>
+    </div>
+
+
+    <nav>
+    <!-- Only for admin! -->
+        <ul>
+        <li><a href="{{ request.route_url('group_edit', group_id=group.id) }}">Edit Group</a></li>
+        <!-- <li><a href="{{ request.route_url('profile_detail', username='admin.username') }}">Delete Group</a><li> -->
+        </ul>
+    </nav>
+
+
+    <section id='forum'>
+    <h2> Want to plan an event? Start a discussion!!!</h2>
+
+    <div id="#form-container">
+    <form id="leave-comment-form" action="{{ request.route_url('group_detail', group_id=group.id) }}" method='POST'>
+        <label>Discussion Topic</label>
+        <div class="field-group">
+            <input type="text" name="title" placeholder="What do you want to do?"/>
+        </div>
+        <input id="save_discussion" type="submit" name="save_discussion" value="discussion"/>
+    </form>
+    </div>
+
+        {% for discussion in discussions %}
+        <article class="discussion" id="{{ discussion.id }}">
+            <h3>{{ discussion.title }}</a></h3>
+            <hr/>
+
+            {% for post in posts %}
+                <div class="post">
+                {% if post.discussion_id == discussion.id %}
+                    <p>{{ post.text }}</p>
+                {% endif %}
+                </div>
+        {% endfor %}
+
+        </article>
+        <form id="leave-post-form" action="{{ request.route_url('group_discussion', group_id=group.id, discussion_id=discussion.id) }}" method='POST'>
+        <label>Comment</label>
+        <div class="field-group">
+            <textarea name="text" rows="2" cols="80" placeholder='Write a comment...'></textarea>
+        </div>
+        <input id="save_post" type="submit" name="save_post" value="post"/>
+        </form>
+        {% endfor %}
+
+        {% if not discussions %}
+            <div class="entry">
+                <h3>No one has planned anything yet.</h3><h3>Be the first one to!</h3>
+            </div>
+        {% endif %}
+    </section>
+
+{% endif %}
+
+
+
 {% endblock %}
+

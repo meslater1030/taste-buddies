@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="view-group-form" action="{{ request.route_url('group_detail', group_id=1) }}">
+<form id="view-group-form" action="{{ request.route_url('group_edit', group_id=group.id) }}" method='POST'>
     <h1>Edit your group!</h1>
      <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
@@ -11,85 +11,80 @@
 <label>Group Name</label>
     <div class="field-group">
         <input type="text" name="group_name" id="group_name"
-        placeholder="Group Name"/>
+        value="{{ group.name }}"/>
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="group_age_range" />
-            <option>18-24</option>
-            <option>25-34</option>
-            <option>35-44</option>
-            <option>45-54</option>
-            <option>55-64</option>
-            <option>65-74</option>
-            <option>75+</option>
+        <select class="group_age" name="group_age" />
+        {% for age in ages %}
+            {% if age.age_group == group.age %}
+                <option selected='selected' value='{{ age.id }}' name="group_age" class="group_age">{{ group.age }}</option>
+            {% else %}
+                <option value='{{ age.id }}' name="group_age" class="group_age">{{ age.age_group }}</option>
+            {% endif %}
+        {% endfor %}
         </select>
     </div>
     <label>Location</label>
-    <div class="field-group">
-        <select class="group_location" />
-            <option>Seattle</option>
-            <option>Kitsap</option>
-            <option>Eastside</option>
-            <option>Skagit</option>
-            <option>South King</option>
-            <option>65-74</option>
+        <select class="group_location" name="group_location"/>
+        {% for location in locations %}
+            {% if location.city == group.location %}
+                <option selected='selected' value='{{ location.id }}' name='group_location' class="group_location">{{ group.location }}</option>
+            {% else %}
+                <option value='{{ location.id }}' name='group_location' class="group_location">{{ location.city }}</option>
+            {% endif %}
+        {% endfor %}
         </select>
     </div>
 
     <div id="group_taste" class="field-group">
         <label>Taste</label>
-        <input type="checkbox" name="group_taste" class="style" value="Sour"> Sour
-        <input type="checkbox" name="group_taste" class="style" value="Sweet"> Sweet
-        <input type="checkbox" name="group_taste" class="style" value="Salty"> Salty
-        <input type="checkbox" name="group_taste" class="style" value="Spicy"> Spicy
-        <input type="checkbox" name="group_taste" class="style" value="Bitter"> Bitter
-        <input type="checkbox" name="group_taste" class="style" value="Italian"> Italian
-        <input type="checkbox" name="group_taste" class="style" value="Indian"> Indian
-        <input type="checkbox" name="group_taste" class="style" value="Chinese"> Chinese
-        <input type="checkbox" name="group_taste" class="style" value="American_Classic"> American Classic
-        <input type="checkbox" name="group_taste" class="style" value="German"> German
-        <input type="checkbox" name="group_taste" class="style" value="British"> British
-        <input type="checkbox" name="group_taste" class="style" value="French"> French
-        <input type="checkbox" name="group_taste" class="style" value="Vietnamese"> Vietnamese
-        <input type="checkbox" name="group_taste" class="style" value="Japanese"> Japanese
-        <input type="checkbox" name="group_taste" class="style" value="Pub"> Pub
-        <input type="checkbox" name="group_taste" class="style" value="Persian"> Persian
-        <input type="checkbox" name="group_taste" class="style" value="Mediterranian"> Mediterranian
-        <input type="checkbox" name="group_taste" class="style" value="Greek"> Greek
-        <input type="checkbox" name="group_taste" class="style" value="Afghan">Afghan
-        <input type="checkbox" name="group_taste" class="style" value="Somolian">Somolian
-        <input type="checkbox" name="group_taste" class="style" value="Thai">Thai
-        <input type="checkbox" name="group_taste" class="style" value="Barbecue">Barbecue
-        <input type="checkbox" name="group_taste" class="style" value="Soul">Soul
-        <input type="checkbox" name="group_taste" class="style" value="Ethiopian">Ethiopian
-        <input type="checkbox" name="group_taste" class="style" value="Jamaican">Jamaican
-        <input type="checkbox" name="group_taste" class="style" value="Mexican">Mexican
-        <input type="checkbox" name="group_taste" class="style" value="Korean">Korean
+        {% for food_profile in food_profiles %}
+            {% for group_food_taste in group.food_profile %}
+                {% if group_food_taste.taste == food_profile.taste %}
+                    <input type="checkbox" name="personal_taste" class="personal_taste"
+                           value="{{ food_profile.id }}" checked="checked">{{ food_profile.taste }}
+                {% else %}
+                    <input type="checkbox" name="personal_taste" class="personal_taste" value="{{ food_profile.id }}">{{ food_profile.taste }}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
 
         <label>Diet</label>
-        <input type="checkbox" name="group_taste" class="style" value="Vegetarian">Vegetarian
-        <input type="checkbox" name="group_taste" class="style" value="Vegan">Vegan
-        <input type="checkbox" name="group_taste" class="style" value="Gluten_Free">Gluten Free
-        <input type="checkbox" name="group_taste" class="style" value="Low_Carb">Low Carb
-
+        {% for diet in diets %}
+            {% for group_diet in group.diet_restrict %}
+                {% if group_diet.diet == diet.diet %}
+                    <input type="checkbox" class="diet"
+                           value="{{ diet.id }}" checked="checked" name="group_diet">{{ diet.diet }}
+                {% else %}
+                    <input type="checkbox" class="diet" value="{{ diet.id }}" name="group_diet">{{ diet.diet }}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
     </div>
+
     <div class="field-group">
         <label>Price</label>
-        <input type="radio" name="group_price" class="style" value="cheap">$
-        <input type="radio" name="group_price" class="style" value="average">$$
-        <input type="radio" name="group_price" class="style" value="moderate">$$$
-        <input type="radio" name="group_price" class="style" value="expensive">$$$$
+        {% for cost in costs %}
+            {% if group.cost == cost.id %}
+                <input type="radio" name="group_price" class="style"
+                       value="{{ cost.id }}" checked="checked">{{ cost.cost }}
+            {% else %}
+                <input type="radio" name="group_price" class="style" value="{{ cost.id }}">{{ cost.cost }}
+            {% endif %}
+        {% endfor %}
     </div>
-    <div class="field-group">
         <label>Group Description</label>
+    <div class="group_description" id="group_description" name="group_description">
         <textarea
             id="text"
-            name="text"
-            placeholder="Write your group description here!!"
+            name="group_description"
+            class="group_description"
             cols="60"
-            rows="8"></textarea>
+            rows="8"
+            value="{{ group.description }}">{{ group.description }}</textarea>
     </div>
+
     <input id="save_group" type="submit" name="profile_save" value="Save Group"/>
 </form>
 </div>

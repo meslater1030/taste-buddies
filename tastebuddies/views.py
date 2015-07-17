@@ -1,7 +1,6 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
-import time
 import os
 
 from email.MIMEMultipart import MIMEMultipart
@@ -16,16 +15,6 @@ from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
                     Group, Diet)
 
 
-# @view_config(route_name='home', renderer='templates/test.jinja2')
-# def my_view(request):
-#     try:
-#         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-#     except DBAPIError:
-#         return Response(conn_err_msg, content_type='text/plain',
-#                         status_int=500)
-#     return {'one': one, 'project': 'tastebuddies'}
-
-
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
 def home_view(request):
@@ -36,11 +25,10 @@ def home_view(request):
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
 
+    error_msg = None
     username = request.authenticated_userid
 
     if request.method == 'POST':
-
-        # import pdb; pdb.set_trace()
 
         try:
             manager = BCRYPTPasswordManager()
@@ -49,21 +37,25 @@ def user_create_view(request):
             hashed = manager.encode(password)
             email = request.params.get('email')
 
-            User.write(username=username, password=hashed, email=email)
+            User.write(
+                username=username,
+                password=hashed,
+                email=email,
+                cost=1,
+                age=1,
+                user_location=1
+            )
             headers = remember(request, username)
-
-            time.sleep(1)
 
             return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
             return {}
-    return {'username': username}
+    return {'username': username,
+            'error_msg': error_msg}
 
 
-@view_config(route_name='send_email')
+@view_config(route_name='send_email', permission='authn')
 def send_verify_email(request):
-
-    # import pdb; pdb.set_trace()
 
     ver_code = randint(1000, 9999)
 
@@ -102,20 +94,25 @@ def send_verify_email(request):
 
 
 @view_config(route_name='verify',
+             permission='authn',
              renderer='templates/verify.jinja2')
 def verify(request):
+    error_msg = None
     uname = request.authenticated_userid
     user_obj = User.lookup_user_by_username(uname)
-    action = {'username': uname}
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
         db_vcode = user_obj.ver_code
 
         if user_vcode == db_vcode:
+            user_obj.confirm_user(username=user_obj.username)
+
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
+
+    action = {'username': uname, 'error_msg': error_msg}
 
     return action
 
@@ -149,30 +146,33 @@ def passes_authentication(request):
 
 
 def passes_verification(request):
-    # !!!!!
-    # HERE WE NEED TO CHECK THE USER'S 'VERIFIED' DB COLUMN
-    # AND RETURN IT
-    # !!!!!
-    verified_status = True
+    username = request.params.get('username', None)
+    udata = User.lookup_user_by_username(username)
+
+    try:
+        verified_status = udata.confirmed
+    except:
+        verified_status = False
+
     return verified_status
 
 
 @view_config(route_name='user_login',
              renderer='templates/login.jinja2')
 def login(request):
+    error_msg = None
     username = request.params.get('username', '')
-    error = ''
-    result = ''
+    result = None
 
     if request.method == 'POST':
-        error = 'Login Failed'
+        error_msg = 'Login Failed'
         authn = False
 
         try:
             authn = passes_authentication(request)
 
         except ValueError as e:
-            error = str(e)
+            error_msg = str(e)
 
         if authn is True:
             headers = remember(request, username)
@@ -190,12 +190,12 @@ def login(request):
                 )
 
     if not result:
-        result = {'error': error, 'username': username}
+        result = {'error_msg': error_msg, 'username': username}
 
     return result
 
 
-@view_config(route_name='logout',)
+@view_config(route_name='logout', permission='authn')
 def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
@@ -205,7 +205,12 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
 
-    uname = request.authenticated_userid
+    error_msg = None
+    if not (request.has_permission('owner')
+            or request.has_permission('connect')):
+        return HTTPForbidden()
+
+    uname = request.matchdict['username']
     udata = User.lookup_user_by_username(uname)
 
     tastes = []
@@ -221,18 +226,13 @@ def profile_detail_view(request):
     for group in udata.user_groups:
         groups.append(group)
 
-    try:
-        price = Cost.one(eid=udata.cost).cost
-        location = Location.one(eid=udata.user_location).city
-        age = AgeGroup.one(eid=udata.age).age_group
-
-    except:
-        price = '$',
-        location = "Seattle"
-        age = 27
+    price = Cost.one(eid=udata.cost).cost
+    location = Location.one(eid=udata.user_location).city
+    age = AgeGroup.one(eid=udata.age).age_group
 
     return {
-        'username': udata.username,
+        'username': request.authenticated_userid,
+        'error_msg': error_msg,
         'firstname': udata.firstname,
         'lastname': udata.lastname,
         'food': udata.food,
@@ -247,8 +247,10 @@ def profile_detail_view(request):
 
 
 @view_config(route_name='profile_edit',
+             permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
+    error_msg = None
     if request.method == 'POST':
             username = request.authenticated_userid
             firstname = request.params.get('first_name')
@@ -278,15 +280,26 @@ def profile_edit_view(request):
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'user': user, 'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'username': username, 'diets': diet}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'user': user,
+        'tastes': tastes,
+        'ages': age,
+        'location': location,
+        'price': price,
+        'diets': diet
+    }
 
 
 @view_config(route_name='group_create',
+             permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    error_msg = None
+    username = request.authenticated_userid
+
     if request.method == 'POST':
-            username = request.authenticated_userid
             group_name = request.params.get('group_name')
             group_descrip = request.params.get('group_description')
             location = request.params.get('location')
@@ -298,76 +311,191 @@ def group_create_view(request):
                         location=location, food_profile=taste,
                         diet_restrict=diet, cost=price, age=age,
                         Admin=username)
+            all_groups = Group.all()
+            for group in all_groups:
+                if group.name == group_name:
+                    group_id = group.id
+            return HTTPFound(request.route_url('group_detail',
+                             group_id=group_id))
     tastes = Profile.all()
     diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'diets': diet}
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'tastes': tastes,
+        'ages': age,
+        'location': location,
+        'price': price,
+        'diets': diet
+    }
 
 
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-
-    # selected = ''
-    # for group in Group.all():
-    #     if group.name == ??
-    #         selected = group
-
-    # tastes = []
-    # diets = []
-    # for taste in selected.food_profile:
-    #     tastes.append(taste.taste)
-    # for diet in selected.diet_restrict:
-    #     diets.append(diet.diet)
-    # name = selected.name
-    # description = selected.description
-
-    # try:
-    #     price = Cost.one(eid=selected.cost).cost
-    #     location = Location.one(eid=selected.group_location).city
-    #     age = AgeGroup.one(eid=selected.age).age_group
-
-    # return{'name': name, 'tastes': tastes, 'diets': diets, 'age': age,
-    #        'location': location, 'price': price, 'description': description}
-
-    return {}
-
-
-@view_config(route_name='group_edit',
-             renderer='templates/group_edit.jinja2')
-def group_edit_view(request):
-    return {}
-
-
-@view_config(route_name='group_forum',
-             renderer='templates/group_forum.jinja2')
-def group_forum_view(request):
-    """
-    If the request method is POST then writes either the discussion or
-    the post to the database.
-    If the request method is GET finds the appropriate group and its
-    associated discussions.  creates an ordered dictionary with the
-    discussion title as key and the post texts as values in a list.
-    Reverses the ordered dictionary so that the most recent discussions
-    appear first.
-    """
-    group = Group.one(request.matchdict['group_id'])
+    error_msg = None
+    username = request.authenticated_userid
+    grp_obj = Group.lookup_group_by_id(request.matchdict['group_id'])
 
     if request.method == 'POST':
+        User.addgroup(username=username, usergroup=grp_obj)
+
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
+            Discussion.write(title=title, group_id=grp_obj.id)
+
+            for discussions in Discussion.all():
+
+                if discussions.title == title:
+                    discussion = discussions
+            discussion_id = discussion.id
+
+            return HTTPFound(request.route_url(
+                'group_discussion',
+                group_id=request.matchdict['group_id'],
+                discussion_id=discussion_id
+            ))
+
         if request.params.get('text'):
             discussion = Discussion.one(request.matchdict['discussion_id'])
             text = request.params.get('text')
             Post.write(text=text, discussion_id=discussion.id)
 
-    discussions = group.discussions
-    posts = discussions.posts
-    return {'discussions': discussions, 'posts': posts}
+    members = grp_obj.users
+
+    tmp_discussions = []
+
+    for discussion in Discussion.all():
+        if discussion.group_id == grp_obj.id:
+            tmp_discussions.append(discussion)
+
+    discussions = []
+
+    for discussion in tmp_discussions:
+        discussions.append(tmp_discussions.pop())
+
+    posts = Post.all()
+    price = Cost.one(eid=grp_obj.cost).cost
+    location = Location.one(eid=grp_obj.location).city
+    age = AgeGroup.one(eid=grp_obj.age).age_group
+
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': grp_obj,
+        'members': members,
+        'age': age,
+        'location': location,
+        'price': price,
+        'discussions': discussions,
+        'posts': posts
+    }
+
+
+@view_config(route_name='group_discussion',
+             renderer='templates/group_detail.jinja2')
+def group_discussion_view(request):
+    error_msg = None
+    username = request.authenticated_userid
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+
+    if request.method == 'POST':
+
+        if request.params.get('title'):
+            title = request.params.get('title')
+            Discussion.write(title=title, group_id=group.id)
+
+        if request.params.get('text'):
+
+            discussion = Discussion.one(request.matchdict['discussion_id'])
+            text = request.params.get('text')
+            Post.write(text=text, discussion_id=discussion.id)
+
+    members = User.all()
+    group_members = []
+
+    for member in members:
+        for group in member.user_groups:
+            if group == member.user_groups:
+                group_members.append(group)
+
+    tmp_discussions = group.discussions
+
+    for discussion in Discussion.all():
+
+        if discussion.group_id == group.id:
+            tmp_discussions.append(discussion)
+
+    discussions = []
+
+    for discussion in tmp_discussions:
+        discussions.append(tmp_discussions.pop())
+
+    posts = Post.all()
+    price = Cost.one(eid=group.cost).cost
+    location = Location.one(eid=group.location).city
+    age = AgeGroup.one(eid=group.age).age_group
+
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': group,
+        'members': members,
+        'age': age,
+        'location': location,
+        'price': price,
+        'discussions': discussions,
+        'posts': posts,
+    }
+
+
+@view_config(route_name='group_edit',
+             permission='authn',
+             renderer='templates/group_edit.jinja2')
+def group_edit_view(request):
+    error_msg = None
+    username = request.authenticated_userid
+    if request.method == 'POST':
+            group = Group.lookup_group_by_id(request.matchdict['group_id'])
+            group_name = request.params.get('group_name')
+            group_descrip = request.params.get('group_description')
+            location = request.params.get('group_location')
+            taste = request.params.getall('personal_taste')
+            diet = request.params.getall('group_diet')
+            price = request.params.get('group_price')
+            age = request.params.get('group_age')
+            username = request.authenticated_userid
+            Group.change(name=group_name, description=group_descrip,
+                         location=location, taste=taste,
+                         diet=diet, cost=price, age=age,
+                         Admin=username, id=group.id)
+            all_groups = Group.all()
+            for group in all_groups:
+                if group.name == group_name:
+                    group_id = group.id
+            return HTTPFound(request.route_url('group_detail',
+                             group_id=group_id))
+
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    ages = AgeGroup.all()
+    locations = Location.all()
+    food_profiles = Profile.all()
+    diets = Diet.all()
+    costs = Cost.all()
+    # id = group.id
+    return {
+        'username': username,
+        'error_msg': error_msg,
+        'group': group,
+        'ages': ages,
+        'locations': locations,
+        'food_profiles': food_profiles,
+        'diets': diets,
+        'costs': costs
+    }
 
 
 conn_err_msg = """

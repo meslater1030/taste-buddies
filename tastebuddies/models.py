@@ -10,6 +10,7 @@ from sqlalchemy import (
     Boolean,
 )
 
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
@@ -19,6 +20,7 @@ from sqlalchemy.orm import (
     validates,
 )
 
+from pyramid.security import Allow
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
@@ -156,6 +158,15 @@ class User(Base, _Table):
         return instance
 
     @classmethod
+    def confirm_user(cls, username, session=None):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_user_by_username(username)
+        instance.confirmed = True
+        session.add(instance)
+        return instance
+
+    @classmethod
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
@@ -166,6 +177,8 @@ class User(Base, _Table):
         instance.food = kwargs.get("food")
         tasteid = map(int, kwargs.get("taste"))
         dietid = map(int, kwargs.get("diet"))
+        instance.food_profile = []
+        instance.diet_restrict = []
         for eid in tasteid:
             instance.food_profile.append(session.query(Profile).filter
                                          (Profile.id == eid).all()[0])
@@ -176,8 +189,22 @@ class User(Base, _Table):
         instance.cost = int(kwargs.get("price"))
         instance.user_location = int(kwargs.get("location"))
         instance.age = int(kwargs.get("age"))
+
         session.add(instance)
         return instance
+
+    @property
+    def __acl__(self):
+        acl = []
+
+        acl.append((Allow, self.username, 'owner'))
+
+        for group in self.user_groups:
+            acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
+
+        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
+
+        return acl
 
     def __repr__(self):
         return "<User({} {}, username={})>".format(self.firstname,
@@ -234,16 +261,40 @@ class Group(Base):
     discussions = relationship('Discussion',
                                primaryjoin="(Group.id==Discussion.group_id)")
 
-    group_admin = relationship("Admin", uselist=False, backref='group')
+    # group_admin = relationship("Admin", uselist=False, backref='group')
+    group_admin = relationship("Admin", uselist=False)
 
     food_profile = relationship('Profile', secondary=grouptaste_table,
                                 backref='group')
     diet_restrict = relationship('Diet', secondary=groupdiet_table,
                                  backref='group')
-    post = relationship('Post')
     cost = Column(Integer, ForeignKey('cost.id'))
     age = Column(Integer, ForeignKey('agegroup.id'))
-    group_admin = relationship("Admin", uselist=False)
+
+    @classmethod
+    def change(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls.lookup_group_by_id(gid=kwargs["id"])
+        instance.name = kwargs.get("name")
+        instance.description = kwargs.get("description")
+        instance.user_location = int(kwargs.get("location"))
+        if kwargs.get("discussions"):
+            instance.discussions = kwargs.get("discussions")
+        instance.age = int(kwargs.get("age"))
+        instance.cost = int(kwargs.get("cost"))
+        tasteid = map(int, kwargs.get("taste"))
+        dietid = map(int, kwargs.get("diet"))
+        instance.food_profile = []
+        instance.diet_restrict = []
+        for eid in tasteid:
+            instance.food_profile.append(session.query(Profile).filter
+                                         (Profile.id == eid).all()[0])
+        for eid in dietid:
+            instance.diet_restrict.append(session.query(Diet).filter
+                                          (Diet.id == eid).all()[0])
+        session.add(instance)
+        return instance
 
     @classmethod
     def write(cls, session=None, **kwargs):
@@ -269,10 +320,37 @@ class Group(Base):
         return instance
 
     @classmethod
+    def all(cls, session=None):
+        if session is None:
+            session = DBSession
+        return session.query(cls).all()
+
+    @classmethod
     def lookup_group_by_id(cls, gid, session=None):
         if session is None:
             session = DBSession
         return session.query(cls).filter(cls.id == gid).one()
+
+    @classmethod
+    def get_members_of_gid(cls, gid, session=None):
+        if session is None:
+            session = DBSession
+
+        return session.query(User).filter(User.user_groups == gid).all()
+
+    @property
+    def __acl__(self):
+        acl = []
+
+        acl.append((Allow, self.group_admin, 'g_admin'))
+
+        members = self.id.users
+        for member in members:
+            acl.append((Allow, 'member:{}'.format(member.username), 'member'))
+
+        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
+
+        return acl
 
     def __repr__(self):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
@@ -292,9 +370,7 @@ class Discussion(Base, _Table):
 class Post(Base, _Table):
     __tablename__ = 'post'
     text = Column(Text)
-
     discussion_id = Column(Integer, ForeignKey('discussion.id'))
-    group_id = Column(Integer, ForeignKey('groups.id'))
 
     def __repr__(self):
         return "<Post(%s)>" % (self.text)
