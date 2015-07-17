@@ -200,7 +200,7 @@ class User(Base, _Table):
         # if url_name == cur_name:
         acl.append((Allow, self.username, 'owner'))
         for group in self.user_groups:
-            acl.append((Allow, 'group:{}'.format(group.id), 'view'))
+            acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
 
         acl.append((Deny, Everyone, ALL_PERMISSIONS))
 

@@ -201,11 +201,13 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
     # import pdb; pdb.set_trace()
+
+    if not (request.has_permission('owner')
+            or request.has_permission('connect')):
+        return HTTPForbidden()
+
     uname = request.matchdict['username']
     udata = User.lookup_user_by_username(uname)
-
-    if not request.has_permission('owner'):
-        return HTTPForbidden()
 
     tastes = []
     diets = []
@@ -320,7 +322,11 @@ def group_detail_view(request):
     if request.method == 'POST':
         username = request.authenticated_userid
         User.addgroup(username=username, usergroup=gid)
-        return HTTPFound(request.route_url('group_detail', group_id=request.matchdict['group_id']))
+        return HTTPFound(request.route_url(
+            'group_detail',
+            group_id=request.matchdict['group_id']
+        ))
+
     members = gid.users
     group_members = []
     for member in members:
