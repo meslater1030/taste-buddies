@@ -429,7 +429,6 @@ def group_edit_view(request):
     food_profiles = Profile.all()
     diets = Diet.all()
     costs = Cost.all()
-
     return {'username': username, 'group': group, 'ages': ages,
             'locations': locations, 'food_profiles': food_profiles,
             'diets': diets, 'costs': costs}

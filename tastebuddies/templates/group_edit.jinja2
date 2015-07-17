@@ -41,32 +41,35 @@
     <div id="group_taste" class="field-group">
         <label>Taste</label>
         {% for food_profile in food_profiles %}
-            {% if food_profile.taste == group.food_profile %}
-                <input type="checkbox" name="group_taste" class="personal_taste"
-                       value="{{ group.food_profile }}" checked="checked">{{ group.food_profile }}
-            {% else %}
-                <input type="checkbox" class="personal_taste" value="{{ food_profile.taste }}">{{ food_profile.taste }}
-            {% endif %}
+            {% for group_food_taste in group.food_profile %}
+                {% if group_food_taste.taste == food_profile.taste %}
+                    <input type="checkbox" name="group_taste" class="personal_taste"
+                           value="{{ food_profile.taste }}" checked="checked">{{ food_profile.taste }}
+                {% else %}
+                    <input type="checkbox" class="personal_taste" value="{{ food_profile.taste }}">{{ food_profile.taste }}
+                {% endif %}
+            {% endfor %}
         {% endfor %}
-
 
         <label>Diet</label>
         {% for diet in diets %}
-            {% if diet.diet == group.diet_restrict %}
-                <input type="checkbox" class="diet"
-                       value="{{ group.diet_restrict }}" checked="checked">{{ group.diet_restrict }}
-            {% else %}
-                <input type="checkbox" class="diet" value="{{ diet.diet }}">{{ diet.diet }}
-            {% endif %}
+            {% for group_diet in group.diet_restrict %}
+                {% if group_diet.diet == diet.diet %}
+                    <input type="checkbox" class="diet"
+                           value="{{ diet.diet }}" checked="checked">{{ diet.diet }}
+                {% else %}
+                    <input type="checkbox" class="diet" value="{{ diet.diet }}">{{ diet.diet }}
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     </div>
 
     <div class="field-group">
         <label>Price</label>
         {% for cost in costs %}
-            {% if cost.cost == group.cost %}
+            {% if group.cost == cost.id %}
                 <input type="radio" name="group_price" class="style"
-                       value="{{ group.cost }}" checked="checked">{{ group.cost }}
+                       value="{{ cost.cost }}" checked="checked">{{ cost.cost }}
             {% else %}
                 <input type="radio" name="group_price" class="style" value="{{ cost.cost }}">{{ cost.cost }}
             {% endif %}
