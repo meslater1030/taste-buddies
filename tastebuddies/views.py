@@ -285,8 +285,9 @@ def profile_edit_view(request):
 @view_config(route_name='group_create',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    username = request.authenticated_userid
+
     if request.method == 'POST':
-            username = request.authenticated_userid
             group_name = request.params.get('group_name')
             group_descrip = request.params.get('group_description')
             location = request.params.get('location')
@@ -305,8 +306,14 @@ def group_create_view(request):
     age = AgeGroup.all()
     location = Location.all()
     price = Cost.all()
-    return {'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'diets': diet}
+    return {
+        'username': username,
+        'tastes': tastes,
+        'ages': age,
+        'location': location,
+        'price': price,
+        'diets': diet
+    }
 
 
 @view_config(route_name='group_detail',

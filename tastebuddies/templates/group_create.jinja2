@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form method="POST" id="create-group-form" action="{{ request.route_url('group_create')}}">
+<form method="POST" id="create-group-form" action="{{ request.route_url('profile_detail', username=username) }}">
     <h1>Create your group!</h1>
     <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
