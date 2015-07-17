@@ -52,7 +52,7 @@ def user_create_view(request):
     return {'username': username}
 
 
-@view_config(route_name='send_email')
+@view_config(route_name='send_email', permission='authn')
 def send_verify_email(request):
 
     ver_code = randint(1000, 9999)
@@ -92,6 +92,7 @@ def send_verify_email(request):
 
 
 @view_config(route_name='verify',
+             permission='authn',
              renderer='templates/verify.jinja2')
 def verify(request):
     uname = request.authenticated_userid
@@ -190,17 +191,15 @@ def login(request):
     return result
 
 
-@view_config(route_name='logout',)
+@view_config(route_name='logout', permission='authn')
 def logout(request):
     headers = forget(request)
     return HTTPFound(request.route_url('home'), headers=headers)
 
 
 @view_config(route_name='profile_detail',
-             # permission='view',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-    # import pdb; pdb.set_trace()
 
     if not (request.has_permission('owner')
             or request.has_permission('connect')):
@@ -242,6 +241,7 @@ def profile_detail_view(request):
 
 
 @view_config(route_name='profile_edit',
+             permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
     if request.method == 'POST':
@@ -278,6 +278,7 @@ def profile_edit_view(request):
 
 
 @view_config(route_name='group_create',
+             permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
     username = request.authenticated_userid
@@ -342,6 +343,7 @@ def group_detail_view(request):
 
 
 @view_config(route_name='group_edit',
+             permission='authn',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     username = request.authenticated_userid
@@ -375,6 +377,7 @@ def group_edit_view(request):
 
 
 @view_config(route_name='group_forum',
+             permission='authn',
              renderer='templates/group_forum.jinja2')
 def group_forum_view(request):
     """
