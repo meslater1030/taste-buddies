@@ -20,7 +20,7 @@ from sqlalchemy.orm import (
     validates,
 )
 
-from pyramid.security import Allow, Deny, Everyone, ALL_PERMISSIONS
+from pyramid.security import Allow
 
 from zope.sqlalchemy import ZopeTransactionExtension
 

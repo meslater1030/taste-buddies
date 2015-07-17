@@ -366,14 +366,6 @@ def group_detail_view(request):
 
     members = grp_obj.users
 
-    import pdb; pdb.set_trace()
-    # group_members = []
-
-    # for member in members:
-    #     for group in member.user_groups:
-    #         if group == member.user_groups:
-    #             group_members.append(group)
-
     tmp_discussions = []
 
     for discussion in Discussion.all():
@@ -441,8 +433,6 @@ def group_discussion_view(request):
 
     for discussion in tmp_discussions:
         discussions.append(tmp_discussions.pop())
-
-    import pdb; pdb.set_trace()
 
     posts = Post.all()
     price = Cost.one(eid=group.cost).cost
