@@ -98,8 +98,11 @@ def send_verify_email(request):
              renderer='templates/verify.jinja2')
 def verify(request):
     error_msg = None
+
     uname = request.authenticated_userid
     user_obj = User.lookup_user_by_username(uname)
+
+    action = {'username': uname, 'error_msg': error_msg}
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
@@ -111,8 +114,6 @@ def verify(request):
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
-
-    action = {'username': uname, 'error_msg': error_msg}
 
     return action
 
@@ -298,6 +299,8 @@ def profile_edit_view(request):
 def group_create_view(request):
     error_msg = None
     username = request.authenticated_userid
+
+    import pdb; pdb.set_trace()
 
     if request.method == 'POST':
             group_name = request.params.get('group_name')
