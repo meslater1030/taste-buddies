@@ -74,6 +74,7 @@
   </form>
 </div>
 
+{% if request.has_permission('owner') %}
 <nav>
     <ul>
     <ul>
@@ -90,6 +91,7 @@
     </ul>
     </ul>
 </nav>
+{% endif %}
 
 </form>
 </div>
