@@ -32,7 +32,16 @@
   <div id="banner">
         <img src="/static/img/taste_buddies_banner.png" alt="taste buddies banner" />
   </div>
+
 </header>
+
+{% if error_msg %}
+
+<div id='error_msg'>
+<p>{{ error_msg }}</p>
+</div>
+
+{% endif %}
 
   {% block body %}
   {% endblock %}
@@ -50,7 +59,7 @@
       </aside>
       <footer>
       <ul>
-      <p>&copy; 2015 Taste Buddies Created in the Code Fellows Python Dev Accelerator</p>
+      <p>&copy; 2015 Created by Karen Wong, Megan Slater, Tanner Lake, and Johnson Jew</p>
       </ul>
     </footer>
   </body>

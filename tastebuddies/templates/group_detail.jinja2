@@ -24,17 +24,14 @@
     {{ diet.diet }}
     </span>
 {% endfor %}
-</p>
-<p>
+
+
     <span class="button disabled {{ price.lower() }}">{{ price }}
     </span>
-</p>
-<p>
+
     <span class="button disabled {{ location.lower() }}">
     {{ location }}
     </span>
-</p>
-<p>
     <span class="button disabled {{ age.lower() }}">
     {{ age }}
     </span>
@@ -44,12 +41,19 @@
 
     <h2> Members </h2>
     <div id = "members_container">
-    <ul>
+        <img src="../static/img/dog4.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog5.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog6.jpeg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog7.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog8.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog9.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog10.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
+        <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
     <!-- only list 8 -->
         {% for member in members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
         {% endfor %}
-    </ul>
+
     </div>
 
     <div id="#form-container">
@@ -59,11 +63,6 @@
 
 {% endif %}
 
-<div id="#form-container">
-<form id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
-<input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
-</form>
-</div>
 
 {% if request.has_permission('authn') %}
     <nav>
@@ -114,7 +113,7 @@
 
     {% if not discussions %}
         <div class="entry">
-            <p><em>No one has planned anything yet. Start a discussion!</em></p>
+            <h3>No one has planned anything yet.</h3><h3>Be the first one to!</h3>
         </div>
     {% endif %}
 </section>

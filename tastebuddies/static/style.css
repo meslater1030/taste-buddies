@@ -18,6 +18,11 @@ h2 {
     text-align: center;
 }
 
+h3 {
+    font-family: Courier;
+    font-size: 10px;
+    text-align: center;
+}
 
 body {
     font-size: 80%;
@@ -48,6 +53,15 @@ body {
     width: 100%;
 }
 
+#error_msg {
+    background-color: #ebb;
+    border: 1px solid #b88;
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+    text-align: center;
+    margin: 2% 30% 0% 30%;
+}
 
 #resend-email-form, #join-group-form, #login-form, #create-user-form, #verification-form{
     text-align: center;
@@ -418,7 +432,7 @@ footer {
 
 .mediterranian.button.disabled{
   background: linear-gradient(#337ab7,#2e6da4);
-  text-shadow: 1px 1px 1px ##2e6da4;
+  text-shadow: 1px 1px 1px #2e6da4;
 }
 
 
@@ -434,7 +448,7 @@ footer {
 }
 
 
-.somalian.button.disabled{
+.somolian.button.disabled{
   background: linear-gradient(#FF6666,#FFA3A3);
   text-shadow: 1px 1px 1px #FFA3A3;
 }
@@ -446,7 +460,7 @@ footer {
 }
 
 
-.barbeque.button.disabled {
+.barbecue.button.disabled {
   background: linear-gradient(#A0522D,#AA6342);
   text-shadow: 1px 1px 1px #AA6342;
 }
@@ -470,7 +484,7 @@ footer {
 }
 
 
-.mexian.button.disabled {
+.mexican.button.disabled {
   background: linear-gradient(#6BDB55,#57B245);
   text-shadow: 1px 1px 1px #57B245;
 }
@@ -489,13 +503,13 @@ footer {
 
 /*Dietary Restrictions*/
 
-.gluten_free.button.disabled {
+.gluten.free.button.disabled {
   background: linear-gradient(#993366,#7A2952);
   text-shadow: 1px 1px 1px #7A2952;
 }
 
 
-.low_carb.button.disabled{
+.low.carb.button.disabled{
   background: linear-gradient(#FF9900,#FFB2B2);
   text-shadow: 1px 1px 1px #FFB2B2;
 }
@@ -601,7 +615,7 @@ footer {
 }
 
 
-.south_king.button.disabled {
+.south.king.button.disabled {
   background: linear-gradient(#FFD700,#FFDB19);
   text-shadow: 1px 1px 1px #FFDB19;
 }
