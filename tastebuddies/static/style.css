@@ -216,6 +216,11 @@ a:hover, a.on {
 }
 
 
+.member-li {
+    margin-top: 10px;
+}
+
+
 .group-page-member-photo{
     border-radius: 100%;
     display: inline-block;
@@ -290,7 +295,7 @@ footer {
 /*Group Taste Buttons/Profile*/
 
 #group_taste_buttons {
-    width: 700px;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
     border-bottom: 1px solid #952d98;

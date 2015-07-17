@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from pyramid.security import Allow, Authenticated
-from models import User, DBSession
+from models import DBSession, User, Group
 
 
 def groupfinder(uname, request):
@@ -35,4 +35,8 @@ class UserFactory(object):
 
 
 class GroupFactory(object):
-    pass
+    def __init__(self, request):
+        self.request = request
+
+    def __getitem__(self, key):
+        return DBSession.query(Group).filter(Group.id == key).one()

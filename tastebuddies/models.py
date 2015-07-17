@@ -194,15 +194,13 @@ class User(Base, _Table):
     @property
     def __acl__(self):
         acl = []
-        # url_name = self.request.matchdict['username']
-        # cur_name = self.request.authenticated_userid
 
-        # if url_name == cur_name:
         acl.append((Allow, self.username, 'owner'))
+
         for group in self.user_groups:
             acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
 
-        acl.append((Deny, Everyone, ALL_PERMISSIONS))
+        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
 
         return acl
 
@@ -261,7 +259,8 @@ class Group(Base):
     discussions = relationship('Discussion',
                                primaryjoin="(Group.id==Discussion.group_id)")
 
-    group_admin = relationship("Admin", uselist=False, backref='group')
+    # group_admin = relationship("Admin", uselist=False, backref='group')
+    group_admin = relationship("Admin", uselist=False)
 
     food_profile = relationship('Profile', secondary=grouptaste_table,
                                 backref='group')
@@ -270,7 +269,6 @@ class Group(Base):
     post = relationship('Post')
     cost = Column(Integer, ForeignKey('cost.id'))
     age = Column(Integer, ForeignKey('agegroup.id'))
-    group_admin = relationship("Admin", uselist=False)
 
     @classmethod
     def write(cls, session=None, **kwargs):
@@ -306,6 +304,27 @@ class Group(Base):
         if session is None:
             session = DBSession
         return session.query(cls).filter(cls.id == gid).one()
+
+    @classmethod
+    def get_members_of_gid(cls, gid, session=None):
+        if session is None:
+            session = DBSession
+
+        return session.query(User).filter(User.user_groups == gid).all()
+
+    @property
+    def __acl__(self):
+        acl = []
+
+        acl.append((Allow, self.group_admin, 'g_admin'))
+
+        members = self.id.users
+        for member in members:
+            acl.append((Allow, 'member:{}'.format(member.username), 'member'))
+
+        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
+
+        return acl
 
     def __repr__(self):
         return "<Group(%s, location=%s)>" % (self.name, self.location)

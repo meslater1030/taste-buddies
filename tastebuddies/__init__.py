@@ -75,7 +75,9 @@ def main(global_config, **settings):
 
     config.add_route('profile_detail', '/profile/{username}',
                      factory=UserFactory, traverse='/{username}')
-    config.add_route('group_detail', '/group/{group_id}')
+
+    config.add_route('group_detail', '/group/{group_id}',
+                     factory=Root)
     # config.add_route('group_detail', '/group/{group_id}',
     #                  factory=GroupFactory, traverse='/{group_id}')
 

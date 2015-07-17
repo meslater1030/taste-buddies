@@ -5,7 +5,14 @@
 
 <div id="#form-container">
   <form id="view-personal-profile-form">
-    <h1>Your Profile!</h1>
+    {% if request.has_permission('owner') %}
+        <h1>Your Profile!</h1>
+
+    {% else %}
+        <h1>{{ request.matchdict['username'] }}'s Profile!</h1>
+
+    {% endif %}
+
     <div><!--     an image uploading bar thing suppose to be right here -->
        <img src="../static/img/dog2.jpg" alt="Pesonal Profile Photo" class="profile-photo">
     </div>
@@ -78,17 +85,17 @@
 <nav>
     <ul>
     <ul>
-    <li><a href="{{ request.route_url('group_detail', group_id=0) }}">+Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_create') }}">+Create Group</a></li>
 
     <li><a href="{{ request.route_url('profile_edit', username=username) }}">+Edit Profile</a></li>
 
     </ul>
-    <ul>
+<!--     <ul>
 
-    <li><a href="{{ request.route_url('group_create') }}">+Create Group</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_id=0) }}">+Your Groups</a></li>
 
     <li><a href="{{ request.route_url('group_detail', group_id=1) }}">+Administer Your Groups</a></li>
-    </ul>
+    </ul> -->
     </ul>
 </nav>
 {% endif %}
