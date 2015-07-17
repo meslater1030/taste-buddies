@@ -15,15 +15,30 @@
 <div id="group_taste_buttons">
 <p>
 {% for taste in group.food_profile %}
+    <span class="button disabled {{ taste.taste.lower() }}">
     {{ taste.taste }}
+    </span>
 {% endfor %}
 {% for diet in group.diet_restrict %}
+    <span class="button disabled {{ diet.diet.lower() }}">
     {{ diet.diet }}
+    </span>
 {% endfor %}
 </p>
-<p>{{ price }}</p>
-<p>{{ location }}</p>
-<p>{{ age }}</p>
+<p>
+    <span class="button disabled {{ price.lower() }}">{{ price }}
+    </span>
+</p>
+<p>
+    <span class="button disabled {{ location.lower() }}">
+    {{ location }}
+    </span>
+</p>
+<p>
+    <span class="button disabled {{ age.lower() }}">
+    {{ age }}
+    </span>
+</p>
 
 </div>
 
