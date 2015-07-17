@@ -10,6 +10,7 @@ from sqlalchemy import (
     Boolean,
 )
 
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
@@ -308,7 +309,6 @@ class Discussion(Base, _Table):
 class Post(Base, _Table):
     __tablename__ = 'post'
     text = Column(Text)
-
     discussion_id = Column(Integer, ForeignKey('discussion.id'))
 
     def __repr__(self):

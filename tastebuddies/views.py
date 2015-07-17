@@ -329,12 +329,42 @@ def group_detail_view(request):
                 group_members.append(group)
 
     discussions = group.discussions
+    posts = Post.all()
     price = Cost.one(eid=group.cost).cost
     location = Location.one(eid=group.location).city
     age = AgeGroup.one(eid=group.age).age_group
     return {'group': group, 'members': members,
             'age': age, 'location': location, 'price': price,
-            'discussions': discussions}
+            'discussions': discussions, 'posts': posts}
+
+
+@view_config(route_name='group_discussion',
+             renderer='templates/group_detail.jinja2')
+def group_discussion_view(request):
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    if request.method == 'POST':
+        if request.params.get('title'):
+            title = request.params.get('title')
+            Discussion.write(title=title, group_id=group.id)
+        if request.params.get('text'):
+            discussion = Discussion.one(request.matchdict['discussion_id'])
+            text = request.params.get('text')
+            Post.write(text=text, discussion_id=discussion.id)
+    members = User.all()
+    group_members = []
+    for member in members:
+        for group in member.user_groups:
+            if group == member.user_groups:
+                group_members.append(group)
+
+    discussions = group.discussions
+    posts = Post.all()
+    price = Cost.one(eid=group.cost).cost
+    location = Location.one(eid=group.location).city
+    age = AgeGroup.one(eid=group.age).age_group
+    return {'group': group, 'members': members,
+            'age': age, 'location': location, 'price': price,
+            'discussions': discussions, 'posts': posts}
 
 
 @view_config(route_name='group_edit',
