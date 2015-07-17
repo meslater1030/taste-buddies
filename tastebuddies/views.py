@@ -300,9 +300,9 @@ def group_create_view(request):
     diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
-    price = Cost.all()
+    cost = Cost.all()
     return {'tastes': tastes, 'ages': age, 'location': location,
-            'price': price, 'diets': diet}
+            'cost': cost, 'diets': diet}
 
 
 @view_config(route_name='group_detail',
@@ -321,7 +321,15 @@ def group_detail_view(request):
 @view_config(route_name='group_edit',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
-    return {}
+    group = Group.one(request.matchdict['group_id'])
+    ages = AgeGroup.all()
+    locations = Location.all()
+    food_profiles = Profile.all()
+    diets = Diet.all()
+    costs = Cost.all()
+    return {'group': group, 'ages': ages,
+            'locations': locations, 'food_profiles': food_profiles,
+            'diets': diets, 'costs': costs}
 
 
 @view_config(route_name='group_forum',
