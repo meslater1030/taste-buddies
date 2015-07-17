@@ -15,16 +15,6 @@ from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
                     Group, Diet)
 
 
-# @view_config(route_name='home', renderer='templates/test.jinja2')
-# def my_view(request):
-#     try:
-#         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
-#     except DBAPIError:
-#         return Response(conn_err_msg, content_type='text/plain',
-#                         status_int=500)
-#     return {'one': one, 'project': 'tastebuddies'}
-
-
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
 def home_view(request):
@@ -38,8 +28,6 @@ def user_create_view(request):
     username = request.authenticated_userid
 
     if request.method == 'POST':
-
-        # import pdb; pdb.set_trace()
 
         try:
             manager = BCRYPTPasswordManager()
@@ -66,8 +54,6 @@ def user_create_view(request):
 
 @view_config(route_name='send_email')
 def send_verify_email(request):
-
-    # import pdb; pdb.set_trace()
 
     ver_code = randint(1000, 9999)
 
@@ -117,6 +103,8 @@ def verify(request):
         db_vcode = user_obj.ver_code
 
         if user_vcode == db_vcode:
+            user_obj.confirm_user(username=user_obj.username)
+
             action = HTTPFound(
                 request.route_url('profile_detail', username=uname)
             )
@@ -153,11 +141,14 @@ def passes_authentication(request):
 
 
 def passes_verification(request):
-    # !!!!!
-    # HERE WE NEED TO CHECK THE USER'S 'VERIFIED' DB COLUMN
-    # AND RETURN IT
-    # !!!!!
-    verified_status = True
+    username = request.params.get('username', None)
+    udata = User.lookup_user_by_username(username)
+
+    try:
+        verified_status = udata.confirmed
+    except:
+        verified_status = False
+
     return verified_status
 
 
