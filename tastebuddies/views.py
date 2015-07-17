@@ -1,7 +1,6 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
-import time
 import os
 
 from email.MIMEMultipart import MIMEMultipart
@@ -49,10 +48,15 @@ def user_create_view(request):
             hashed = manager.encode(password)
             email = request.params.get('email')
 
-            User.write(username=username, password=hashed, email=email)
+            User.write(
+                username=username,
+                password=hashed,
+                email=email,
+                cost=1,
+                age=1,
+                user_location=1
+            )
             headers = remember(request, username)
-
-            time.sleep(1)
 
             return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
@@ -205,7 +209,7 @@ def logout(request):
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
 
-    uname = request.authenticated_userid
+    uname = request.matchdict['username']
     udata = User.lookup_user_by_username(uname)
 
     tastes = []
@@ -221,15 +225,9 @@ def profile_detail_view(request):
     for group in udata.user_groups:
         groups.append(group)
 
-    try:
-        price = Cost.one(eid=udata.cost).cost
-        location = Location.one(eid=udata.user_location).city
-        age = AgeGroup.one(eid=udata.age).age_group
-
-    except:
-        price = '$',
-        location = "Seattle"
-        age = 27
+    price = Cost.one(eid=udata.cost).cost
+    location = Location.one(eid=udata.user_location).city
+    age = AgeGroup.one(eid=udata.age).age_group
 
     return {
         'username': udata.username,

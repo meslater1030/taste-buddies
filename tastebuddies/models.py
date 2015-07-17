@@ -166,6 +166,8 @@ class User(Base, _Table):
         instance.food = kwargs.get("food")
         tasteid = map(int, kwargs.get("taste"))
         dietid = map(int, kwargs.get("diet"))
+        instance.food_profile = []
+        instance.diet_restrict = []
         for eid in tasteid:
             instance.food_profile.append(session.query(Profile).filter
                                          (Profile.id == eid).all()[0])
