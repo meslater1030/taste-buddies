@@ -298,6 +298,8 @@ def group_create_view(request):
                         location=location, food_profile=taste,
                         diet_restrict=diet, cost=price, age=age,
                         Admin=username)
+            return HTTPFound(request.route_url('profile_detail',
+                             username=username))
     tastes = Profile.all()
     diet = Diet.all()
     age = AgeGroup.all()
