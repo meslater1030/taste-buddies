@@ -312,18 +312,22 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-    members = User.all()
+    gid = Group.lookup_group_by_id(request.matchdict['group_id'])
+    if request.method == 'POST':
+        username = request.authenticated_userid
+        User.addgroup(username=username, usergroup=gid)
+        return HTTPFound(request.route_url('group_detail', group_id=request.matchdict['group_id']))
+    members = gid.users
     group_members = []
     for member in members:
         for group in member.user_groups:
             if group == member.user_groups:
                 group_members.append(group)
 
-    price = Cost.one(eid=group.cost).cost
-    location = Location.one(eid=group.location).city
-    age = AgeGroup.one(eid=group.age).age_group
-    return {'group': group, 'members': members,
+    price = Cost.one(eid=gid.cost).cost
+    location = Location.one(eid=gid.location).city
+    age = AgeGroup.one(eid=gid.age).age_group
+    return {'group': gid, 'members': members,
             'age': age, 'location': location, 'price': price}
 
 

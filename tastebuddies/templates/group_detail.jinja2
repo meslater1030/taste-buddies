@@ -38,7 +38,7 @@
 </div>
 
 <div id="#form-container">
-<form id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+<form method="POST" id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
 <input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
 </form>
 </div>
