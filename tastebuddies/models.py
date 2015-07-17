@@ -10,6 +10,7 @@ from sqlalchemy import (
     Boolean,
 )
 
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.orm import (
@@ -266,7 +267,6 @@ class Group(Base):
                                 backref='group')
     diet_restrict = relationship('Diet', secondary=groupdiet_table,
                                  backref='group')
-    post = relationship('Post')
     cost = Column(Integer, ForeignKey('cost.id'))
     age = Column(Integer, ForeignKey('agegroup.id'))
 
@@ -344,9 +344,7 @@ class Discussion(Base, _Table):
 class Post(Base, _Table):
     __tablename__ = 'post'
     text = Column(Text)
-
     discussion_id = Column(Integer, ForeignKey('discussion.id'))
-    group_id = Column(Integer, ForeignKey('groups.id'))
 
     def __repr__(self):
         return "<Post(%s)>" % (self.text)

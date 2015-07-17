@@ -57,7 +57,6 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('user_create', '/create_user')
     config.add_route('user_login', '/login')
-
     config.add_route('verify', '/verify',
                      factory=Root)
     config.add_route('send_email', '/send_email',
@@ -80,7 +79,8 @@ def main(global_config, **settings):
                      factory=Root)
     # config.add_route('group_detail', '/group/{group_id}',
     #                  factory=GroupFactory, traverse='/{group_id}')
-
+    config.add_route('group_discussion', '/group/{group_id}/{discussion_id}',
+                     factory=Root)
     config.scan()
 
     return config.make_wsgi_app()

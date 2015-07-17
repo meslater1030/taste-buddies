@@ -37,8 +37,6 @@
     </span>
 </p>
 
-</div>
-
 {% if request.has_permission('authn') %}
 
     <h2> Members </h2>
@@ -57,11 +55,13 @@
     </form>
     </div>
 
-    <section id='forum'>
-    {% block forumbody %}{% endblock %}
-    </section>
-
 {% endif %}
+
+<div id="#form-container">
+<form id="join-group-form" action="{{ request.route_url('group_detail', group_id=group.id) }}">
+<input id="join_group_button" type="submit" name="join_group" value="Join Group"/>
+</form>
+</div>
 
 {% if request.has_permission('authn') %}
     <nav>
@@ -73,5 +73,51 @@
     </nav>
 {% endif %}
 
+
+<section id='forum'>
+<h2> Want to plan an event? Start a discussion!!!</h2>
+
+<div id="#form-container">
+<form id="leave-comment-form" action="{{ request.route_url('group_detail', group_id=group.id) }}" method='POST'>
+    <label>Discussion Topic</label>
+    <div class="field-group">
+        <input type="text" name="title" placeholder="What do you want to do?"/>
+    </div>
+    <input id="save_discussion" type="submit" name="save_discussion" value="discussion"/>
+</form>
+</div>
+
+    {% for discussion in discussions %}
+    <article class="discussion" id="{{ discussion.id }}">
+        <h3>{{ discussion.title }}</a></h3>
+        <hr/>
+
+        {% for post in posts %}
+            <div class="post">
+            {% if post.discussion_id == discussion.id %}
+                <p>{{ post.text }}</p>
+            {% endif %}
+            </div>
+        {% endfor %}
+
+    </article>
+    <form id="leave-post-form" action="{{ request.route_url('group_discussion', group_id=group.id, discussion_id=discussion.id) }}" method='POST'>
+    <label>Comment</label>
+    <div class="field-group">
+        <textarea name="text" rows="2" cols="80" placeholder='Write a comment...'></textarea>
+    </div>
+    <input id="save_post" type="submit" name="save_post" value="post"/>
+    </form>
+    {% endfor %}
+
+    {% if not discussions %}
+        <div class="entry">
+            <p><em>No one has planned anything yet. Start a discussion!</em></p>
+        </div>
+    {% endif %}
+</section>
+
+
+
 {% endblock %}
->>>>>>> sec
+

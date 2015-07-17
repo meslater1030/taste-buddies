@@ -320,31 +320,80 @@ def group_create_view(request):
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
     username = request.authenticated_userid
-    gid = Group.lookup_group_by_id(request.matchdict['group_id'])
-
-    # import pdb; pdb.set_trace()
-
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
     if request.method == 'POST':
-        User.addgroup(username=username, usergroup=gid)
-        return HTTPFound(request.route_url(
-            'group_detail',
-            group_id=request.matchdict['group_id']
-        ))
+        User.addgroup(username=username, usergroup=group)
+        if request.params.get('title'):
+            title = request.params.get('title')
+            Discussion.write(title=title, group_id=group.id)
+            for discussions in Discussion.all():
+                if discussions.title == title:
+                    discussion = discussions
+            discussion_id = discussion.id
+            return HTTPFound(request.route_url(
+                'group_discussion',
+                group_id=request.matchdict['group_id'],
+                discussion_id=discussion_id
+            ))
+        if request.params.get('text'):
+            discussion = Discussion.one(request.matchdict['discussion_id'])
+            text = request.params.get('text')
+            Post.write(text=text, discussion_id=discussion.id)
+    members = User.all()
+    group_members = []
+    for member in members:
+        for group in member.user_groups:
+            if group == member.user_groups:
+                group_members.append(group)
+    tmp_discussions = []
+    for discussion in Discussion.all():
+        if discussion.group_id == group.id:
+            tmp_discussions.append(discussion)
+    discussions = []
+    for discussion in tmp_discussions:
+        discussions.append(tmp_discussions.pop())
+    posts = Post.all()
+    price = Cost.one(eid=group.cost).cost
+    location = Location.one(eid=group.location).city
+    age = AgeGroup.one(eid=group.age).age_group
+    return {'username': username, 'group': group, 'members': members,
+            'age': age, 'location': location, 'price': price,
+            'discussions': discussions, 'posts': posts}
 
-    members = gid.users
-    # group_members = []
-    # for member in members:
-    #     for group in member.user_groups:
-    #         if group == member.user_groups:
-    #             group_members.append(group)
 
-    # import pdb; pdb.set_trace()
+@view_config(route_name='group_discussion',
+             renderer='templates/group_detail.jinja2')
+def group_discussion_view(request):
+    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    if request.method == 'POST':
+        if request.params.get('title'):
+            title = request.params.get('title')
+            Discussion.write(title=title, group_id=group.id)
+        if request.params.get('text'):
+            discussion = Discussion.one(request.matchdict['discussion_id'])
+            text = request.params.get('text')
+            Post.write(text=text, discussion_id=discussion.id)
+    members = User.all()
+    group_members = []
+    for member in members:
+        for group in member.user_groups:
+            if group == member.user_groups:
+                group_members.append(group)
 
-    price = Cost.one(eid=gid.cost).cost
-    location = Location.one(eid=gid.location).city
-    age = AgeGroup.one(eid=gid.age).age_group
-    return {'username': username, 'group': gid, 'members': members,
-            'age': age, 'location': location, 'price': price}
+    tmp_discussions = []
+    for discussion in Discussion.all():
+        if discussion.group_id == group.id:
+            tmp_discussions.append(discussion)
+    discussions = []
+    for discussion in tmp_discussions:
+        discussions.append(tmp_discussions.pop())
+    posts = Post.all()
+    price = Cost.one(eid=group.cost).cost
+    location = Location.one(eid=group.location).city
+    age = AgeGroup.one(eid=group.age).age_group
+    return {'group': group, 'members': members,
+            'age': age, 'location': location, 'price': price,
+            'discussions': discussions, 'posts': posts}
 
 
 @view_config(route_name='group_edit',
@@ -384,36 +433,6 @@ def group_edit_view(request):
     return {'username': username, 'group': group, 'ages': ages,
             'locations': locations, 'food_profiles': food_profiles,
             'diets': diets, 'costs': costs}
-
-
-@view_config(route_name='group_forum',
-             permission='authn',
-             renderer='templates/group_forum.jinja2')
-def group_forum_view(request):
-    """
-    If the request method is POST then writes either the discussion or
-    the post to the database.
-    If the request method is GET finds the appropriate group and its
-    associated discussions.  creates an ordered dictionary with the
-    discussion title as key and the post texts as values in a list.
-    Reverses the ordered dictionary so that the most recent discussions
-    appear first.
-    """
-    username = request.authenticated_userid
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-
-    if request.method == 'POST':
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
-        if request.params.get('text'):
-            discussion = Discussion.one(request.matchdict['discussion_id'])
-            text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
-
-    discussions = group.discussions
-    posts = discussions.posts
-    return {'username': username, 'discussions': discussions, 'posts': posts}
 
 
 conn_err_msg = """
