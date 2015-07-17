@@ -333,7 +333,7 @@ def group_detail_view(request):
             return HTTPFound(request.route_url(
                 'group_discussion',
                 group_id=request.matchdict['group_id'],
-                discussion_id=request.matchdict['discussion_id']
+                discussion_id=discussion_id
             ))
         if request.params.get('text'):
             discussion = Discussion.one(request.matchdict['discussion_id'])
@@ -433,36 +433,6 @@ def group_edit_view(request):
     return {'username': username, 'group': group, 'ages': ages,
             'locations': locations, 'food_profiles': food_profiles,
             'diets': diets, 'costs': costs}
-
-
-@view_config(route_name='group_forum',
-             permission='authn',
-             renderer='templates/group_forum.jinja2')
-def group_forum_view(request):
-    """
-    If the request method is POST then writes either the discussion or
-    the post to the database.
-    If the request method is GET finds the appropriate group and its
-    associated discussions.  creates an ordered dictionary with the
-    discussion title as key and the post texts as values in a list.
-    Reverses the ordered dictionary so that the most recent discussions
-    appear first.
-    """
-    username = request.authenticated_userid
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-
-    if request.method == 'POST':
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
-        if request.params.get('text'):
-            discussion = Discussion.one(request.matchdict['discussion_id'])
-            text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
-
-    discussions = group.discussions
-    posts = discussions.posts
-    return {'username': username, 'discussions': discussions, 'posts': posts}
 
 
 conn_err_msg = """
