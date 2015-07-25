@@ -46,7 +46,7 @@
 
         <select name="location" class="location"/>
             {% for city in location %}
-            {% if city.id == user.user_location %}
+            {% if city.id == user.location %}
             <option selected="selected" value={{ city.id }}>{{ city.city }}</option>
 
             {% else %}
@@ -62,7 +62,7 @@
         <label>Taste</label>
 
         {% for taste in tastes %}
-        {% if taste in user.food_profile %}
+        {% if taste in user.taste %}
         <input type="checkbox" checked='checked' name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
 
         {% else %}
@@ -77,7 +77,7 @@
         <label>Dietary Restrictions</label>
 
         {% for diet in diets %}
-        {% if diet in user.diet_restrict %}
+        {% if diet in user.diet %}
         <input type="checkbox" checked='checked' name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
 
         {% else %}

@@ -39,20 +39,20 @@
 
     <div id="group_taste" class="field-group">
         <label>Taste</label>
-        {% for food_profile in food_profiles %}
-            {% for group_food_taste in group.food_profile %}
-                {% if group_food_taste.taste == food_profile.taste %}
+        {% for taste in tastes %}
+            {% for group_food_taste in group.taste %}
+                {% if group_food_taste.taste == taste.taste %}
                     <input type="checkbox" name="personal_taste" class="personal_taste"
-                           value="{{ food_profile.id }}" checked="checked">{{ food_profile.taste }}
+                           value="{{ taste.id }}" checked="checked">{{ taste.taste }}
                 {% else %}
-                    <input type="checkbox" name="personal_taste" class="personal_taste" value="{{ food_profile.id }}">{{ food_profile.taste }}
+                    <input type="checkbox" name="personal_taste" class="personal_taste" value="{{ taste.id }}">{{ taste.taste }}
                 {% endif %}
             {% endfor %}
         {% endfor %}
 
         <label>Diet</label>
         {% for diet in diets %}
-            {% for group_diet in group.diet_restrict %}
+            {% for group_diet in group.diet %}
                 {% if group_diet.diet == diet.diet %}
                     <input type="checkbox" class="diet"
                            value="{{ diet.id }}" checked="checked" name="group_diet">{{ diet.diet }}

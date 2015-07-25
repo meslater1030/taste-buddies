@@ -29,48 +29,32 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 
-usertaste_table = Table('user_profile', Base.metadata,
-                        Column('users', Integer, ForeignKey('users.id')),
-                        Column('profile', Integer, ForeignKey('profile.id'))
-                        )
+user_taste = Table('user_taste', Base.metadata,
+                   Column('users', Integer, ForeignKey('users.id')),
+                   Column('taste', Integer, ForeignKey('taste.id'))
+                   )
 
 
-userdiet_table = Table('user_diet', Base.metadata,
-                       Column('users', Integer, ForeignKey('users.id')),
-                       Column('profile', Integer, ForeignKey('diet.id'))
-                       )
+user_diet = Table('user_diet', Base.metadata,
+                  Column('users', Integer, ForeignKey('users.id')),
+                  Column('diet', Integer, ForeignKey('diet.id'))
+                  )
+
+group_user = Table('group_user', Base.metadata, Column('group', Integer,
+                   ForeignKey('groups.id')), Column('users', Integer,
+                   ForeignKey('users.id'))
+                   )
+
+group_taste = Table('group_taste', Base.metadata,
+                    Column('group_id', Integer, ForeignKey('groups.id')),
+                    Column('taste', Integer, ForeignKey('taste.id'))
+                    )
 
 
-usercost_table = Table('user_cost', Base.metadata,
-                       Column('users', Integer, ForeignKey('users.id')),
-                       Column('profile', Integer, ForeignKey('cost.id'))
-                       )
-
-groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
-                       ForeignKey('groups.id')), Column('agegroup', Integer,
-                       ForeignKey('agegroup.id'))
-                       )
-
-groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
-                        ForeignKey('groups.id')), Column('users', Integer,
-                        ForeignKey('users.id'))
-                        )
-
-groupcost_table = Table('group_cost', Base.metadata, Column('groups_id',
-                        Integer, ForeignKey('groups.id')),
-                        Column('cost_id', Integer, ForeignKey('cost.id'))
-                        )
-
-grouptaste_table = Table('group_taste', Base.metadata,
-                         Column('group_id', Integer, ForeignKey('groups.id')),
-                         Column('profile', Integer, ForeignKey('profile.id'))
-                         )
-
-
-groupdiet_table = Table('group_diet', Base.metadata,
-                        Column('group_id', Integer, ForeignKey('groups.id')),
-                        Column('diet_id', Integer, ForeignKey('diet.id'))
-                        )
+group_diet = Table('group_diet', Base.metadata,
+                   Column('group_id', Integer, ForeignKey('groups.id')),
+                   Column('diet_id', Integer, ForeignKey('diet.id'))
+                   )
 
 
 class _Table(object):
@@ -96,6 +80,13 @@ class _Table(object):
             session = DBSession
         return session.query(cls).filter(cls.id == eid).one()
 
+    @classmethod
+    def lookup_by_attribute(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        for x in kwargs:
+            return session.query(cls).filter(cls.x == kwargs[x]).one()
+
 
 class User(Base, _Table):
     __tablename__ = 'users'
@@ -107,14 +98,11 @@ class User(Base, _Table):
     confirmed = Column(Boolean, default=False)
     ver_code = Column(Integer)
     age = Column(Integer, ForeignKey('agegroup.id'))
-    user_location = Column(Integer, ForeignKey('location.id'))
+    location = Column(Integer, ForeignKey('location.id'))
     cost = Column(Integer, ForeignKey('cost.id'))
-    food_profile = relationship('Profile', secondary=usertaste_table,
-                                backref='users')
-    diet_restrict = relationship('Diet', secondary=userdiet_table,
-                                 backref='users')
-    user_groups = relationship('Group', secondary=groupuser_table,
-                               backref='users')
+    taste = relationship('Taste', secondary=user_taste, backref='users')
+    diet = relationship('Diet', secondary=user_diet, backref='users')
+    groups = relationship('Group', secondary=group_user, backref='users')
     restaurants = Column(Text)
     food = Column(Text)
 
@@ -128,23 +116,11 @@ class User(Base, _Table):
             raise TypeError('Please enter a vaild email address')
 
     @classmethod
-    def lookup_user_by_username(cls, username, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(User.username == username).one()
-
-    @classmethod
-    def lookup_user_by_id(cls, uid, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(cls.id == uid).one()
-
-    @classmethod
     def addgroup(cls, session=None, usergroup=None, username=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_user_by_username(username=username)
-        instance.user_groups.append(usergroup)
+        instance = cls.lookup_by_attribute(username=username)
+        instance.groups.append(usergroup)
         session.add(instance)
         return instance
 
@@ -152,7 +128,7 @@ class User(Base, _Table):
     def write_ver_code(cls, username, ver_code, session=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_user_by_username(username)
+        instance = cls.lookup_by_attribute(username=username)
         instance.ver_code = int(ver_code)
         session.add(instance)
         return instance
@@ -161,7 +137,7 @@ class User(Base, _Table):
     def confirm_user(cls, username, session=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_user_by_username(username)
+        instance = cls.lookup_by_attribute(username=username)
         instance.confirmed = True
         session.add(instance)
         return instance
@@ -170,24 +146,24 @@ class User(Base, _Table):
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls.lookup_user_by_username(username=kwargs["username"])
+        instance = cls.lookup_by_attribute(username=kwargs["username"])
         instance.firstname = kwargs.get("firstname")
         instance.lastname = kwargs.get("lastname")
         instance.restaurants = kwargs.get("restaurant")
         instance.food = kwargs.get("food")
         tasteid = map(int, kwargs.get("taste"))
         dietid = map(int, kwargs.get("diet"))
-        instance.food_profile = []
-        instance.diet_restrict = []
+        instance.taste = []
+        instance.diet = []
         for eid in tasteid:
-            instance.food_profile.append(session.query(Profile).filter
-                                         (Profile.id == eid).all()[0])
+            instance.taste.append(session.query(Taste).filter
+                                  (Taste.id == eid).all()[0])
         for eid in dietid:
-            instance.diet_restrict.append(session.query(Diet).filter
-                                          (Diet.id == eid).all()[0])
+            instance.diet.append(session.query(Diet).filter
+                                 (Diet.id == eid).all()[0])
 
         instance.cost = int(kwargs.get("price"))
-        instance.user_location = int(kwargs.get("location"))
+        instance.location = int(kwargs.get("location"))
         instance.age = int(kwargs.get("age"))
 
         session.add(instance)
@@ -199,7 +175,7 @@ class User(Base, _Table):
 
         acl.append((Allow, self.username, 'owner'))
 
-        for group in self.user_groups:
+        for group in self.groups:
             acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
 
         # acl.append((Deny, Everyone, ALL_PERMISSIONS))
@@ -212,8 +188,8 @@ class User(Base, _Table):
                                                    self.username)
 
 
-class Profile(Base, _Table):
-    __tablename__ = 'profile'
+class Taste(Base, _Table):
+    __tablename__ = 'taste'
     taste = Column(Text, unique=True)
 
     def __repr__(self):
@@ -264,10 +240,9 @@ class Group(Base):
     # group_admin = relationship("Admin", uselist=False, backref='group')
     group_admin = relationship("Admin", uselist=False)
 
-    food_profile = relationship('Profile', secondary=grouptaste_table,
-                                backref='group')
-    diet_restrict = relationship('Diet', secondary=groupdiet_table,
-                                 backref='group')
+    taste = relationship('Taste', secondary=group_taste,
+                         backref='group')
+    diet = relationship('Diet', secondary=group_diet, backref='group')
     cost = Column(Integer, ForeignKey('cost.id'))
     age = Column(Integer, ForeignKey('agegroup.id'))
 
@@ -278,21 +253,21 @@ class Group(Base):
         instance = cls.lookup_group_by_id(gid=kwargs["id"])
         instance.name = kwargs.get("name")
         instance.description = kwargs.get("description")
-        instance.user_location = int(kwargs.get("location"))
+        instance.location = int(kwargs.get("location"))
         if kwargs.get("discussions"):
             instance.discussions = kwargs.get("discussions")
         instance.age = int(kwargs.get("age"))
         instance.cost = int(kwargs.get("cost"))
         tasteid = map(int, kwargs.get("taste"))
         dietid = map(int, kwargs.get("diet"))
-        instance.food_profile = []
-        instance.diet_restrict = []
+        instance.taste = []
+        instance.diet = []
         for eid in tasteid:
-            instance.food_profile.append(session.query(Profile).filter
-                                         (Profile.id == eid).all()[0])
+            instance.taste.append(session.query(Taste).filter
+                                  (Taste.id == eid).all()[0])
         for eid in dietid:
-            instance.diet_restrict.append(session.query(Diet).filter
-                                          (Diet.id == eid).all()[0])
+            instance.diet.append(session.query(Diet).filter
+                                 (Diet.id == eid).all()[0])
         session.add(instance)
         return instance
 
@@ -300,18 +275,18 @@ class Group(Base):
     def write(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        tasteid = map(int, kwargs.get("food_profile"))
-        dietid = map(int, kwargs.get("diet_restrict"))
+        tasteid = map(int, kwargs.get("taste"))
+        dietid = map(int, kwargs.get("taste"))
         grouptaste = []
         diettaste = []
         for eid in tasteid:
-            grouptaste.append(session.query(Profile).filter
-                              (Profile.id == eid).all()[0])
+            grouptaste.append(session.query(Taste).filter
+                              (Taste.id == eid).all()[0])
         for eid in dietid:
             diettaste.append(session.query(Diet).filter
                              (Diet.id == eid).all()[0])
-        kwargs["food_profile"] = grouptaste
-        kwargs["diet_restrict"] = diettaste
+        kwargs["taste"] = grouptaste
+        kwargs["diet"] = diettaste
         username = kwargs.get("Admin")
         del kwargs['Admin']
         instance = cls(**kwargs)
@@ -336,7 +311,7 @@ class Group(Base):
         if session is None:
             session = DBSession
 
-        return session.query(User).filter(User.user_groups == gid).all()
+        return session.query(User).filter(User.groups == gid).all()
 
     @property
     def __acl__(self):

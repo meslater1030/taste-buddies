@@ -11,7 +11,7 @@ from random import randint
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
+from models import (User, Cost, Location, AgeGroup, Taste, Post, Discussion,
                     Group, Diet)
 
 
@@ -43,7 +43,7 @@ def user_create_view(request):
                 email=email,
                 cost=1,
                 age=1,
-                user_location=1
+                location=1
             )
             headers = remember(request, username)
 
@@ -61,7 +61,8 @@ def send_verify_email(request):
 
     uname = request.authenticated_userid
     user_obj = User.lookup_user_by_username(uname)
-    user_obj.write_ver_code(username=user_obj.username, ver_code=ver_code)
+    user_obj.write_ver_code(username=user_obj.username,
+                            ver_code=ver_code)
 
     fromaddr = "tastebot@gmail.com"
     toaddr = user_obj.email
@@ -211,23 +212,23 @@ def profile_detail_view(request):
         return HTTPForbidden()
 
     uname = request.matchdict['username']
-    udata = User.lookup_user_by_username(uname)
+    udata = User.lookup_by_attribute(username=uname)
 
     tastes = []
     diets = []
     groups = []
 
-    for taste in udata.food_profile:
+    for taste in udata.taste:
         tastes.append(taste.taste)
 
-    for diet in udata.diet_restrict:
+    for diet in udata.diet:
         diets.append(diet.diet)
 
-    for group in udata.user_groups:
+    for group in udata.groups:
         groups.append(group)
 
     price = Cost.one(eid=udata.cost).cost
-    location = Location.one(eid=udata.user_location).city
+    location = Location.one(eid=udata.location).city
     age = AgeGroup.one(eid=udata.age).age_group
 
     return {
@@ -275,7 +276,7 @@ def profile_edit_view(request):
 
     username = request.authenticated_userid
     user = User.lookup_user_by_username(username)
-    tastes = Profile.all()
+    tastes = Taste.all()
     diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
@@ -308,8 +309,8 @@ def group_create_view(request):
             price = request.params.get('group_price')
             age = request.params.get('age')
             Group.write(name=group_name, description=group_descrip,
-                        location=location, food_profile=taste,
-                        diet_restrict=diet, cost=price, age=age,
+                        location=location, taste=taste,
+                        diet=diet, cost=price, age=age,
                         Admin=username)
             all_groups = Group.all()
             for group in all_groups:
@@ -317,7 +318,7 @@ def group_create_view(request):
                     group_id = group.id
             return HTTPFound(request.route_url('group_detail',
                              group_id=group_id))
-    tastes = Profile.all()
+    tastes = Taste.all()
     diet = Diet.all()
     age = AgeGroup.all()
     location = Location.all()
@@ -418,8 +419,8 @@ def group_discussion_view(request):
     group_members = []
 
     for member in members:
-        for group in member.user_groups:
-            if group == member.user_groups:
+        for group in member.groups:
+            if group == member.groups:
                 group_members.append(group)
 
     tmp_discussions = group.discussions
@@ -482,7 +483,7 @@ def group_edit_view(request):
     group = Group.lookup_group_by_id(request.matchdict['group_id'])
     ages = AgeGroup.all()
     locations = Location.all()
-    food_profiles = Profile.all()
+    tastes = Taste.all()
     diets = Diet.all()
     costs = Cost.all()
     # id = group.id
@@ -492,7 +493,7 @@ def group_edit_view(request):
         'group': group,
         'ages': ages,
         'locations': locations,
-        'food_profiles': food_profiles,
+        'tastes': tastes,
         'diets': diets,
         'costs': costs
     }

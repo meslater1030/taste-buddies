@@ -14,12 +14,12 @@
 <h1>Group Food Profile</h1>
 <div id="group_taste_buttons">
 <p>
-{% for taste in group.food_profile %}
+{% for taste in group.taste %}
     <span class="button disabled {{ taste.taste.lower() }}">
     {{ taste.taste }}
     </span>
 {% endfor %}
-{% for diet in group.diet_restrict %}
+{% for diet in group.diet %}
     <span class="button disabled {{ diet.diet.lower() }}">
     {{ diet.diet }}
     </span>

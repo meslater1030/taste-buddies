@@ -14,7 +14,7 @@ from pyramid.scripts.common import parse_vars
 from ..models import (
     DBSession,
     Cost,
-    Profile,
+    Taste,
     Base,
     Location,
     Diet,
@@ -71,7 +71,7 @@ def main(argv=sys.argv):
         ]
 
         for taste in tastes:
-            Profile.write(taste=taste)
+            Taste.write(taste=taste)
 
         diets = [
             'Vegetarian',
