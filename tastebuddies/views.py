@@ -11,7 +11,7 @@ from random import randint
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import (User, Cost, Location, AgeGroup, Taste, Post, Discussion,
+from models import (User, Cost, Location, Age, Taste, Post, Discussion,
                     Group, Diet)
 
 
@@ -37,7 +37,7 @@ def user_create_view(request):
             hashed = manager.encode(password)
             email = request.params.get('email')
 
-            User.write(
+            User.add(
                 username=username,
                 password=hashed,
                 email=email,
@@ -60,7 +60,7 @@ def send_verify_email(request):
     ver_code = randint(1000, 9999)
 
     uname = request.authenticated_userid
-    user_obj = User.lookup_by_attribute(username=uname)
+    user_obj = User.lookup_by_attribute(username=uname)[0]
     user_obj.write_ver_code(username=user_obj.username,
                             ver_code=ver_code)
 
@@ -100,7 +100,7 @@ def send_verify_email(request):
 def verify(request):
     error_msg = None
     uname = request.authenticated_userid
-    user_obj = User.lookup_by_attribute(username=uname)
+    user_obj = User.lookup_by_attribute(username=uname)[0]
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
@@ -125,7 +125,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_by_attribute(username=entered_username)
+    user_obj = User.lookup_by_attribute(username=entered_username)[0]
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -148,7 +148,7 @@ def passes_authentication(request):
 
 def passes_verification(request):
     username = request.params.get('username', None)
-    udata = User.lookup_by_attribute(username=username)
+    udata = User.lookup_by_attribute(username=username)[0]
 
     try:
         verified_status = udata.confirmed
@@ -212,7 +212,7 @@ def profile_detail_view(request):
         return HTTPForbidden()
 
     uname = request.matchdict['username']
-    udata = User.lookup_by_attribute(username=uname)
+    udata = User.lookup_by_attribute(username=uname)[0]
 
     tastes = []
     diets = []
@@ -227,9 +227,9 @@ def profile_detail_view(request):
     for group in udata.groups:
         groups.append(group)
 
-    price = Cost.one(eid=udata.cost).cost
-    location = Location.one(eid=udata.location).city
-    age = AgeGroup.one(eid=udata.age).age_group
+    price = Cost.lookup_by_attribute(id=udata.cost)[0].cost
+    location = Location.lookup_by_attribute(id=udata.location)[0].city
+    age = Age.lookup_by_attribute(id=udata.age)[0].age_group
 
     return {
         'username': request.authenticated_userid,
@@ -275,10 +275,10 @@ def profile_edit_view(request):
                              headers=headers)
 
     username = request.authenticated_userid
-    user = User.lookup_by_attribute(username=username)
+    user = User.lookup_by_attribute(username=username)[0]
     tastes = Taste.all()
     diet = Diet.all()
-    age = AgeGroup.all()
+    age = Age.all()
     location = Location.all()
     price = Cost.all()
     return {
@@ -306,13 +306,12 @@ def group_create_view(request):
             location = request.params.get('location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
-            import pdb; pdb.set_trace()
             price = request.params.get('group_price')
             age = request.params.get('age')
-            Group.write(name=group_name, description=group_descrip,
-                        location=location, taste=taste,
-                        diet=diet, cost=price, age=age,
-                        Admin=username)
+            Group.add(name=group_name, description=group_descrip,
+                      location=location, taste=taste,
+                      diet=diet, cost=price, age=age,
+                      Admin=username)
             all_groups = Group.all()
             for group in all_groups:
                 if group.name == group_name:
@@ -321,7 +320,7 @@ def group_create_view(request):
                              group_id=group_id))
     tastes = Taste.all()
     diet = Diet.all()
-    age = AgeGroup.all()
+    age = Age.all()
     location = Location.all()
     price = Cost.all()
     return {
@@ -340,14 +339,14 @@ def group_create_view(request):
 def group_detail_view(request):
     error_msg = None
     username = request.authenticated_userid
-    grp_obj = Group.lookup_by_attribute(id=request.matchdict['group_id'])
+    grp_obj = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
 
     if request.method == 'POST':
         User.addgroup(username=username, usergroup=grp_obj)
 
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title, group_id=grp_obj.id)
+            Discussion.add(title=title, group_id=grp_obj.id)
 
             for discussions in Discussion.all():
 
@@ -362,9 +361,10 @@ def group_detail_view(request):
             ))
 
         if request.params.get('text'):
-            discussion = Discussion.one(request.matchdict['discussion_id'])
+            discussion = (Discussion.lookup_by_attribute(
+                          id=request.matchdict['discussion_id'])[0])
             text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
+            Post.add(text=text, discussion_id=discussion.id)
 
     members = grp_obj.users
 
@@ -380,9 +380,9 @@ def group_detail_view(request):
         discussions.append(tmp_discussions.pop())
 
     posts = Post.all()
-    price = Cost.one(eid=grp_obj.cost).cost
-    location = Location.one(eid=grp_obj.location).city
-    age = AgeGroup.one(eid=grp_obj.age).age_group
+    price = Cost.lookup_by_attribute(id=grp_obj.cost)[0].cost
+    location = Location.lookup_by_attribute(id=grp_obj.location)[0].city
+    age = Age.lookup_by_attribute(id=grp_obj.age)[0].age_group
 
     return {
         'username': username,
@@ -402,19 +402,20 @@ def group_detail_view(request):
 def group_discussion_view(request):
     error_msg = None
     username = request.authenticated_userid
-    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
+    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
 
     if request.method == 'POST':
 
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
+            Discussion.add(title=title, group_id=group.id)
 
         if request.params.get('text'):
 
-            discussion = Discussion.one(request.matchdict['discussion_id'])
+            discussion = (Discussion.lookup_by_attribute(
+                          id=request.matchdict['discussion_id'])[0])
             text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
+            Post.add(text=text, discussion_id=discussion.id)
 
     members = User.all()
     group_members = []
@@ -437,9 +438,9 @@ def group_discussion_view(request):
         discussions.append(tmp_discussions.pop())
 
     posts = Post.all()
-    price = Cost.one(eid=group.cost).cost
-    location = Location.one(eid=group.location).city
-    age = AgeGroup.one(eid=group.age).age_group
+    price = Cost.lookup_by_attribute(id=group.cost)[0].cost
+    location = Location.lookup_by_attribute(id=group.location)[0].city
+    age = Age.lookup_by_attribute(id=group.age)[0].age_group
 
     return {
         'username': username,
@@ -461,7 +462,8 @@ def group_edit_view(request):
     error_msg = None
     username = request.authenticated_userid
     if request.method == 'POST':
-            group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
+            group = (Group.lookup_by_attribute
+                     (id=request.matchdict['group_id'])[0])
             group_name = request.params.get('group_name')
             group_descrip = request.params.get('group_description')
             location = request.params.get('group_location')
@@ -481,8 +483,8 @@ def group_edit_view(request):
             return HTTPFound(request.route_url('group_detail',
                              group_id=group_id))
 
-    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
-    ages = AgeGroup.all()
+    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
+    ages = Age.all()
     locations = Location.all()
     tastes = Taste.all()
     diets = Diet.all()

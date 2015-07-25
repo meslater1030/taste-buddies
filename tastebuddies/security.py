@@ -6,7 +6,7 @@ from models import DBSession, User, Group
 
 
 def groupfinder(uname, request):
-    user = User.lookup_by_attribute(username=uname)
+    user = User.lookup_by_attribute(username=uname)[0]
 
     acls = []
 

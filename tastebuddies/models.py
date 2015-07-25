@@ -61,7 +61,7 @@ class _Table(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
-    def write(cls, session=None, **kwargs):
+    def add(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
         instance = cls(**kwargs)
@@ -75,16 +75,10 @@ class _Table(object):
         return session.query(cls).all()
 
     @classmethod
-    def one(cls, eid=None, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(cls.id == eid).one()
-
-    @classmethod
     def lookup_by_attribute(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        return session.query(cls).filter_by(**kwargs).one()
+        return session.query(cls).filter_by(**kwargs).all()
 
 
 class User(Base, _Table):
@@ -96,7 +90,7 @@ class User(Base, _Table):
     lastname = Column(Text)
     confirmed = Column(Boolean, default=False)
     ver_code = Column(Integer)
-    age = Column(Integer, ForeignKey('agegroup.id'))
+    age = Column(Integer, ForeignKey('age.id'))
     location = Column(Integer, ForeignKey('location.id'))
     cost = Column(Integer, ForeignKey('cost.id'))
     taste = relationship('Taste', secondary=user_taste, backref='users')
@@ -118,7 +112,7 @@ class User(Base, _Table):
     def addgroup(cls, session=None, usergroup=None, username=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_by_attribute(username=username)
+        instance = cls.lookup_by_attribute(username=username)[0]
         instance.groups.append(usergroup)
         session.add(instance)
         return instance
@@ -127,7 +121,7 @@ class User(Base, _Table):
     def write_ver_code(cls, username, ver_code, session=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_by_attribute(username=username)
+        instance = cls.lookup_by_attribute(username=username)[0]
         instance.ver_code = int(ver_code)
         session.add(instance)
         return instance
@@ -136,7 +130,7 @@ class User(Base, _Table):
     def confirm_user(cls, username, session=None):
         if session is None:
             session = DBSession
-        instance = cls.lookup_by_attribute(username=username)
+        instance = cls.lookup_by_attribute(username=username)[0]
         instance.confirmed = True
         session.add(instance)
         return instance
@@ -145,7 +139,7 @@ class User(Base, _Table):
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls.lookup_by_attribute(username=kwargs["username"])
+        instance = cls.lookup_by_attribute(username=kwargs["username"])[0]
         instance.firstname = kwargs.get("firstname")
         instance.lastname = kwargs.get("lastname")
         instance.restaurants = kwargs.get("restaurant")
@@ -195,8 +189,8 @@ class Taste(Base, _Table):
         return "<Taste(%s)>" % (self.taste)
 
 
-class AgeGroup(Base, _Table):
-    __tablename__ = 'agegroup'
+class Age(Base, _Table):
+    __tablename__ = 'age'
     age_group = Column(Text)
 
     def __repr__(self):
@@ -227,7 +221,7 @@ class Diet(Base, _Table):
         return "<Dietary Preference(%s)>" % (self.diet)
 
 
-class Group(Base):
+class Group(Base, _Table):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, unique=True, nullable=False)
@@ -243,13 +237,13 @@ class Group(Base):
                          backref='group')
     diet = relationship('Diet', secondary=group_diet, backref='group')
     cost = Column(Integer, ForeignKey('cost.id'))
-    age = Column(Integer, ForeignKey('agegroup.id'))
+    age = Column(Integer, ForeignKey('age.id'))
 
     @classmethod
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls.lookup_by_attribute(id=kwargs["id"])
+        instance = cls.lookup_by_attribute(id=kwargs["id"])[0]
         instance.name = kwargs.get("name")
         instance.description = kwargs.get("description")
         instance.location = int(kwargs.get("location"))
@@ -271,7 +265,7 @@ class Group(Base):
         return instance
 
     @classmethod
-    def write(cls, session=None, **kwargs):
+    def add(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
         tasteid = map(int, kwargs.get("taste"))

@@ -18,7 +18,7 @@ from ..models import (
     Base,
     Location,
     Diet,
-    AgeGroup
+    Age
     )
 
 
@@ -71,7 +71,7 @@ def main(argv=sys.argv):
         ]
 
         for taste in tastes:
-            Taste.write(taste=taste)
+            Taste.add(taste=taste)
 
         diets = [
             'Vegetarian',
@@ -81,7 +81,7 @@ def main(argv=sys.argv):
         ]
 
         for diet in diets:
-            Diet.write(diet=diet)
+            Diet.add(diet=diet)
 
         locations = [
             'Seattle',
@@ -92,7 +92,7 @@ def main(argv=sys.argv):
         ]
 
         for location in locations:
-            Location.write(city=location)
+            Location.add(city=location)
 
         ages = [
             '18-25',
@@ -105,7 +105,7 @@ def main(argv=sys.argv):
         ]
 
         for age in ages:
-            AgeGroup.write(age_group=age)
+            Age.add(age_group=age)
 
         costs = [
             '$',
@@ -115,4 +115,4 @@ def main(argv=sys.argv):
         ]
 
         for cost in costs:
-            Cost.write(cost=cost)
+            Cost.add(cost=cost)
