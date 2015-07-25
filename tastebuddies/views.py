@@ -60,7 +60,7 @@ def send_verify_email(request):
     ver_code = randint(1000, 9999)
 
     uname = request.authenticated_userid
-    user_obj = User.lookup_user_by_username(uname)
+    user_obj = User.lookup_by_attribute(username=uname)
     user_obj.write_ver_code(username=user_obj.username,
                             ver_code=ver_code)
 
@@ -100,7 +100,7 @@ def send_verify_email(request):
 def verify(request):
     error_msg = None
     uname = request.authenticated_userid
-    user_obj = User.lookup_user_by_username(uname)
+    user_obj = User.lookup_by_attribute(username=uname)
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
@@ -125,7 +125,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_user_by_username(username=entered_username)
+    user_obj = User.lookup_by_attribute(username=entered_username)
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -148,7 +148,7 @@ def passes_authentication(request):
 
 def passes_verification(request):
     username = request.params.get('username', None)
-    udata = User.lookup_user_by_username(username)
+    udata = User.lookup_by_attribute(username=username)
 
     try:
         verified_status = udata.confirmed
@@ -275,7 +275,7 @@ def profile_edit_view(request):
                              headers=headers)
 
     username = request.authenticated_userid
-    user = User.lookup_user_by_username(username)
+    user = User.lookup_by_attribute(username=username)
     tastes = Taste.all()
     diet = Diet.all()
     age = AgeGroup.all()
@@ -306,6 +306,7 @@ def group_create_view(request):
             location = request.params.get('location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
+            import pdb; pdb.set_trace()
             price = request.params.get('group_price')
             age = request.params.get('age')
             Group.write(name=group_name, description=group_descrip,
@@ -339,7 +340,7 @@ def group_create_view(request):
 def group_detail_view(request):
     error_msg = None
     username = request.authenticated_userid
-    grp_obj = Group.lookup_group_by_id(request.matchdict['group_id'])
+    grp_obj = Group.lookup_by_attribute(id=request.matchdict['group_id'])
 
     if request.method == 'POST':
         User.addgroup(username=username, usergroup=grp_obj)
@@ -401,7 +402,7 @@ def group_detail_view(request):
 def group_discussion_view(request):
     error_msg = None
     username = request.authenticated_userid
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
 
     if request.method == 'POST':
 
@@ -460,7 +461,7 @@ def group_edit_view(request):
     error_msg = None
     username = request.authenticated_userid
     if request.method == 'POST':
-            group = Group.lookup_group_by_id(request.matchdict['group_id'])
+            group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
             group_name = request.params.get('group_name')
             group_descrip = request.params.get('group_description')
             location = request.params.get('group_location')
@@ -480,7 +481,7 @@ def group_edit_view(request):
             return HTTPFound(request.route_url('group_detail',
                              group_id=group_id))
 
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
+    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])
     ages = AgeGroup.all()
     locations = Location.all()
     tastes = Taste.all()

@@ -84,8 +84,7 @@ class _Table(object):
     def lookup_by_attribute(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        for x in kwargs:
-            return session.query(cls).filter(cls.x == kwargs[x]).one()
+        return session.query(cls).filter_by(**kwargs).one()
 
 
 class User(Base, _Table):
@@ -250,7 +249,7 @@ class Group(Base):
     def change(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        instance = cls.lookup_group_by_id(gid=kwargs["id"])
+        instance = cls.lookup_by_attribute(id=kwargs["id"])
         instance.name = kwargs.get("name")
         instance.description = kwargs.get("description")
         instance.location = int(kwargs.get("location"))
@@ -299,12 +298,6 @@ class Group(Base):
         if session is None:
             session = DBSession
         return session.query(cls).all()
-
-    @classmethod
-    def lookup_group_by_id(cls, gid, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(cls.id == gid).one()
 
     @classmethod
     def get_members_of_gid(cls, gid, session=None):
