@@ -17,15 +17,15 @@
     <div class="field-group">
         <select name="age" class="group_age_range" />
             {% for age in ages %}
-            <option value={{ age.id }}>{{ age.age_group }}</option>
+            <option value={{ age.id }}>{{ age.age }}</option>
             {% endfor %}
         </select>
     </div>
     <label>Location</label>
     <div id="location" class="field-group">
         <select name="location" class="location"/>
-            {% for city in location %}
-            <option value={{ city.id }}>{{ city.city }}</option>
+            {% for location in location %}
+            <option value={{ location.id }}>{{ location.location }}</option>
             {% endfor %}
         </select>
     </div>
@@ -41,10 +41,10 @@
         <input type="checkbox" name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
         {% endfor %}
     </div>
-    <div id="personal_price_range" class="field-group">
-        <label>Price</label>
-        {% for cost in price %}
-          <input type="radio" name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+    <div id="personal_cost_range" class="field-group">
+        <label>Cost</label>
+        {% for cost in cost %}
+          <input type="radio" name="group_cost" class="style" value={{ cost.id }}>{{ cost.cost }}
         {% endfor %}
     </div>
         <label>Group Description</label>

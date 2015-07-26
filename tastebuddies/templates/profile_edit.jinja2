@@ -30,10 +30,10 @@
             {% for age in ages %}
             {% if age.id == user.age %}
 
-            <option value={{ age.id }} selected="selected">{{ age.age_group }}</option>
+            <option value={{ age.id }} selected="selected">{{ age.age }}</option>
 
             {% else %}
-            <option value={{ age.id }}>{{ age.age_group }}</option>
+            <option value={{ age.id }}>{{ age.age }}</option>
 
             {% endif %}
             {% endfor %}
@@ -45,12 +45,12 @@
     <div id="location" class="field-group">
 
         <select name="location" class="location"/>
-            {% for city in location %}
-            {% if city.id == user.location %}
-            <option selected="selected" value={{ city.id }}>{{ city.city }}</option>
+            {% for location in location %}
+            {% if location.id == user.location %}
+            <option selected="selected" value={{ location.id }}>{{ location.location }}</option>
 
             {% else %}
-            <option value={{ city.id }}>{{ city.city }}</option>
+            <option value={{ location.id }}>{{ location.location }}</option>
 
             {% endif %}
             {% endfor %}
@@ -100,15 +100,15 @@
     value="{{ user.food }}"/>
     </div>
 
-    <div id="personal_price_range" class="field-group">
-        <label>Price</label>
+    <div id="personal_cost_range" class="field-group">
+        <label>Cost</label>
 
-        {% for cost in price %}
+        {% for cost in cost %}
           {% if user.cost == cost.id %}
-          <input type="radio" checked='checked' name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+          <input type="radio" checked='checked' name="group_cost" class="style" value={{ cost.id }}>{{ cost.cost }}
 
           {% else %}
-          <input type="radio" name="group_price" class="style" value={{ cost.id }}>{{ cost.cost }}
+          <input type="radio" name="group_cost" class="style" value={{ cost.id }}>{{ cost.cost }}
 
           {% endif %}
 

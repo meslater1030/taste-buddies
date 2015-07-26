@@ -17,10 +17,10 @@
     <div class="field-group">
         <select class="group_age" name="group_age" />
         {% for age in ages %}
-            {% if age.age_group == group.age %}
+            {% if age.age == group.age %}
                 <option selected='selected' value='{{ age.id }}' name="group_age" class="group_age">{{ group.age }}</option>
             {% else %}
-                <option value='{{ age.id }}' name="group_age" class="group_age">{{ age.age_group }}</option>
+                <option value='{{ age.id }}' name="group_age" class="group_age">{{ age.age }}</option>
             {% endif %}
         {% endfor %}
         </select>
@@ -28,10 +28,10 @@
     <label>Location</label>
         <select class="group_location" name="group_location"/>
         {% for location in locations %}
-            {% if location.city == group.location %}
+            {% if location.location == group.location %}
                 <option selected='selected' value='{{ location.id }}' name='group_location' class="group_location">{{ group.location }}</option>
             {% else %}
-                <option value='{{ location.id }}' name='group_location' class="group_location">{{ location.city }}</option>
+                <option value='{{ location.id }}' name='group_location' class="group_location">{{ location.location }}</option>
             {% endif %}
         {% endfor %}
         </select>
@@ -64,13 +64,13 @@
     </div>
 
     <div class="field-group">
-        <label>Price</label>
+        <label>Cost</label>
         {% for cost in costs %}
             {% if group.cost == cost.id %}
-                <input type="radio" name="group_price" class="style"
+                <input type="radio" name="group_cost" class="style"
                        value="{{ cost.id }}" checked="checked">{{ cost.cost }}
             {% else %}
-                <input type="radio" name="group_price" class="style" value="{{ cost.id }}">{{ cost.cost }}
+                <input type="radio" name="group_cost" class="style" value="{{ cost.id }}">{{ cost.cost }}
             {% endif %}
         {% endfor %}
     </div>

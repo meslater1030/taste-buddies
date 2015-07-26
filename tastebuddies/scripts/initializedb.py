@@ -92,7 +92,7 @@ def main(argv=sys.argv):
         ]
 
         for location in locations:
-            Location.add(city=location)
+            Location.add(location=location)
 
         ages = [
             '18-25',
@@ -105,7 +105,7 @@ def main(argv=sys.argv):
         ]
 
         for age in ages:
-            Age.add(age_group=age)
+            Age.add(age=age)
 
         costs = [
             '$',

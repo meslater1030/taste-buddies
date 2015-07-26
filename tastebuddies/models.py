@@ -40,9 +40,9 @@ user_diet = Table('user_diet', Base.metadata,
                   Column('diet', Integer, ForeignKey('diet.id'))
                   )
 
-group_user = Table('group_user', Base.metadata, Column('group', Integer,
-                   ForeignKey('groups.id')), Column('users', Integer,
-                   ForeignKey('users.id'))
+group_user = Table('group_user', Base.metadata,
+                   Column('groups', Integer, ForeignKey('groups.id')),
+                   Column('users', Integer, ForeignKey('users.id'))
                    )
 
 group_taste = Table('group_taste', Base.metadata,
@@ -57,7 +57,7 @@ group_diet = Table('group_diet', Base.metadata,
                    )
 
 
-class _Table(object):
+class TableSetup(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
@@ -81,7 +81,7 @@ class _Table(object):
         return session.query(cls).filter_by(**kwargs).all()
 
 
-class User(Base, _Table):
+class User(Base, TableSetup):
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     password = Column(Text, nullable=False)
@@ -155,7 +155,7 @@ class User(Base, _Table):
             instance.diet.append(session.query(Diet).filter
                                  (Diet.id == eid).all()[0])
 
-        instance.cost = int(kwargs.get("price"))
+        instance.cost = int(kwargs.get("cost"))
         instance.location = int(kwargs.get("location"))
         instance.age = int(kwargs.get("age"))
 
@@ -181,7 +181,7 @@ class User(Base, _Table):
                                                    self.username)
 
 
-class Taste(Base, _Table):
+class Taste(Base, TableSetup):
     __tablename__ = 'taste'
     taste = Column(Text, unique=True)
 
@@ -189,23 +189,23 @@ class Taste(Base, _Table):
         return "<Taste(%s)>" % (self.taste)
 
 
-class Age(Base, _Table):
+class Age(Base, TableSetup):
     __tablename__ = 'age'
-    age_group = Column(Text)
+    age = Column(Text)
 
     def __repr__(self):
-        return "<Age(%s)>" % (self.age_group)
+        return "<Age(%s)>" % (self.age)
 
 
-class Location(Base, _Table):
+class Location(Base, TableSetup):
     __tablename__ = 'location'
-    city = Column(Text)
+    location = Column(Text)
 
     def __repr__(self):
-        return "<Location(%s)>" % (self.city)
+        return "<Location(%s)>" % (self.location)
 
 
-class Cost(Base, _Table):
+class Cost(Base, TableSetup):
     __tablename__ = 'cost'
     cost = Column(Text)
 
@@ -213,7 +213,7 @@ class Cost(Base, _Table):
         return "<Cost(%s)>" % (self.cost)
 
 
-class Diet(Base, _Table):
+class Diet(Base, TableSetup):
     __tablename__ = 'diet'
     diet = Column(Text)
 
@@ -221,7 +221,7 @@ class Diet(Base, _Table):
         return "<Dietary Preference(%s)>" % (self.diet)
 
 
-class Group(Base, _Table):
+class Group(Base, TableSetup):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, unique=True, nullable=False)
@@ -269,7 +269,7 @@ class Group(Base, _Table):
         if session is None:
             session = DBSession
         tasteid = map(int, kwargs.get("taste"))
-        dietid = map(int, kwargs.get("taste"))
+        dietid = map(int, kwargs.get("diet"))
         grouptaste = []
         diettaste = []
         for eid in tasteid:
@@ -318,7 +318,7 @@ class Group(Base, _Table):
         return "<Group(%s, location=%s)>" % (self.name, self.location)
 
 
-class Discussion(Base, _Table):
+class Discussion(Base, TableSetup):
     __tablename__ = 'discussion'
     title = Column(Text)
     group_id = Column(Integer, ForeignKey('groups.id'))
@@ -329,7 +329,7 @@ class Discussion(Base, _Table):
         return "<Discussion(%s)>" % (self.title)
 
 
-class Post(Base, _Table):
+class Post(Base, TableSetup):
     __tablename__ = 'post'
     text = Column(Text)
     discussion_id = Column(Integer, ForeignKey('discussion.id'))
@@ -338,7 +338,7 @@ class Post(Base, _Table):
         return "<Post(%s)>" % (self.text)
 
 
-class Admin(Base, _Table):
+class Admin(Base, TableSetup):
     __tablename__ = 'admin'
     users = Column(Integer, ForeignKey('users.id'))
     group_id = Column(Integer, ForeignKey('groups.id'))

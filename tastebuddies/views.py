@@ -227,9 +227,9 @@ def profile_detail_view(request):
     for group in udata.groups:
         groups.append(group)
 
-    price = Cost.lookup_by_attribute(id=udata.cost)[0].cost
-    location = Location.lookup_by_attribute(id=udata.location)[0].city
-    age = Age.lookup_by_attribute(id=udata.age)[0].age_group
+    cost = Cost.lookup_by_attribute(id=udata.cost)[0].cost
+    location = Location.lookup_by_attribute(id=udata.location)[0].location
+    age = Age.lookup_by_attribute(id=udata.age)[0].age
 
     return {
         'username': request.authenticated_userid,
@@ -243,7 +243,7 @@ def profile_detail_view(request):
         'groups': groups,
         'age': age,
         'location': location,
-        'price': price,
+        'cost': cost,
     }
 
 
@@ -260,12 +260,12 @@ def profile_edit_view(request):
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
             restaurant = request.params.get('favorite_restaurants')
-            price = request.params.get('group_price')
+            cost = request.params.get('group_cost')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
             User.change(username=username, firstname=firstname,
                         lastname=lastname, location=location,
-                        taste=taste, diet=diet, price=price,
+                        taste=taste, diet=diet, cost=cost,
                         restaurant=restaurant, food=food, age=age)
 
             headers = remember(request, username)
@@ -280,7 +280,7 @@ def profile_edit_view(request):
     diet = Diet.all()
     age = Age.all()
     location = Location.all()
-    price = Cost.all()
+    cost = Cost.all()
     return {
         'username': username,
         'error_msg': error_msg,
@@ -288,7 +288,7 @@ def profile_edit_view(request):
         'tastes': tastes,
         'ages': age,
         'location': location,
-        'price': price,
+        'cost': cost,
         'diets': diet
     }
 
@@ -306,11 +306,11 @@ def group_create_view(request):
             location = request.params.get('location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('diet')
-            price = request.params.get('group_price')
+            cost = request.params.get('group_cost')
             age = request.params.get('age')
             Group.add(name=group_name, description=group_descrip,
                       location=location, taste=taste,
-                      diet=diet, cost=price, age=age,
+                      diet=diet, cost=cost, age=age,
                       Admin=username)
             all_groups = Group.all()
             for group in all_groups:
@@ -322,14 +322,14 @@ def group_create_view(request):
     diet = Diet.all()
     age = Age.all()
     location = Location.all()
-    price = Cost.all()
+    cost = Cost.all()
     return {
         'username': username,
         'error_msg': error_msg,
         'tastes': tastes,
         'ages': age,
         'location': location,
-        'price': price,
+        'cost': cost,
         'diets': diet
     }
 
@@ -380,9 +380,9 @@ def group_detail_view(request):
         discussions.append(tmp_discussions.pop())
 
     posts = Post.all()
-    price = Cost.lookup_by_attribute(id=grp_obj.cost)[0].cost
-    location = Location.lookup_by_attribute(id=grp_obj.location)[0].city
-    age = Age.lookup_by_attribute(id=grp_obj.age)[0].age_group
+    cost = Cost.lookup_by_attribute(id=grp_obj.cost)[0].cost
+    location = Location.lookup_by_attribute(id=grp_obj.location)[0].location
+    age = Age.lookup_by_attribute(id=grp_obj.age)[0].age
 
     return {
         'username': username,
@@ -391,7 +391,7 @@ def group_detail_view(request):
         'members': members,
         'age': age,
         'location': location,
-        'price': price,
+        'cost': cost,
         'discussions': discussions,
         'posts': posts
     }
@@ -438,9 +438,9 @@ def group_discussion_view(request):
         discussions.append(tmp_discussions.pop())
 
     posts = Post.all()
-    price = Cost.lookup_by_attribute(id=group.cost)[0].cost
-    location = Location.lookup_by_attribute(id=group.location)[0].city
-    age = Age.lookup_by_attribute(id=group.age)[0].age_group
+    cost = Cost.lookup_by_attribute(id=group.cost)[0].cost
+    location = Location.lookup_by_attribute(id=group.location)[0].location
+    age = Age.lookup_by_attribute(id=group.age)[0].age
 
     return {
         'username': username,
@@ -449,7 +449,7 @@ def group_discussion_view(request):
         'members': members,
         'age': age,
         'location': location,
-        'price': price,
+        'cost': cost,
         'discussions': discussions,
         'posts': posts,
     }
@@ -469,12 +469,12 @@ def group_edit_view(request):
             location = request.params.get('group_location')
             taste = request.params.getall('personal_taste')
             diet = request.params.getall('group_diet')
-            price = request.params.get('group_price')
+            cost = request.params.get('group_cost')
             age = request.params.get('group_age')
             username = request.authenticated_userid
             Group.change(name=group_name, description=group_descrip,
                          location=location, taste=taste,
-                         diet=diet, cost=price, age=age,
+                         diet=diet, cost=cost, age=age,
                          Admin=username, id=group.id)
             all_groups = Group.all()
             for group in all_groups:
