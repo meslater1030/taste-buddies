@@ -22,39 +22,18 @@ from sqlalchemy.orm import (
 
 from pyramid.security import Allow
 from sqlalchemy_utils.types.choice import ChoiceType
+from sqlalchemy_utils import force_auto_coercion
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
-
-
-user_taste = Table('user_taste', Base.metadata,
-                   Column('users', Integer, ForeignKey('users.id')),
-                   Column('taste', Integer, ForeignKey('taste.id'))
-                   )
-
-
-user_diet = Table('user_diet', Base.metadata,
-                  Column('users', Integer, ForeignKey('users.id')),
-                  Column('diet', Integer, ForeignKey('diet.id'))
-                  )
+force_auto_coercion()
 
 group_user = Table('group_user', Base.metadata,
                    Column('groups', Integer, ForeignKey('groups.id')),
                    Column('users', Integer, ForeignKey('users.id'))
-                   )
-
-group_taste = Table('group_taste', Base.metadata,
-                    Column('group_id', Integer, ForeignKey('groups.id')),
-                    Column('taste', Integer, ForeignKey('taste.id'))
-                    )
-
-
-group_diet = Table('group_diet', Base.metadata,
-                   Column('group_id', Integer, ForeignKey('groups.id')),
-                   Column('diet_id', Integer, ForeignKey('diet.id'))
                    )
 
 
@@ -68,30 +47,6 @@ class TableSetup(object):
         instance = cls(**kwargs)
         session.add(instance)
         return instance
-
-    # old groups add method
-    # @classmethod
-    # def add(cls, session=None, **kwargs):
-    #     if session is None:
-    #         session = DBSession
-    #     taste_id = map(int, kwargs.get("taste"))
-    #     diet_id = map(int, kwargs.get("diet"))
-    #     grouptaste = []
-    #     diettaste = []
-    #     for id in taste_id:
-    #         grouptaste.append(session.query(Taste).filter
-    #                           (Taste.id == id).all()[0])
-    #     for id in diet_id:
-    #         diettaste.append(session.query(Diet).filter
-    #                          (Diet.id == id).all()[0])
-    #     kwargs["taste"] = grouptaste
-    #     kwargs["diet"] = diettaste
-    #     username = kwargs.get("Admin")
-    #     del kwargs['Admin']
-    #     instance = cls(**kwargs)
-    #     User.addgroup(usergroup=instance, username=username)
-    #     session.add(instance)
-    #     return instance
 
     @classmethod
     def all(cls, session=None):
@@ -110,7 +65,15 @@ class TableSetup(object):
         if session is None:
             session = DBSession
         instance = cls(**kwargs)
-        session.update(instance)
+        session.query(cls).filter(cls.id == kwargs['id']).update(**kwargs)
+        return instance
+
+    @classmethod
+    def delete(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.delete(instance)
         return instance
 
 
@@ -137,44 +100,43 @@ class User(Base, TableSetup):
         except:
             raise TypeError('Please enter a vaild email address')
 
+    # I think this can be replaced by edit
     @classmethod
     def addgroup(cls, session=None, usergroup=None, username=None):
         if session is None:
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.groups.append(usergroup)
-        session.add(instance)
+        session.update(instance)
         return instance
 
+    # I think this can also be replaced by edit.  Maybe turn the string
+    # into an integer in views?
     @classmethod
     def write_ver_code(cls, username, ver_code, session=None):
         if session is None:
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.ver_code = int(ver_code)
-        session.add(instance)
+        session.update(instance)
         return instance
 
+    # ditto the above.
     @classmethod
     def confirm_user(cls, username, session=None):
         if session is None:
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.confirmed = True
-        session.add(instance)
+        session.update(instance)
         return instance
 
     @property
     def __acl__(self):
         acl = []
-
         acl.append((Allow, self.username, 'owner'))
-
         for group in self.groups:
             acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
-
-        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
-
         return acl
 
     def __repr__(self):
@@ -186,68 +148,71 @@ class User(Base, TableSetup):
 class Criteria(Base, TableSetup):
     __tablename__ = 'criteria'
     TASTES = [
-        (u'sour', u'Sour'),
-        (u'sweet', u'Sweet'),
-        (u'salty', u'Salty'),
-        (u'spicy', u'Spciy'),
-        (u'bitter', u'Bitter'),
-        (u'italian', u'Italian'),
-        (u'chinese', u'Chinese'),
-        (u'american-classic', u'American Classic')
-        (u'german', u'German')
-        (u'british', u'British'),
-        (u'french', u'French'),
-        (u'vietnamese', u'Vietnamese'),
-        (u'japanese', u'Japanese')
-        (u'pub', u'Pub'),
-        (u'persian', u'Persian'),
-        (u'mediterranian', u'Mediterranian'),
-        (u'greek', u'Greek'),
-        (u'afghan', u'Afghan'),
-        (u'somolian', u'Somolian'),
-        (u'thai', u'Thai'),
-        (u'barbecue', u'Barbecue')
-        (u'soul', u'Soul')
-        (u'ethiopian', u'Ethiopian')
-        (u'jamaican', u'Jamaican')
-        (u'mexican', u'Mexican')
-        (u'korean', u'Korean')
+        ('sour', 'Sour'),
+        ('sweet', 'Sweet'),
+        ('salty', 'Salty'),
+        ('spicy', 'Spciy'),
+        ('bitter', 'Bitter'),
+        ('italian', 'Italian'),
+        ('chinese', 'Chinese'),
+        ('american-classic', 'American Classic'),
+        ('german', 'German'),
+        ('british', 'British'),
+        ('french', 'French'),
+        ('vietnamese', 'Vietnamese'),
+        ('japanese', 'Japanese'),
+        ('pub', 'Pub'),
+        ('persian', 'Persian'),
+        ('mediterranian', 'Mediterranian'),
+        ('greek', 'Greek'),
+        ('afghan', 'Afghan'),
+        ('somolian', 'Somolian'),
+        ('thai', 'Thai'),
+        ('barbecue', 'Barbecue'),
+        ('soul', 'Soul'),
+        ('ethiopian', 'Ethiopian'),
+        ('jamaican', 'Jamaican'),
+        ('mexican', 'Mexican'),
+        ('korean', 'Korean'),
     ]
     DIETS = [
-        (u'vegetarian', u'Vegetarian'),
-        (u'vegan', u'Vegan'),
-        (u'gluten-free', u'Gluten Free'),
-        (u'low-carb', u'Low Carb')
+        ('vegetarian', 'Vegetarian'),
+        ('vegan', 'Vegan'),
+        ('gluten-free', 'Gluten Free'),
+        ('low-carb', 'Low Carb')
     ]
     LOCATIONS = [
-        (u'seattle', u'Seattle'),
-        (u'kitsap', u'Kitsap'),
-        (u'eastside', u'Eastside'),
-        (u'skagit', u'Skagit'),
-        (u'south-king', u'South King')
+        ('seattle', 'Seattle'),
+        ('kitsap', 'Kitsap'),
+        ('eastside', 'Eastside'),
+        ('skagit', 'Skagit'),
+        ('south-king', 'South King')
     ]
     AGES = [
-        (u'18-24', u'18-24'),
-        (u'25-34', u'25-34'),
-        (u'35-44', u'35-44'),
-        (u'45-54', u'45-54'),
-        (u'55-64', u'55-64'),
-        (u'65-74', u'65-74'),
-        (u'75+', u'75+')
+        ('18-24', '18-24'),
+        ('25-34', '25-34'),
+        ('35-44', '35-44'),
+        ('45-54', '45-54'),
+        ('55-64', '55-64'),
+        ('65-74', '65-74'),
+        ('75+', '75+')
     ]
     COSTS = [
-        (u'$', u'$'),
-        (u'$$', u'$$'),
-        (u'$$$', u'$$$'),
-        (u'$$$$', u'$$$$')
+        ('$', '$'),
+        ('$$', '$$'),
+        ('$$$', '$$$'),
+        ('$$$$', '$$$$')
     ]
-    taste = Column(ChoiceType(TASTES))
-    age = Column(ChoiceType(AGES))
-    location = Column(ChoiceType(LOCATIONS))
-    cost = Column(ChoiceType(COSTS))
-    diet = Column(ChoiceType(DIETS))
+    taste = Column(ChoiceType(TASTES))  # many for groups and users
+    age = Column(ChoiceType(AGES))  # many for groups, one for users
+    location = Column(ChoiceType(LOCATIONS))  # one for both
+    cost = Column(ChoiceType(COSTS))  # many for both
+    diet = Column(ChoiceType(DIETS))  # many for both
     groups = relationship('Group', backref='criteria')
     users = relationship('User', backref='criteria')
+
+    def __repr__(self):
+        return"<Criteria(%s)>" % (self.taste)
 
 
 class Group(Base, TableSetup):
@@ -268,29 +233,16 @@ class Group(Base, TableSetup):
         instance.description = kwargs.get("description")
         if kwargs.get("discussions"):
             instance.discussions = kwargs.get("discussions")
-
         session.update(instance)
         return instance
-
-    @classmethod
-    def get_members_of_gid(cls, gid, session=None):
-        if session is None:
-            session = DBSession
-
-        return session.query(User).filter(User.groups == gid).all()
 
     @property
     def __acl__(self):
         acl = []
-
         acl.append((Allow, self.admin, 'g_admin'))
-
         members = self.id.users
         for member in members:
             acl.append((Allow, 'member:{}'.format(member.username), 'member'))
-
-        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
-
         return acl
 
     def __repr__(self):
