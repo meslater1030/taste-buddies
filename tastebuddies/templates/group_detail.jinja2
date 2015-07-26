@@ -14,26 +14,27 @@
 <h1>Group Food Profile</h1>
 <div id="group_taste_buttons">
 <p>
-{% for taste in group.taste %}
-    <span class="button disabled {{ taste.taste.lower() }}">
-    {{ taste.taste }}
+{% for taste in criteria.taste %}
+    <span class="button disabled {{ taste.lower() }}">
+    {{ taste }}
     </span>
 {% endfor %}
-{% for diet in group.diet %}
-    <span class="button disabled {{ diet.diet.lower() }}">
-    {{ diet.diet }}
+{% for diet in criteria.diet %}
+    <span class="button disabled {{ diet.lower() }}">
+    {{ diet }}
     </span>
 {% endfor %}
 
 
-    <span class="button disabled {{ cost.lower() }}">{{ cost }}
+    <span class="button disabled {{ cost.lower() }}">
+    {{ criteria.cost }}
     </span>
 
     <span class="button disabled {{ location.lower() }}">
-    {{ location }}
+    {{ criteria.location }}
     </span>
     <span class="button disabled {{ age.lower() }}">
-    {{ age }}
+    {{ criteria.age }}
     </span>
 </p>
 
@@ -51,7 +52,7 @@
         <img src="../static/img/dog11.jpg" alt="Group members Profile Photo" class="group-page-member-photo">
     <!-- only list 8 -->
         <ol>
-        {% for member in members %}
+        {% for member in group.members %}
         <li class='member-li'><a href="{{ request.route_url('profile_detail', username=member.username)}}">{{ member.username }}</a></li>
         {% endfor %}
         </ol>
@@ -112,7 +113,7 @@
 
         {% if not discussions %}
             <div class="entry">
-                <h3>No one has planned anything yet.</h3><h3>Be the first one to!</h3>
+                <h3>No one has planned anything yet.</h3><h3>Be the first!</h3>
             </div>
         {% endif %}
     </section>

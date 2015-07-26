@@ -35,15 +35,12 @@ def user_create_view(request):
             password = request.params.get('password')
             hashed = manager.encode(password)
             email = request.params.get('email')
-
-            User.add(
+            user = User.add(
                 username=username,
                 password=hashed,
                 email=email,
-                cost=1,
-                age=1,
-                location=1
             )
+            Criteria.add(user=user)
             headers = remember(request, username)
 
             return HTTPFound(request.route_url('send_email'), headers=headers)
@@ -208,20 +205,10 @@ def profile_detail_view(request):
         return HTTPForbidden()
 
     user = User.lookup_by_attribute(username=request.matchdict['username'])[0]
-    criteria = Criteria.lookup_by_attribute(id=user.criteria_id)
     profile = {}
     profile['username'] = request.authenticated_userid,
-    profile['firstname'] = user.firstname
-    profile['lastname'] = user.lastname
-    profile['food'] = user.food
-    profile['restaurant'] = user.restaurant
-    profile['tastes'] = criteria.taste
-    profile['diets'] = criteria.diet
-    profile['groups'] = user.groups
-    profile['age'] = criteria.age
-    profile['location'] = criteria.location
-    profile['cost'] = criteria.cost
-
+    profile['user'] = user
+    profile['criteria'] = Criteria.lookup_by_attribute(user=user)[0]
     return profile
 
 
@@ -231,32 +218,29 @@ def profile_detail_view(request):
 def profile_edit_view(request):
     username = request.authenticated_userid
     user = User.lookup_by_attribute(username=username)[0]
-    criteria = Criteria.lookup_by_attribute(id=user.criteria_id)[0]
+    criteria = Criteria.lookup_by_attribute(user=user)[0]
     if request.method == 'POST':
         User.edit(id=user.id,
                   username=username,
                   firstname=request.params.get('first_name'),
                   lastname=request.params.get('last_name'),
-                  restaurant=request.params.get('favorite_restaurants'),
-                  food=request.params.get('favorite_food'))
+                  restaurants=request.params.get('favorite_restaurants'),
+                  food=request.params.get('favorite_food')
+                  )
         Criteria.edit(id=criteria.id,
-                      location=request.params.get('location'),
-                      taste=request.params.getall('personal_taste'),
+                      location=request.params.getall('location'),
+                      taste=request.params.getall('taste'),
                       diet=request.params.getall('diet'),
-                      cost=request.params.get('group_cost'),
-                      age=request.params.get('age'))
-
+                      cost=request.params.getall('cost'),
+                      age=request.params.getall('age')
+                      )
         headers = remember(request, username)
         return HTTPFound(request.route_url(
                          'profile_detail', username=username
                          ),
                          headers=headers)
     profile = {}
-    profile['tastes'] = criteria.TASTES
-    profile['diet'] = criteria.DIET
-    profile['age'] = criteria.AGES
-    profile['location'] = criteria.LOCATIONS
-    profile['cost'] = criteria.COSTS
+    profile['criteria'] = criteria
     profile['username'] = username
     profile['user'] = user
     return profile
@@ -269,24 +253,19 @@ def group_create_view(request):
     username = request.authenticated_userid
 
     if request.method == 'POST':
-        criteria = Criteria.add(location=request.params.get('location'),
-                                taste=request.params.getall('personal_taste'),
-                                diet=request.params.getall('diet'),
-                                cost=request.params.get('group_cost'),
-                                age=request.params.get('age'))
-        group = Group.add(name=request.params.get('group_name'),
-                          description=request.params.get('group_description'),
-                          Admin=username,
-                          criteria_id=criteria.id)
+        group = Group.add(name=request.params.get('name'),
+                          description=request.params.get('description'),
+                          Admin=username)
+        Criteria.add(location=request.params.get('location'),
+                     taste=request.params.getall('taste'),
+                     diet=request.params.getall('diet'),
+                     cost=request.params.get('cost'),
+                     age=request.params.get('age'),
+                     group=group)
         return HTTPFound(request.route_url('group_detail',
                          group_id=group.id))
     profile = {}
-    criteria = Criteria()
-    profile['tastes'] = criteria.TASTES
-    profile['diet'] = criteria.DIET
-    profile['age'] = criteria.AGES
-    profile['location'] = criteria.LOCATIONS
-    profile['cost'] = criteria.COSTS
+    profile['criteria'] = Criteria()
     profile['username'] = username
     return profile
 
@@ -296,7 +275,7 @@ def group_create_view(request):
 def group_detail_view(request):
     username = request.authenticated_userid
     group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
-    criteria = Criteria.lookup_by_attribute(id=group.criteria_id)[0]
+    criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
         User.addgroup(username=username, usergroup=group)
 
@@ -330,11 +309,8 @@ def group_detail_view(request):
     for discussion in tmp_discussions:
         discussions.append(tmp_discussions.pop())
     profile = {}
-    profile['members'] = group.users
     profile['posts'] = Post.all()
-    profile['cost'] = criteria.cost
-    profile['location'] = criteria.location
-    profile['age'] = criteria.location
+    profile['criteria'] = criteria
     profile['group'] = group
     profile['username'] = username
 
@@ -346,15 +322,12 @@ def group_detail_view(request):
 def group_discussion_view(request):
     username = request.authenticated_userid
     group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
-    criteria = Criteria.lookup_by_attribute(id=group.criteria_id)[0]
+    criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-
         if request.params.get('title'):
             title = request.params.get('title')
             Discussion.add(title=title, group_id=group.id)
-
         if request.params.get('text'):
-
             discussion = (Discussion.lookup_by_attribute(
                           id=request.matchdict['discussion_id'])[0])
             text = request.params.get('text')
@@ -368,12 +341,9 @@ def group_discussion_view(request):
     for discussion in tmp_discussions:
         profile['discussions'].append(tmp_discussions.pop())
     profile['posts'] = Post.all()
-    profile['cost'] = criteria.cost
-    profile['location'] = criteria.location
-    profile['age'] = criteria.age
-    profile['members'] = group.users
     profile['group'] = group
     profile['username'] = username
+    profile['criteria'] = criteria
 
     return profile
 
@@ -384,28 +354,25 @@ def group_discussion_view(request):
 def group_edit_view(request):
     username = request.authenticated_userid
     group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
-    criteria = Criteria.lookup_by_attribute(id=group.criteria_id)[0]
+    criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-        criteria = Criteria.edit(location=request.params.get('group_location'),
-                                 taste=request.params.getall('personal_taste'),
-                                 diet=request.params.getall('group_diet'),
-                                 cost=request.params.get('group_cost'),
-                                 age=request.params.get('group_age'),
+        criteria = Criteria.edit(location=request.params.get('location'),
+                                 taste=request.params.getall('taste'),
+                                 diet=request.params.getall('diet'),
+                                 cost=request.params.get('cost'),
+                                 age=request.params.get('age'),
                                  id=criteria.id)
-        group = Group.edit(name=request.params.get('group_name'),
-                           description=request.params.get('group_description'),
+        group = Group.edit(name=request.params.get('name'),
+                           description=request.params.get('description'),
                            Admin=username,
                            id=group.id)
         return HTTPFound(request.route_url('group_detail', group_id=group.id))
 
     profile = {}
-    profile['ages'] = criteria.AGES
-    profile['locations'] = criteria.LOCATIONS
-    profile['tastes'] = criteria.TASTES
-    profile['diets'] = criteria.DIETS
-    profile['costs'] = criteria.COSTS
+    profile['criteria'] = criteria
     profile['group'] = group
     profile['username'] = username
+
     return profile
 
 

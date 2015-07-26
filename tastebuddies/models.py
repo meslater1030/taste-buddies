@@ -8,6 +8,7 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     Boolean,
+    PickleType
 )
 
 
@@ -21,15 +22,12 @@ from sqlalchemy.orm import (
 )
 
 from pyramid.security import Allow
-from sqlalchemy_utils.types.choice import ChoiceType
-from sqlalchemy_utils import force_auto_coercion
 
 from zope.sqlalchemy import ZopeTransactionExtension
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
-force_auto_coercion()
 
 group_user = Table('group_user', Base.metadata,
                    Column('groups', Integer, ForeignKey('groups.id')),
@@ -65,7 +63,7 @@ class TableSetup(object):
         if session is None:
             session = DBSession
         instance = cls(**kwargs)
-        session.query(cls).filter(cls.id == kwargs['id']).update(**kwargs)
+        session.query(cls).filter(cls.id == kwargs['id']).update(kwargs)
         return instance
 
     @classmethod
@@ -73,7 +71,7 @@ class TableSetup(object):
         if session is None:
             session = DBSession
         instance = cls(**kwargs)
-        session.delete(instance)
+        session.query(cls).filter(cls.id == kwargs['id']).delete()
         return instance
 
 
@@ -107,7 +105,7 @@ class User(Base, TableSetup):
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.groups.append(usergroup)
-        session.update(instance)
+        session.add(instance)
         return instance
 
     # I think this can also be replaced by edit.  Maybe turn the string
@@ -118,7 +116,7 @@ class User(Base, TableSetup):
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.ver_code = int(ver_code)
-        session.update(instance)
+        session.add(instance)
         return instance
 
     # ditto the above.
@@ -128,7 +126,7 @@ class User(Base, TableSetup):
             session = DBSession
         instance = cls.lookup_by_attribute(username=username)[0]
         instance.confirmed = True
-        session.update(instance)
+        session.add(instance)
         return instance
 
     @property
@@ -146,73 +144,37 @@ class User(Base, TableSetup):
 
 
 class Criteria(Base, TableSetup):
+    """Constant variables are used to generate options for the user
+    to choose from on the front end.  Columns are PickleTypes and expect
+    to receive and return lists.  Each user has one set of criteria and
+    each group has one set of criteria and vice versa for a one to one
+    relationship.
+    """
     __tablename__ = 'criteria'
-    TASTES = [
-        ('sour', 'Sour'),
-        ('sweet', 'Sweet'),
-        ('salty', 'Salty'),
-        ('spicy', 'Spciy'),
-        ('bitter', 'Bitter'),
-        ('italian', 'Italian'),
-        ('chinese', 'Chinese'),
-        ('american-classic', 'American Classic'),
-        ('german', 'German'),
-        ('british', 'British'),
-        ('french', 'French'),
-        ('vietnamese', 'Vietnamese'),
-        ('japanese', 'Japanese'),
-        ('pub', 'Pub'),
-        ('persian', 'Persian'),
-        ('mediterranian', 'Mediterranian'),
-        ('greek', 'Greek'),
-        ('afghan', 'Afghan'),
-        ('somolian', 'Somolian'),
-        ('thai', 'Thai'),
-        ('barbecue', 'Barbecue'),
-        ('soul', 'Soul'),
-        ('ethiopian', 'Ethiopian'),
-        ('jamaican', 'Jamaican'),
-        ('mexican', 'Mexican'),
-        ('korean', 'Korean'),
-    ]
-    DIETS = [
-        ('vegetarian', 'Vegetarian'),
-        ('vegan', 'Vegan'),
-        ('gluten-free', 'Gluten Free'),
-        ('low-carb', 'Low Carb')
-    ]
-    LOCATIONS = [
-        ('seattle', 'Seattle'),
-        ('kitsap', 'Kitsap'),
-        ('eastside', 'Eastside'),
-        ('skagit', 'Skagit'),
-        ('south-king', 'South King')
-    ]
-    AGES = [
-        ('18-24', '18-24'),
-        ('25-34', '25-34'),
-        ('35-44', '35-44'),
-        ('45-54', '45-54'),
-        ('55-64', '55-64'),
-        ('65-74', '65-74'),
-        ('75+', '75+')
-    ]
-    COSTS = [
-        ('$', '$'),
-        ('$$', '$$'),
-        ('$$$', '$$$'),
-        ('$$$$', '$$$$')
-    ]
-    taste = Column(ChoiceType(TASTES))  # many for groups and users
-    age = Column(ChoiceType(AGES))  # many for groups, one for users
-    location = Column(ChoiceType(LOCATIONS))  # one for both
-    cost = Column(ChoiceType(COSTS))  # many for both
-    diet = Column(ChoiceType(DIETS))  # many for both
-    groups = relationship('Group', backref='criteria')
-    users = relationship('User', backref='criteria')
+    TASTES = ['Sour', 'Sweet', 'Salty', 'Spicy', 'Bitter', 'Italian',
+              'Chinese', 'American Classic', 'German', 'British',
+              'French', 'Vietnamese', 'Japanese', 'Pub', 'Persian',
+              'Mediterranian', 'Greek', 'Afghan', 'Somolian',
+              'Thai', 'Barbecue', 'Soul', 'Ethiopian', 'Jamaican',
+              'Mexican', 'Korean',
+              ]
+    DIETS = ['Vegetarian', 'Vegan', 'Gluten Free', 'Low Carb']
+    LOCATIONS = ['Seattle', 'Kitsap', 'Eastside', 'Skagit', 'South King']
+    AGES = ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+']
+    COSTS = ['$', '$$', '$$$', '$$$$']
+    taste = Column(PickleType)  # many for groups and users
+    age = Column(PickleType)  # many for groups, one for users
+    location = Column(PickleType)  # one for both
+    cost = Column(PickleType)  # many for both
+    diet = Column(PickleType)  # many for both
+    group = relationship('Group', uselist=False, backref='criteria')
+    user = relationship('User', uselist=False, backref='criteria')
 
     def __repr__(self):
-        return"<Criteria(%s)>" % (self.taste)
+        if self.user:
+            return"<Criteria(%s)>" % (self.user.username)
+        else:
+            return"<Criteria(%s)>" % (self.group.name)
 
 
 class Group(Base, TableSetup):
@@ -233,7 +195,7 @@ class Group(Base, TableSetup):
         instance.description = kwargs.get("description")
         if kwargs.get("discussions"):
             instance.discussions = kwargs.get("discussions")
-        session.update(instance)
+        session.add(instance)
         return instance
 
     @property

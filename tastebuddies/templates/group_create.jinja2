@@ -10,48 +10,48 @@
     </div>
     <label>Group Name</label>
     <div class="field-group">
-        <input type="text" name="group_name" id="group_name"
+        <input type="text" name="name" id="name"
         placeholder="Group Name"/>
     </div>
     <label>Age</label>
     <div class="field-group">
         <select name="age" class="group_age_range" />
-            {% for age in ages %}
-            <option value={{ age.id }}>{{ age.age }}</option>
+            {% for age in criteria.age %}
+            <option value={{ age }}>{{ age }}</option>
             {% endfor %}
         </select>
     </div>
     <label>Location</label>
     <div id="location" class="field-group">
         <select name="location" class="location"/>
-            {% for location in location %}
-            <option value={{ location.id }}>{{ location.location }}</option>
+            {% for location in criteria.location %}
+            <option value={{ location }}>{{ location }}</option>
             {% endfor %}
         </select>
     </div>
-    <div id="personal_taste" class="field-group">
+    <div id="taste" class="field-group">
         <label>Taste</label>
-        {% for taste in tastes %}
-        <input type="checkbox" name="personal_taste" class="style" value={{ taste.id }}>{{ taste.taste }}
+        {% for taste in criteria.taste %}
+        <input type="checkbox" name="taste" class="style" value={{ taste }}>{{ taste }}
         {% endfor %}
     </div>
     <div id="dietary_restriction" class="field-group">
         <label>Dietary Restrictions</label>
-        {% for diet in diets %}
-        <input type="checkbox" name="diet" class="style" value={{ diet.id }}>{{ diet.diet }}
+        {% for diet in criteria.diet %}
+        <input type="checkbox" name="diet" class="style" value={{ diet }}>{{ diet }}
         {% endfor %}
     </div>
     <div id="personal_cost_range" class="field-group">
         <label>Cost</label>
-        {% for cost in cost %}
-          <input type="radio" name="group_cost" class="style" value={{ cost.id }}>{{ cost.cost }}
+        {% for cost in criteria.cost %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
         {% endfor %}
     </div>
         <label>Group Description</label>
-    <div class="field-group" id="group_description">
+    <div class="field-group" id="description">
         <textarea
             id="text"
-            name="group_description"
+            name="description"
             placeholder="Write your group description here!!"
             cols="60"
             rows="8"></textarea>
