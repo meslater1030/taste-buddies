@@ -263,10 +263,10 @@ def profile_edit_view(request):
             cost = request.params.get('group_cost')
             food = request.params.get('favorite_food')
             age = request.params.get('age')
-            User.change(username=username, firstname=firstname,
-                        lastname=lastname, location=location,
-                        taste=taste, diet=diet, cost=cost,
-                        restaurant=restaurant, food=food, age=age)
+            User.edit(username=username, firstname=firstname,
+                      lastname=lastname, location=location,
+                      taste=taste, diet=diet, cost=cost,
+                      restaurant=restaurant, food=food, age=age)
 
             headers = remember(request, username)
             return HTTPFound(request.route_url(
@@ -472,10 +472,10 @@ def group_edit_view(request):
             cost = request.params.get('group_cost')
             age = request.params.get('group_age')
             username = request.authenticated_userid
-            Group.change(name=group_name, description=group_descrip,
-                         location=location, taste=taste,
-                         diet=diet, cost=cost, age=age,
-                         Admin=username, id=group.id)
+            Group.edit(name=group_name, description=group_descrip,
+                       location=location, taste=taste,
+                       diet=diet, cost=cost, age=age,
+                       Admin=username, id=group.id)
             all_groups = Group.all()
             for group in all_groups:
                 if group.name == group_name:
