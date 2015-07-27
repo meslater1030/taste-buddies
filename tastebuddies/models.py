@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from pyramid.security import Allow
 from sqlalchemy import (
     Table,
     Column,
@@ -20,8 +20,6 @@ from sqlalchemy.orm import (
     relationship,
     validates,
 )
-
-from pyramid.security import Allow
 
 from zope.sqlalchemy import ZopeTransactionExtension
 

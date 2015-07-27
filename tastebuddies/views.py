@@ -1,19 +1,21 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from collections import OrderedDict
-from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound, HTTPForbidden
-
-import os
+from cryptacular.bcrypt import BCRYPTPasswordManager
 import datetime
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-import smtplib
-from random import randint
 
+from models import User, Group, Criteria
+import os
+
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.security import remember, forget
-from cryptacular.bcrypt import BCRYPTPasswordManager
+from pyramid.view import view_config
 
-from models import (User, Group, Criteria)
+from random import randint
+import smtplib
 
 
 @view_config(route_name='home',
@@ -200,6 +202,9 @@ def logout(request):
 @view_config(route_name='profile_detail',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
+    """will allow the user who owns the profile or any user who is in a group
+    with that user to see that users current informmation and criteria.
+    """
     if not (request.has_permission('owner')
             or request.has_permission('connect')):
         return HTTPForbidden()
@@ -216,6 +221,9 @@ def profile_detail_view(request):
              permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
+    """returns current user information.  On POST collects all information
+    fromt the page and edits the user and criteria accordingly.
+    """
     username = request.authenticated_userid
     user = User.lookup_by_attribute(username=username)[0]
     criteria = Criteria.lookup_by_attribute(user=user)[0]
@@ -250,6 +258,9 @@ def profile_edit_view(request):
              permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
+    """Collects all information from the page and instanciates a new
+    group and its corresponding criteria.
+    """
     username = request.authenticated_userid
     admin = User.lookup_by_attribute(username=username)[0]
     if request.method == 'POST':
@@ -273,6 +284,13 @@ def group_create_view(request):
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
+    """returns current group information.  If recievng input form a form
+    will add that user as a group member if they aren't already.  Will look
+    to see whether a new discussion is being created and if so, add it
+    to the group forum.  If a new post on an existing discussion is created
+    that post will be added to the appropriate discussion.  Discussions
+    are returned in reverse order.
+    """
     username = request.authenticated_userid
     group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
     criteria = Criteria.lookup_by_attribute(group=group)[0]
@@ -298,7 +316,6 @@ def group_detail_view(request):
     for _ in range(len(group.forum)):
         to_add = group.forum.popitem()
         forum[to_add[0]] = to_add[1]
-    import pdb; pdb.set_trace()
     profile['forum'] = forum
     profile['criteria'] = criteria
     profile['group'] = group
@@ -310,6 +327,10 @@ def group_detail_view(request):
              permission='authn',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
+    """returns current group information for editing and then collects
+    all information that has been added by the user whether new or existing
+    and edits the existing entries.
+    """
     username = request.authenticated_userid
     group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
     criteria = Criteria.lookup_by_attribute(group=group)[0]
