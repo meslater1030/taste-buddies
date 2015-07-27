@@ -65,15 +65,13 @@ def main(global_config, **settings):
                      factory=Root)
     config.add_route('group_create', '/group/create_group',
                      factory=Root)
-    config.add_route('group_edit', '/group/edit/{group_id}',
+    config.add_route('group_edit', '/group/edit/{group_name}',
                      factory=Root)
-    config.add_route('group_forum', '/group/{group_id}/{}',
+    config.add_route('group_forum', '/group/{group_name}',
                      factory=Root)
     config.add_route('profile_detail', '/profile/{username}',
                      factory=UserFactory, traverse='/{username}')
-    config.add_route('group_detail', '/group/{group_id}',
-                     factory=Root)
-    config.add_route('group_discussion', '/group/{group_id}/{discussion_id}',
+    config.add_route('group_detail', '/group/{group_name}',
                      factory=Root)
     config.scan()
 

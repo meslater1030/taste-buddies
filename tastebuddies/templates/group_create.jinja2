@@ -16,7 +16,7 @@
     <label>Age</label>
     <div class="field-group">
         <select name="age" class="group_age_range" />
-            {% for age in criteria.age %}
+            {% for age in criteria.AGES %}
             <option value={{ age }}>{{ age }}</option>
             {% endfor %}
         </select>
@@ -24,26 +24,26 @@
     <label>Location</label>
     <div id="location" class="field-group">
         <select name="location" class="location"/>
-            {% for location in criteria.location %}
+            {% for location in criteria.LOCATIONS %}
             <option value={{ location }}>{{ location }}</option>
             {% endfor %}
         </select>
     </div>
     <div id="taste" class="field-group">
         <label>Taste</label>
-        {% for taste in criteria.taste %}
+        {% for taste in criteria.TASTES %}
         <input type="checkbox" name="taste" class="style" value={{ taste }}>{{ taste }}
         {% endfor %}
     </div>
     <div id="dietary_restriction" class="field-group">
         <label>Dietary Restrictions</label>
-        {% for diet in criteria.diet %}
+        {% for diet in criteria.DIETS %}
         <input type="checkbox" name="diet" class="style" value={{ diet }}>{{ diet }}
         {% endfor %}
     </div>
     <div id="personal_cost_range" class="field-group">
         <label>Cost</label>
-        {% for cost in criteria.cost %}
+        {% for cost in criteria.COSTS %}
           <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
         {% endfor %}
     </div>

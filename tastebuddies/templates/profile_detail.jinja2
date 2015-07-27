@@ -72,11 +72,11 @@
         <label>User Groups</label>
 
         <ul class="group-links-list">
-
+            {% if user.groups %}
             {% for group in user.groups %}
-            <li><a href="{{ request.route_url('group_detail', group_id=group.id) }}">{{ group.name }}</a></li>
+            <li><a href="{{ request.route_url('group_detail', group_name=group.name) }}">{{ group.name }}</a></li>
             {% endfor %}
-
+            {% endif %}
         </ul>
     </div>
   </form>
@@ -93,9 +93,9 @@
     </ul>
 <!--     <ul>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=0) }}">+Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_name=0) }}">+Your Groups</a></li>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=1) }}">+Administer Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_name=1) }}">+Administer Your Groups</a></li>
     </ul> -->
     </ul>
 </nav>

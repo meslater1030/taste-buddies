@@ -89,7 +89,7 @@ body {
 #save_comment, #login, #save_group, #create-account, #verify, #save_personal_profile{
     background-color: #7ab800;
     font-family:"Courier";
-    color: #fff;
+    color: #000;
     font-weight: 500;
     font-size: 16px;
     line-height: 42px;
@@ -106,7 +106,7 @@ body {
 #resend_email_button, #join_group_button {
     background-color: #FF9819;
     font-family:"Courier";
-    color: #fff;
+    color: #000;
     display: inline-block;
     font-weight: 500;
     font-size: 16px;
@@ -320,7 +320,7 @@ footer {
   opacity: 0.65;
   cursor: not-allowed;
   background: #CCC;
-  color: #FFF;
+  color: #000;
   display: inline-block;
   border-radius: 4px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
@@ -329,6 +329,7 @@ footer {
   padding: 0 3em;
   text-decoration: none;
   margin-bottom: 2%;
+  font-weight: bold;
 
 }
 

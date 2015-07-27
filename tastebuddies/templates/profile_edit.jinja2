@@ -28,13 +28,16 @@
 
         <select name="age" class="age_range">
             {% for age in criteria.AGES %}
+                {% if criteria.age %}
                 {% if age in criteria.age %}
 
                 <option value={{ age }} selected>{{ age }}</option>
 
                 {% else %}
                 <option value={{ age }}>{{ age }}</option>
-
+                {% endif %}
+                {% else %}
+                <option value={{ age }}>{{ age }}</option>
                 {% endif %}
             {% endfor %}
         </select>
@@ -46,13 +49,16 @@
 
         <select name="location" class="location"/>
             {% for location in criteria.LOCATIONS %}
-            {% if location in criteria.location %}
-            <option value={{ location }} selected>{{ location }}</option>
+                {% if criteria.location %}
+                {% if location in criteria.location %}
+                <option value={{ location }} selected>{{ location }}</option>
 
-            {% else %}
-            <option value={{ location }}>{{ location }}</option>
-
-            {% endif %}
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
             {% endfor %}
         </select>
 
@@ -68,6 +74,8 @@
             {% else %}
             <input type="checkbox" name="taste" class="style" value={{ taste }}>{{ taste }}
             {% endif %}
+            {% else %}
+            <input type="checkbox" name="taste" class="style" value={{ taste }}>{{ taste }}
             {% endif %}
         {% endfor %}
 
@@ -84,6 +92,9 @@
             <input type="checkbox" name="diet" class="style" value={{ diet }}>{{ diet }}
 
             {% endif %}
+            {% else %}
+            <input type="checkbox" name="diet" class="style" value={{ diet }}>{{ diet }}
+
             {% endif %}
         {% endfor %}
 
@@ -105,12 +116,15 @@
         <label>Cost</label>
 
         {% for cost in criteria.COSTS %}
+          {% if criteria.cost %}
           {% if cost in criteria.cost %}
           <input type="radio" checked='checked' name="cost" class="style" value={{ cost }}>{{ cost }}
 
           {% else %}
           <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
-
+          {% endif %}
+          {% else %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
           {% endif %}
 
         {% endfor %}

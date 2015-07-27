@@ -251,19 +251,19 @@ def profile_edit_view(request):
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
     username = request.authenticated_userid
-
+    admin = User.lookup_by_attribute(username=username)[0]
     if request.method == 'POST':
         group = Group.add(name=request.params.get('name'),
                           description=request.params.get('description'),
-                          Admin=username)
-        Criteria.add(location=request.params.get('location'),
+                          admin=admin, users=[admin])
+        Criteria.add(location=request.params.getall('location'),
                      taste=request.params.getall('taste'),
                      diet=request.params.getall('diet'),
-                     cost=request.params.get('cost'),
-                     age=request.params.get('age'),
+                     cost=request.params.getall('cost'),
+                     age=request.params.getall('age'),
                      group=group)
         return HTTPFound(request.route_url('group_detail',
-                         group_id=group.id))
+                         group_name=group.name))
     profile = {}
     profile['criteria'] = Criteria()
     profile['username'] = username
@@ -274,56 +274,31 @@ def group_create_view(request):
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
     username = request.authenticated_userid
-    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
+    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
     criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-        User.addgroup(username=username, usergroup=group)
-
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.add(title=title, group_id=group.id)
-
-            for discussions in Discussion.all():
-
-                if discussions.title == title:
-                    discussion = discussions
-            discussion_id = discussion.id
-
-            return HTTPFound(request.route_url(
-                'group_discussion',
-                group_id=request.matchdict['group_id'],
-                discussion_id=discussion_id
-            ))
-
-        if request.params.get('text'):
-            discussion = (Discussion.lookup_by_attribute(
-                          id=request.matchdict['discussion_id'])[0])
-            text = request.params.get('text')
-            Post.add(text=text, discussion_id=discussion.id)
-
-    tmp_discussions = []
-    for discussion in Discussion.all():
-        if discussion.group_id == group.id:
-            tmp_discussions.append(discussion)
-    discussions = []
-    for discussion in tmp_discussions:
-        discussions.append(tmp_discussions.pop())
+        user = User.lookup_by_attribute(username=username)[0]
+        user.groups.append(group)
+        return HTTPFound(request.route_url(
+                         'group_detail',
+                         group_id=request.matchdict['group_id'],
+                         ))
     profile = {}
-    profile['posts'] = Post.all()
     profile['criteria'] = criteria
     profile['group'] = group
     profile['username'] = username
-
     return profile
 
 
-@view_config(route_name='group_discussion',
-             renderer='templates/group_detail.jinja2')
-def group_discussion_view(request):
+@view_config(route_name='group_forum',
+             renderer='templates/group_forum.jinja2')
+def group_forum_view(request):
     username = request.authenticated_userid
-    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
+    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
     criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
+        user = User.lookup_by_attribute(username=username)[0]
+        user.groups.append(group)
         if request.params.get('title'):
             title = request.params.get('title')
             Discussion.add(title=title, group_id=group.id)
@@ -353,20 +328,20 @@ def group_discussion_view(request):
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
     username = request.authenticated_userid
-    group = Group.lookup_by_attribute(id=request.matchdict['group_id'])[0]
+    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
     criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-        criteria = Criteria.edit(location=request.params.get('location'),
+        criteria = Criteria.edit(location=request.params.getall('location'),
                                  taste=request.params.getall('taste'),
                                  diet=request.params.getall('diet'),
-                                 cost=request.params.get('cost'),
-                                 age=request.params.get('age'),
+                                 cost=request.params.getall('cost'),
+                                 age=request.params.getall('age'),
                                  id=criteria.id)
         group = Group.edit(name=request.params.get('name'),
                            description=request.params.get('description'),
-                           Admin=username,
                            id=group.id)
-        return HTTPFound(request.route_url('group_detail', group_id=group.id))
+        return HTTPFound(request.route_url('group_detail',
+                                           group_name=group.name))
 
     profile = {}
     profile['criteria'] = criteria

@@ -3,7 +3,7 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="view-group-form" action="{{ request.route_url('group_edit', group_id=group.id) }}" method='POST'>
+<form id="view-group-form" action="{{ request.route_url('group_edit', group_name=group.name) }}" method='POST'>
     <h1>Edit your group!</h1>
      <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
@@ -16,24 +16,35 @@
     <label>Age</label>
     <div class="field-group">
         <select class="age" name="age" />
-        {% for age in criteria.AGES %}
-            {% if age == criteria.age %}
-                <option selected='selected' value='{{ age }}' name="age" class="age">{{ age }}</option>
-            {% else %}
-                <option value='{{ age }}' name="age" class="age">{{ age }}</option>
-            {% endif %}
-        {% endfor %}
+            {% for age in criteria.AGES %}
+                {% if criteria.age %}
+                {% if age in criteria.age %}
+
+                <option value={{ age }} selected>{{ age }}</option>
+
+                {% else %}
+                <option value={{ age }}>{{ age }}</option>
+                {% endif %}
+                {% else %}
+                <option value={{ age }}>{{ age }}</option>
+                {% endif %}
+            {% endfor %}
         </select>
     </div>
     <label>Location</label>
         <select class="location" name="location"/>
-        {% for location in criteria.LOCATIONS %}
-            {% if location == criteria.location %}
-                <option selected='selected' value='{{ location }}' name='location' class="location">{{ location }}</option>
-            {% else %}
-                <option value='{{ location }}' name='location' class="location">{{ location }}</option>
-            {% endif %}
-        {% endfor %}
+            {% for location in criteria.LOCATIONS %}
+                {% if criteria.location %}
+                {% if location in criteria.location %}
+                <option value={{ location }} selected>{{ location }}</option>
+
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
+            {% endfor %}
         </select>
     </div>
 
@@ -62,12 +73,17 @@
     <div class="field-group">
         <label>Cost</label>
         {% for cost in criteria.COSTS %}
-            {% if cost == criteria.cost %}
-                <input type="radio" name="cost" class="style"
-                       value="{{ cost }}" checked="checked">{{ cost }}
-            {% else %}
-                <input type="radio" name="cost" class="style" value="{{ cost }}">{{ cost }}
-            {% endif %}
+          {% if criteria.cost %}
+          {% if cost in criteria.cost %}
+          <input type="radio" checked='checked' name="cost" class="style" value={{ cost }}>{{ cost }}
+
+          {% else %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
+          {% endif %}
+          {% else %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
+          {% endif %}
+
         {% endfor %}
     </div>
         <label>Group Description</label>

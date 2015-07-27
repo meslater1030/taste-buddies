@@ -30,8 +30,8 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 group_user = Table('group_user', Base.metadata,
-                   Column('groups', Integer, ForeignKey('groups.id')),
-                   Column('users', Integer, ForeignKey('users.id'))
+                   Column('group_id', Integer, ForeignKey('groups.id')),
+                   Column('user_id', Integer, ForeignKey('users.id'))
                    )
 
 
@@ -84,10 +84,10 @@ class User(Base, TableSetup):
     lastname = Column(Text)
     confirmed = Column(Boolean, default=False)
     ver_code = Column(Integer)
-    groups = relationship('Group', secondary=group_user, backref='users')
     restaurants = Column(Text)
     food = Column(Text)
     criteria_id = Column(Integer, ForeignKey('criteria.id'))
+    admin_groups = relationship("Group", backref='admin')
 
     @validates('email')
     def validate_email(self, key, email):
@@ -162,19 +162,19 @@ class Criteria(Base, TableSetup):
     LOCATIONS = ['Seattle', 'Kitsap', 'Eastside', 'Skagit', 'South King']
     AGES = ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+']
     COSTS = ['$', '$$', '$$$', '$$$$']
-    taste = Column(PickleType)  # many for groups and users
-    age = Column(PickleType)  # many for groups, one for users
-    location = Column(PickleType)  # one for both
-    cost = Column(PickleType)  # many for both
-    diet = Column(PickleType)  # many for both
+    taste = Column(PickleType)
+    age = Column(PickleType)
+    location = Column(PickleType)
+    cost = Column(PickleType)
+    diet = Column(PickleType)
     group = relationship('Group', uselist=False, backref='criteria')
     user = relationship('User', uselist=False, backref='criteria')
 
     def __repr__(self):
         if self.user:
-            return"<Criteria(%s)>" % (self.user.username)
+            return"<Criteria for %s>" % (self.user.username)
         else:
-            return"<Criteria(%s)>" % (self.group.name)
+            return"<Criteria for %s>" % (self.group.name)
 
 
 class Group(Base, TableSetup):
@@ -183,8 +183,9 @@ class Group(Base, TableSetup):
     description = Column(Text, nullable=False)
     discussions = relationship('Discussion',
                                primaryjoin="(Group.id==Discussion.group_id)")
-    admin = relationship("Admin", uselist=False)
+    admin_id = Column(Integer, ForeignKey('users.id'))
     criteria_id = Column(Integer, ForeignKey('criteria.id'))
+    users = relationship("User", secondary=group_user, backref='groups')
 
     @classmethod
     def edit(cls, session=None, **kwargs):
@@ -208,7 +209,7 @@ class Group(Base, TableSetup):
         return acl
 
     def __repr__(self):
-        return "<Group(%s, location=%s)>" % (self.name, self.location)
+        return "<Group(%s)>" % (self.name)
 
 
 class Discussion(Base, TableSetup):
