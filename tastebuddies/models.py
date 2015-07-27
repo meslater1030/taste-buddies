@@ -98,16 +98,6 @@ class User(Base, TableSetup):
         except:
             raise TypeError('Please enter a vaild email address')
 
-    # I think this can be replaced by edit
-    @classmethod
-    def addgroup(cls, session=None, usergroup=None, username=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_by_attribute(username=username)[0]
-        instance.groups.append(usergroup)
-        session.add(instance)
-        return instance
-
     # I think this can also be replaced by edit.  Maybe turn the string
     # into an integer in views?
     @classmethod
@@ -178,26 +168,16 @@ class Criteria(Base, TableSetup):
 
 
 class Group(Base, TableSetup):
+    """We expect forum to be input as a dictionary where keys
+    represent titles and values are a list of posts.
+    """
     __tablename__ = 'groups'
     name = Column(Text, unique=True, nullable=False)
     description = Column(Text, nullable=False)
-    discussions = relationship('Discussion',
-                               primaryjoin="(Group.id==Discussion.group_id)")
+    forum = Column(PickleType)
     admin_id = Column(Integer, ForeignKey('users.id'))
     criteria_id = Column(Integer, ForeignKey('criteria.id'))
     users = relationship("User", secondary=group_user, backref='groups')
-
-    @classmethod
-    def edit(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_by_attribute(id=kwargs["id"])[0]
-        instance.name = kwargs.get("name")
-        instance.description = kwargs.get("description")
-        if kwargs.get("discussions"):
-            instance.discussions = kwargs.get("discussions")
-        session.add(instance)
-        return instance
 
     @property
     def __acl__(self):
@@ -210,32 +190,3 @@ class Group(Base, TableSetup):
 
     def __repr__(self):
         return "<Group(%s)>" % (self.name)
-
-
-class Discussion(Base, TableSetup):
-    __tablename__ = 'discussion'
-    title = Column(Text)
-    group_id = Column(Integer, ForeignKey('groups.id'))
-    posts = relationship('Post',
-                         primaryjoin="(Discussion.id==Post.discussion_id)")
-
-    def __repr__(self):
-        return "<Discussion(%s)>" % (self.title)
-
-
-class Post(Base, TableSetup):
-    __tablename__ = 'post'
-    text = Column(Text)
-    discussion_id = Column(Integer, ForeignKey('discussion.id'))
-
-    def __repr__(self):
-        return "<Post(%s)>" % (self.text)
-
-
-class Admin(Base, TableSetup):
-    __tablename__ = 'admin'
-    users = Column(Integer, ForeignKey('users.id'))
-    group_id = Column(Integer, ForeignKey('groups.id'))
-
-    def __repr__(self):
-        return "<Admin(%s)>" % (self.users)

@@ -67,8 +67,6 @@ def main(global_config, **settings):
                      factory=Root)
     config.add_route('group_edit', '/group/edit/{group_name}',
                      factory=Root)
-    config.add_route('group_forum', '/group/{group_name}',
-                     factory=Root)
     config.add_route('profile_detail', '/profile/{username}',
                      factory=UserFactory, traverse='/{username}')
     config.add_route('group_detail', '/group/{group_name}',

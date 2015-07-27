@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
@@ -11,8 +12,7 @@ from random import randint
 from pyramid.security import remember, forget
 from cryptacular.bcrypt import BCRYPTPasswordManager
 
-from models import (User, Post, Discussion,
-                    Group, Criteria)
+from models import (User, Group, Criteria)
 
 
 @view_config(route_name='home',
@@ -255,7 +255,7 @@ def group_create_view(request):
     if request.method == 'POST':
         group = Group.add(name=request.params.get('name'),
                           description=request.params.get('description'),
-                          admin=admin, users=[admin])
+                          admin=admin, users=[admin], forum=OrderedDict())
         Criteria.add(location=request.params.getall('location'),
                      taste=request.params.getall('taste'),
                      diet=request.params.getall('diet'),
@@ -279,47 +279,22 @@ def group_detail_view(request):
     if request.method == 'POST':
         user = User.lookup_by_attribute(username=username)[0]
         user.groups.append(group)
+        if request.params.get('title'):
+            title = request.params.get('title')
+            group.forum[title] = [(request.params.get('post'), username)]
+            group.edit(id=group.id, forum=group.forum)
+        else:
+            post = request.params.items()[0]
+            group.forum[post[0]].append((post[1], username))
+            group.edit(id=group.id, forum=group.forum)
         return HTTPFound(request.route_url(
                          'group_detail',
-                         group_id=request.matchdict['group_id'],
+                         group_name=request.matchdict['group_name'],
                          ))
     profile = {}
     profile['criteria'] = criteria
     profile['group'] = group
     profile['username'] = username
-    return profile
-
-
-@view_config(route_name='group_forum',
-             renderer='templates/group_forum.jinja2')
-def group_forum_view(request):
-    username = request.authenticated_userid
-    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
-    criteria = Criteria.lookup_by_attribute(group=group)[0]
-    if request.method == 'POST':
-        user = User.lookup_by_attribute(username=username)[0]
-        user.groups.append(group)
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.add(title=title, group_id=group.id)
-        if request.params.get('text'):
-            discussion = (Discussion.lookup_by_attribute(
-                          id=request.matchdict['discussion_id'])[0])
-            text = request.params.get('text')
-            Post.add(text=text, discussion_id=discussion.id)
-    tmp_discussions = group.discussions
-    for discussion in Discussion.all():
-        if discussion.group_id == group.id:
-            tmp_discussions.append(discussion)
-    profile = {}
-    profile['discussions'] = []
-    for discussion in tmp_discussions:
-        profile['discussions'].append(tmp_discussions.pop())
-    profile['posts'] = Post.all()
-    profile['group'] = group
-    profile['username'] = username
-    profile['criteria'] = criteria
-
     return profile
 
 

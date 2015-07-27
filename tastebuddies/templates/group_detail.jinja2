@@ -73,6 +73,49 @@
     </nav>
 {% endif %}
 
+   <section id='forum'>
+    <h2> Want to plan an event? Start a discussion!!!</h2>
+        {% if not group.forum %}
+            <div class="entry">
+                <h3>No one has planned anything yet.</h3><h3>Be the first!</h3>
+            </div>
+        {% endif %}
+        <div id="#form-container">
+        <form id="leave-comment-form" action="{{ request.route_url('group_detail', group_name=group.name) }}" method='POST'>
+            <label>Discussion Topic</label>
+            <div class="field-group">
+                <input type="text" name="title" placeholder="What do you want to do?"/>
+            </div>
+            <label>Comment</label>
+            <div class="field-group">
+                <textarea name="post" rows="2" cols="50" placeholder='Write a comment...'></textarea>
+            </div>
+            <input id="save_discussion" type="submit" value="submit"/>
+        </form>
+        </div>
+        {% if group.forum %}
+        {% for title in group.forum.keys() %}
+        <article class="discussion" id="{{ title }}">
+            <h3>{{ title }}</a></h3>
+            <hr/>
+            {% for post in group.forum[title] %}
+                <div class="post">
+                    <p>{{ post[0] }}</p>
+                    <p>user: {{ post[1] }}
+                </div>
+            {% endfor %}
+        </article>
+        <form id="leave-post-form" action="{{ request.route_url('group_detail', group_name=group.name) }}" method='POST'>
+        <label>Comment</label>
+        <div class="field-group">
+            <textarea name="{{ title }}" rows="2" cols="80" placeholder='Write a comment...'></textarea>
+        </div>
+        <input id="save_post" type="submit" name="save_post" value="post"/>
+        </form>
+        {% endfor %}
+        {% endif %}
+    </section>
+
 
 
 {% endblock %}
