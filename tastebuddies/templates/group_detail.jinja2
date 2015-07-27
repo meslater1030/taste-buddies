@@ -93,15 +93,16 @@
             <input id="save_discussion" type="submit" value="submit"/>
         </form>
         </div>
-        {% if group.forum %}
-        {% for title in group.forum.keys() %}
+        {% if forum %}
+        {% for title in forum.keys() %}
         <article class="discussion" id="{{ title }}">
             <h3>{{ title }}</a></h3>
             <hr/>
-            {% for post in group.forum[title] %}
+            {% for post in forum[title] %}
                 <div class="post">
                     <p>{{ post[0] }}</p>
-                    <p>user: {{ post[1] }}
+                    <p>user: {{ post[1] }}</p>
+                    <p>time: {{post[2].strftime('%c')}}
                 </div>
             {% endfor %}
         </article>

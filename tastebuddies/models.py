@@ -36,6 +36,9 @@ group_user = Table('group_user', Base.metadata,
 
 
 class TableSetup(object):
+    """Creates the basic class methods that our other classes will
+    need and instanciates an id that autoincrements.
+    """
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
@@ -76,6 +79,10 @@ class TableSetup(object):
 
 
 class User(Base, TableSetup):
+    """creates a user with atributes that mostly pertain to authorization.
+    Has a many to many relationship with groups, a one to one relationship
+    with criteria and a many to one relationship with groups as admin.
+    """
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     password = Column(Text, nullable=False)
@@ -97,27 +104,6 @@ class User(Base, TableSetup):
             return email
         except:
             raise TypeError('Please enter a vaild email address')
-
-    # I think this can also be replaced by edit.  Maybe turn the string
-    # into an integer in views?
-    @classmethod
-    def write_ver_code(cls, username, ver_code, session=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_by_attribute(username=username)[0]
-        instance.ver_code = int(ver_code)
-        session.add(instance)
-        return instance
-
-    # ditto the above.
-    @classmethod
-    def confirm_user(cls, username, session=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_by_attribute(username=username)[0]
-        instance.confirmed = True
-        session.add(instance)
-        return instance
 
     @property
     def __acl__(self):
@@ -168,8 +154,10 @@ class Criteria(Base, TableSetup):
 
 
 class Group(Base, TableSetup):
-    """We expect forum to be input as a dictionary where keys
-    represent titles and values are a list of posts.
+    """We expect forum to be input as an ordered dictionary where keys
+    represent titles and values are a list of posts.  Many to many
+    realationship with users, one to one relationship with criteria
+    and one to many relationship with users as admins.
     """
     __tablename__ = 'groups'
     name = Column(Text, unique=True, nullable=False)

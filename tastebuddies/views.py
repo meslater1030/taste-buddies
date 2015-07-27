@@ -3,6 +3,7 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 
 import os
+import datetime
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
@@ -54,13 +55,12 @@ def send_verify_email(request):
 
     ver_code = randint(1000, 9999)
 
-    uname = request.authenticated_userid
-    user_obj = User.lookup_by_attribute(username=uname)[0]
-    user_obj.write_ver_code(username=user_obj.username,
-                            ver_code=ver_code)
+    username = request.authenticated_userid
+    user = User.lookup_by_attribute(username=username)[0]
+    user.edit(id=user.id, ver_code=int(ver_code))
 
     fromaddr = "tastebot@gmail.com"
-    toaddr = user_obj.email
+    toaddr = user.email
 
     msg = MIMEMultipart()
     msg["From"] = fromaddr
@@ -94,21 +94,21 @@ def send_verify_email(request):
              renderer='templates/verify.jinja2')
 def verify(request):
     error_msg = None
-    uname = request.authenticated_userid
-    user_obj = User.lookup_by_attribute(username=uname)[0]
+    username = request.authenticated_userid
+    user = User.lookup_by_attribute(username=username)[0]
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
-        db_vcode = user_obj.ver_code
+        db_vcode = user.ver_code
 
         if user_vcode == db_vcode:
-            user_obj.confirm_user(username=user_obj.username)
+            user.edit(id=user.id, confirmed=True)
 
             action = HTTPFound(
-                request.route_url('profile_detail', username=uname)
+                request.route_url('profile_detail', username=username)
             )
 
-    action = {'username': uname, 'error_msg': error_msg}
+    action = {'username': username, 'error_msg': error_msg}
 
     return action
 
@@ -279,19 +279,27 @@ def group_detail_view(request):
     if request.method == 'POST':
         user = User.lookup_by_attribute(username=username)[0]
         user.groups.append(group)
+        time = datetime.datetime.utcnow()
         if request.params.get('title'):
             title = request.params.get('title')
-            group.forum[title] = [(request.params.get('post'), username)]
+            group.forum[title] = [(request.params.get('post'), username, time)]
             group.edit(id=group.id, forum=group.forum)
         else:
-            post = request.params.items()[0]
-            group.forum[post[0]].append((post[1], username))
+            title = request.params.items()[0][0]
+            post = request.params.items()[0][1]
+            group.forum[title].append((post, username, time))
             group.edit(id=group.id, forum=group.forum)
         return HTTPFound(request.route_url(
                          'group_detail',
                          group_name=request.matchdict['group_name'],
                          ))
     profile = {}
+    forum = OrderedDict()
+    for _ in range(len(group.forum)):
+        to_add = group.forum.popitem()
+        forum[to_add[0]] = to_add[1]
+    import pdb; pdb.set_trace()
+    profile['forum'] = forum
     profile['criteria'] = criteria
     profile['group'] = group
     profile['username'] = username
