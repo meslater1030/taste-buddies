@@ -6,12 +6,12 @@ from models import DBSession, User, Group
 
 
 def groupfinder(uname, request):
-    user = User.lookup_user_by_username(uname)
+    user = User.lookup_by_attribute(username=uname)[0]
 
     acls = []
 
     if user:
-        for group in user.user_groups:
+        for group in user.groups:
             acls.append('group:{}'.format(group.id))
 
     return acls

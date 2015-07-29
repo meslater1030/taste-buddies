@@ -21,7 +21,7 @@
 
     <label>Age</label>
     <div class="field-group">
-        <select class="age_range" name="age_range"/>
+        <select class="age" name="age"/>
             <option name="18-24">18-24</option>
             <option name="25-34">25-34</option>
             <option name="35-44">35-44</option>
@@ -41,42 +41,41 @@
             <option name="South_King">South King</option>
         </select>
     </div>
-    <div id="personal_taste" class="field-group">
+    <div id="taste" class="field-group">
         <label>Taste</label>
-        <input type="checkbox" name="personal_taste" class="style" value="Sour"> Sour
-        <input type="checkbox" name="personal_taste" class="style" value="Sweet"> Sweet
-        <input type="checkbox" name="personal_taste" class="style" value="Salty"> Salty
-        <input type="checkbox" name="personal_taste" class="style" value="Spicy"> Spicy
-        <input type="checkbox" name="personal_taste" class="style" value="Bitter"> Bitter
-        <input type="checkbox" name="personal_taste" class="style" value="Italian"> Italian
-        <input type="checkbox" name="personal_taste" class="style" value="Indian"> Indian
-        <input type="checkbox" name="personal_taste" class="style" value="Chinese"> Chinese
-        <input type="checkbox" name="personal_taste" class="style" value="American_Classic"> American Classic
-        <input type="checkbox" name="personal_taste" class="style" value="German"> German
-        <input type="checkbox" name="personal_taste" class="style" value="British"> British
-        <input type="checkbox" name="personal_taste" class="style" value="French"> French
-        <input type="checkbox" name="personal_taste" class="style" value="Vietnamese"> Vietnamese
-        <input type="checkbox" name="personal_taste" class="style" value="Japanese"> Japanese
-        <input type="checkbox" name="personal_taste" class="style" value="Pub"> Pub
-        <input type="checkbox" name="personal_taste" class="style" value="Persian"> Persian
-        <input type="checkbox" name="personal_taste" class="style" value="Mediterranian"> Mediterranian
-        <input type="checkbox" name="personal_taste" class="style" value="Greek"> Greek
-        <input type="checkbox" name="personal_taste" class="style" value="Afghan">Afghan
-        <input type="checkbox" name="personal_taste" class="style" value="Somolian">Somolian
-        <input type="checkbox" name="personal_taste" class="style" value="Thai">
-        Thai
-        <input type="checkbox" name="personal_taste" class="style" value="Barbecue">Barbecue
-        <input type="checkbox" name="personal_taste" class="style" value="Soul">
-        Soul
-        <input type="checkbox" name="personal_taste" class="style" value="Ethiopian">Ethiopian
-        <input type="checkbox" name="personal_taste" class="style" value="Jamaican">Jamaican
-        <input type="checkbox" name="personal_taste" class="style" value="Mexican">Mexican
-        <input type="checkbox" name="personal_taste" class="style" value="Korean">Korean
+        <input type="checkbox" name="taste" class="style" value="Sour"> Sour
+        <input type="checkbox" name="taste" class="style" value="Sweet"> Sweet
+        <input type="checkbox" name="taste" class="style" value="Salty"> Salty
+        <input type="checkbox" name="taste" class="style" value="Spicy"> Spicy
+        <input type="checkbox" name="taste" class="style" value="Bitter"> Bitter
+        <input type="checkbox" name="taste" class="style" value="Italian"> Italian
+        <input type="checkbox" name="taste" class="style" value="Indian"> Indian
+        <input type="checkbox" name="taste" class="style" value="Chinese"> Chinese
+        <input type="checkbox" name="taste" class="style" value="American_Classic"> American Classic
+        <input type="checkbox" name="taste" class="style" value="German"> German
+        <input type="checkbox" name="taste" class="style" value="British"> British
+        <input type="checkbox" name="taste" class="style" value="French"> French
+        <input type="checkbox" name="taste" class="style" value="Vietnamese"> Vietnamese
+        <input type="checkbox" name="taste" class="style" value="Japanese"> Japanese
+        <input type="checkbox" name="taste" class="style" value="Pub"> Pub
+        <input type="checkbox" name="taste" class="style" value="Persian"> Persian
+        <input type="checkbox" name="taste" class="style" value="Mediterranian"> Mediterranian
+        <input type="checkbox" name="taste" class="style" value="Greek"> Greek
+        <input type="checkbox" name="taste" class="style" value="Afghan">Afghan
+        <input type="checkbox" name="taste" class="style" value="Somolian">Somolian
+        <input type="checkbox" name="taste" class="style" value="Thai">Thai
+        <input type="checkbox" name="taste" class="style" value="Barbecue">Barbecue
+        <input type="checkbox" name="taste" class="style" value="Soul">Soul
+        <input type="checkbox" name="taste" class="style" value="Ethiopian">Ethiopian
+        <input type="checkbox" name="taste" class="style" value="Jamaican">Jamaican
+        <input type="checkbox" name="taste" class="style" value="Mexican">Mexican
+        <input type="checkbox" name="taste" class="style" value="Korean">Korean
+
         <label>Diet</label>
-        <input type="checkbox" name="personal_taste" class="style" value="Vegetarian">Vegetarian
-        <input type="checkbox" name="personal_taste" class="style" value="Vegan">Vegan
-        <input type="checkbox" name="personal_taste" class="style" value="Gluten_Free">Gluten Free
-        <input type="checkbox" name="personal_taste" class="style" value="Low_Carb">Low Carb
+        <input type="checkbox" name="taste" class="style" value="Vegetarian">Vegetarian
+        <input type="checkbox" name="taste" class="style" value="Vegan">Vegan
+        <input type="checkbox" name="taste" class="style" value="Gluten_Free">Gluten Free
+        <input type="checkbox" name="taste" class="style" value="Low_Carb">Low Carb
     </div>
     <label>Favorite Restaurants</label>
     <div class="field-group">
@@ -88,12 +87,12 @@
     <input type="text" name="favorite_food" id="favorite_food"
     placeholder="Favorite Food"/>
     </div>
-    <div id="personal_price_range" class="field-group">
-        <label>Price</label>
-        <input type="radio" name="group_price" class="style" value="cheap">$
-        <input type="radio" name="group_price" class="style" value="average">$$
-        <input type="radio" name="group_price" class="style" value="moderate">$$$
-        <input type="radio" name="group_price" class="style" value="expensive">$$$$
+    <div id="personal_cost_range" class="field-group">
+        <label>Cost</label>
+        <input type="radio" name="cost" class="style" value="cheap">$
+        <input type="radio" name="cost" class="style" value="average">$$
+        <input type="radio" name="cost" class="style" value="moderate">$$$
+        <input type="radio" name="cost" class="style" value="expensive">$$$$
     </div>
     <input id="save_personal_profile" type="submit" name="profile_save" value="Save Profile"/>
 </form>

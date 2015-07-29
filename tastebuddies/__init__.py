@@ -15,9 +15,6 @@ from .models import (
 from security import groupfinder, Root, UserFactory
 from pyramid.view import forbidden_view_config
 
-# for group in self.user_groups:
-#             acl.append((Allow, 'group:{}'.format(group.id), 'view'))
-
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -61,29 +58,18 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('user_create', '/create_user')
     config.add_route('user_login', '/login')
-    config.add_route('verify', '/verify',
-                     factory=Root)
-    config.add_route('send_email', '/send_email',
-                     factory=Root)
-    config.add_route('logout', '/logout',
-                     factory=Root)
+    config.add_route('verify', '/verify', factory=Root)
+    config.add_route('send_email', '/send_email', factory=Root)
+    config.add_route('logout', '/logout', factory=Root)
     config.add_route('profile_edit', '/profile/edit/{username}',
                      factory=Root)
     config.add_route('group_create', '/group/create_group',
                      factory=Root)
-    config.add_route('group_edit', '/group/edit/{group_id}',
+    config.add_route('group_edit', '/group/edit/{group_name}',
                      factory=Root)
-    config.add_route('group_forum', '/group/{group_id}/{}',
-                     factory=Root)
-
     config.add_route('profile_detail', '/profile/{username}',
                      factory=UserFactory, traverse='/{username}')
-
-    config.add_route('group_detail', '/group/{group_id}',
-                     factory=Root)
-    # config.add_route('group_detail', '/group/{group_id}',
-    #                  factory=GroupFactory, traverse='/{group_id}')
-    config.add_route('group_discussion', '/group/{group_id}/{discussion_id}',
+    config.add_route('group_detail', '/group/{group_name}',
                      factory=Root)
     config.scan()
 

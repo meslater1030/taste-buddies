@@ -19,63 +19,64 @@
 
     <label>Name</label>
     <div class="field-group">
-        {{ firstname }} {{ lastname }}
+        {{ user.firstname }} {{ user.lastname }}
     </div>
 
     <label>Age Group</label>
     <div class="field-group">
-        {{ age }}
+        {{ criteria.age[0] }}
     </div>
 
     <label>Location</label>
     <div class="field-group">
-        {{ location }}
+        {{ criteria.location[0] }}
     </div>
 
     <div id="personal_taste" class="field-group">
         <label>Taste Preferences</label>
+        {% if criteria.taste %}
+            {% for taste in criteria.taste %}
+            <div>{{ taste }}</div>
+            {% endfor %}
+        {% endif %}
 
-        {% for taste in tastes %}
-        <div>{{ taste }}</div>
-
-        {% endfor %}
     </div>
 
     <div id="diet" class="field-group">
         <label>Dietary Restriction</label>
+        {% if criteria.diet %}
+            {% for diet in criteria.diet %}
+            <div>{{ diet }}</div>
+            {% endfor %}
+        {% endif %}
 
-        {% for diet in diets %}
-        <div>{{ diet }}</div>
-
-        {% endfor %}
     </div>
 
 
     <label>Favorite Restaurants</label>
     <div class="field-group">
-        {{ restaurant }}
+        {{ user.restaurants }}
     </div>
 
     <label>Favorite Foods</label>
     <div class="field-group">
-        {{ food }}
+        {{ user.food }}
     </div>
 
-    <div id="personal_price_range" class="field-group">
-        <label>Price Preference</label>
-        {{ price }}
+    <div id="personal_cost_range" class="field-group">
+        <label>Cost Preference</label>
+        {{ criteria.cost[0] }}
     </div>
 
     <div id="groups" class="field-group">
         <label>User Groups</label>
 
         <ul class="group-links-list">
-
-            {% for group in groups %}
-            <li><a href="{{ request.route_url('group_detail', group_id=group.id) }}">{{ group.name }}</a></li>
-
+            {% if user.groups %}
+            {% for group in user.groups %}
+            <li><a href="{{ request.route_url('group_detail', group_name=group.name) }}">{{ group.name }}</a></li>
             {% endfor %}
-
+            {% endif %}
         </ul>
     </div>
   </form>
@@ -92,9 +93,9 @@
     </ul>
 <!--     <ul>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=0) }}">+Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_name=0) }}">+Your Groups</a></li>
 
-    <li><a href="{{ request.route_url('group_detail', group_id=1) }}">+Administer Your Groups</a></li>
+    <li><a href="{{ request.route_url('group_detail', group_name=1) }}">+Administer Your Groups</a></li>
     </ul> -->
     </ul>
 </nav>

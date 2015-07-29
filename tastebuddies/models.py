@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from pyramid.security import Allow
 from sqlalchemy import (
     Table,
     Column,
@@ -8,6 +8,7 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     Boolean,
+    PickleType
 )
 
 
@@ -20,64 +21,26 @@ from sqlalchemy.orm import (
     validates,
 )
 
-from pyramid.security import Allow
-
 from zope.sqlalchemy import ZopeTransactionExtension
 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
-
-usertaste_table = Table('user_profile', Base.metadata,
-                        Column('users', Integer, ForeignKey('users.id')),
-                        Column('profile', Integer, ForeignKey('profile.id'))
-                        )
-
-
-userdiet_table = Table('user_diet', Base.metadata,
-                       Column('users', Integer, ForeignKey('users.id')),
-                       Column('profile', Integer, ForeignKey('diet.id'))
-                       )
+group_user = Table('group_user', Base.metadata,
+                   Column('group_id', Integer, ForeignKey('groups.id')),
+                   Column('user_id', Integer, ForeignKey('users.id'))
+                   )
 
 
-usercost_table = Table('user_cost', Base.metadata,
-                       Column('users', Integer, ForeignKey('users.id')),
-                       Column('profile', Integer, ForeignKey('cost.id'))
-                       )
-
-groupage_table = Table('group_age', Base.metadata, Column('group', Integer,
-                       ForeignKey('groups.id')), Column('agegroup', Integer,
-                       ForeignKey('agegroup.id'))
-                       )
-
-groupuser_table = Table('group_user', Base.metadata, Column('group', Integer,
-                        ForeignKey('groups.id')), Column('users', Integer,
-                        ForeignKey('users.id'))
-                        )
-
-groupcost_table = Table('group_cost', Base.metadata, Column('groups_id',
-                        Integer, ForeignKey('groups.id')),
-                        Column('cost_id', Integer, ForeignKey('cost.id'))
-                        )
-
-grouptaste_table = Table('group_taste', Base.metadata,
-                         Column('group_id', Integer, ForeignKey('groups.id')),
-                         Column('profile', Integer, ForeignKey('profile.id'))
-                         )
-
-
-groupdiet_table = Table('group_diet', Base.metadata,
-                        Column('group_id', Integer, ForeignKey('groups.id')),
-                        Column('diet_id', Integer, ForeignKey('diet.id'))
-                        )
-
-
-class _Table(object):
+class TableSetup(object):
+    """Creates the basic class methods that our other classes will
+    need and instanciates an id that autoincrements.
+    """
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @classmethod
-    def write(cls, session=None, **kwargs):
+    def add(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
         instance = cls(**kwargs)
@@ -91,13 +54,33 @@ class _Table(object):
         return session.query(cls).all()
 
     @classmethod
-    def one(cls, eid=None, session=None):
+    def lookup_by_attribute(cls, session=None, **kwargs):
         if session is None:
             session = DBSession
-        return session.query(cls).filter(cls.id == eid).one()
+        return session.query(cls).filter_by(**kwargs).all()
+
+    @classmethod
+    def edit(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.query(cls).filter(cls.id == kwargs['id']).update(kwargs)
+        return instance
+
+    @classmethod
+    def delete(cls, session=None, **kwargs):
+        if session is None:
+            session = DBSession
+        instance = cls(**kwargs)
+        session.query(cls).filter(cls.id == kwargs['id']).delete()
+        return instance
 
 
-class User(Base, _Table):
+class User(Base, TableSetup):
+    """creates a user with atributes that mostly pertain to authorization.
+    Has a many to many relationship with groups, a one to one relationship
+    with criteria and a many to one relationship with groups as admin.
+    """
     __tablename__ = 'users'
     username = Column(Text, nullable=False, unique=True)
     password = Column(Text, nullable=False)
@@ -106,17 +89,10 @@ class User(Base, _Table):
     lastname = Column(Text)
     confirmed = Column(Boolean, default=False)
     ver_code = Column(Integer)
-    age = Column(Integer, ForeignKey('agegroup.id'))
-    user_location = Column(Integer, ForeignKey('location.id'))
-    cost = Column(Integer, ForeignKey('cost.id'))
-    food_profile = relationship('Profile', secondary=usertaste_table,
-                                backref='users')
-    diet_restrict = relationship('Diet', secondary=userdiet_table,
-                                 backref='users')
-    user_groups = relationship('Group', secondary=groupuser_table,
-                               backref='users')
     restaurants = Column(Text)
     food = Column(Text)
+    criteria_id = Column(Integer, ForeignKey('criteria.id'))
+    admin_groups = relationship("Group", backref='admin')
 
     @validates('email')
     def validate_email(self, key, email):
@@ -127,83 +103,12 @@ class User(Base, _Table):
         except:
             raise TypeError('Please enter a vaild email address')
 
-    @classmethod
-    def lookup_user_by_username(cls, username, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(User.username == username).one()
-
-    @classmethod
-    def lookup_user_by_id(cls, uid, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(cls.id == uid).one()
-
-    @classmethod
-    def addgroup(cls, session=None, usergroup=None, username=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_user_by_username(username=username)
-        instance.user_groups.append(usergroup)
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def write_ver_code(cls, username, ver_code, session=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_user_by_username(username)
-        instance.ver_code = int(ver_code)
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def confirm_user(cls, username, session=None):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_user_by_username(username)
-        instance.confirmed = True
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def change(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_user_by_username(username=kwargs["username"])
-        instance.firstname = kwargs.get("firstname")
-        instance.lastname = kwargs.get("lastname")
-        instance.restaurants = kwargs.get("restaurant")
-        instance.food = kwargs.get("food")
-        tasteid = map(int, kwargs.get("taste"))
-        dietid = map(int, kwargs.get("diet"))
-        instance.food_profile = []
-        instance.diet_restrict = []
-        for eid in tasteid:
-            instance.food_profile.append(session.query(Profile).filter
-                                         (Profile.id == eid).all()[0])
-        for eid in dietid:
-            instance.diet_restrict.append(session.query(Diet).filter
-                                          (Diet.id == eid).all()[0])
-
-        instance.cost = int(kwargs.get("price"))
-        instance.user_location = int(kwargs.get("location"))
-        instance.age = int(kwargs.get("age"))
-
-        session.add(instance)
-        return instance
-
     @property
     def __acl__(self):
         acl = []
-
         acl.append((Allow, self.username, 'owner'))
-
-        for group in self.user_groups:
+        for group in self.groups:
             acl.append((Allow, 'group:{}'.format(group.id), 'connect'))
-
-        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
-
         return acl
 
     def __repr__(self):
@@ -212,174 +117,62 @@ class User(Base, _Table):
                                                    self.username)
 
 
-class Profile(Base, _Table):
-    __tablename__ = 'profile'
-    taste = Column(Text, unique=True)
+class Criteria(Base, TableSetup):
+    """Constant variables are used to generate options for the user
+    to choose from on the front end.  Columns are PickleTypes and expect
+    to receive and return lists.  Each user has one set of criteria and
+    each group has one set of criteria and vice versa for a one to one
+    relationship.
+    """
+    __tablename__ = 'criteria'
+    TASTES = ['Sour', 'Sweet', 'Salty', 'Spicy', 'Bitter', 'Italian',
+              'Chinese', 'American Classic', 'German', 'British',
+              'French', 'Vietnamese', 'Japanese', 'Pub', 'Persian',
+              'Mediterranian', 'Greek', 'Afghan', 'Somolian',
+              'Thai', 'Barbecue', 'Soul', 'Ethiopian', 'Jamaican',
+              'Mexican', 'Korean',
+              ]
+    DIETS = ['Vegetarian', 'Vegan', 'Gluten Free', 'Low Carb']
+    LOCATIONS = ['Seattle', 'Kitsap', 'Eastside', 'Skagit', 'South King']
+    AGES = ['18-24', '25-34', '35-44', '45-54', '55-64', '65-74', '75+']
+    COSTS = ['$', '$$', '$$$', '$$$$']
+    taste = Column(PickleType)
+    age = Column(PickleType)
+    location = Column(PickleType)
+    cost = Column(PickleType)
+    diet = Column(PickleType)
+    group = relationship('Group', uselist=False, backref='criteria')
+    user = relationship('User', uselist=False, backref='criteria')
 
     def __repr__(self):
-        return "<Taste(%s)>" % (self.taste)
+        if self.user:
+            return"<Criteria for %s>" % (self.user.username)
+        else:
+            return"<Criteria for %s>" % (self.group.name)
 
 
-class AgeGroup(Base, _Table):
-    __tablename__ = 'agegroup'
-    age_group = Column(Text)
-
-    def __repr__(self):
-        return "<Age(%s)>" % (self.age_group)
-
-
-class Location(Base, _Table):
-    __tablename__ = 'location'
-    city = Column(Text)
-
-    def __repr__(self):
-        return "<Location(%s)>" % (self.city)
-
-
-class Cost(Base, _Table):
-    __tablename__ = 'cost'
-    cost = Column(Text)
-
-    def __repr__(self):
-        return "<Cost(%s)>" % (self.cost)
-
-
-class Diet(Base, _Table):
-    __tablename__ = 'diet'
-    diet = Column(Text)
-
-    def __repr__(self):
-        return "<Dietary Preference(%s)>" % (self.diet)
-
-
-class Group(Base):
+class Group(Base, TableSetup):
+    """We expect forum to be input as an ordered dictionary where keys
+    represent titles and values are a list of posts.  Many to many
+    realationship with users, one to one relationship with criteria
+    and one to many relationship with users as admins.
+    """
     __tablename__ = 'groups'
-    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(Text, unique=True, nullable=False)
     description = Column(Text, nullable=False)
-    location = Column(Integer, ForeignKey('location.id'))
-    discussions = relationship('Discussion',
-                               primaryjoin="(Group.id==Discussion.group_id)")
-
-    # group_admin = relationship("Admin", uselist=False, backref='group')
-    group_admin = relationship("Admin", uselist=False)
-
-    food_profile = relationship('Profile', secondary=grouptaste_table,
-                                backref='group')
-    diet_restrict = relationship('Diet', secondary=groupdiet_table,
-                                 backref='group')
-    cost = Column(Integer, ForeignKey('cost.id'))
-    age = Column(Integer, ForeignKey('agegroup.id'))
-
-    @classmethod
-    def change(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        instance = cls.lookup_group_by_id(gid=kwargs["id"])
-        instance.name = kwargs.get("name")
-        instance.description = kwargs.get("description")
-        instance.user_location = int(kwargs.get("location"))
-        if kwargs.get("discussions"):
-            instance.discussions = kwargs.get("discussions")
-        instance.age = int(kwargs.get("age"))
-        instance.cost = int(kwargs.get("cost"))
-        tasteid = map(int, kwargs.get("taste"))
-        dietid = map(int, kwargs.get("diet"))
-        instance.food_profile = []
-        instance.diet_restrict = []
-        for eid in tasteid:
-            instance.food_profile.append(session.query(Profile).filter
-                                         (Profile.id == eid).all()[0])
-        for eid in dietid:
-            instance.diet_restrict.append(session.query(Diet).filter
-                                          (Diet.id == eid).all()[0])
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def write(cls, session=None, **kwargs):
-        if session is None:
-            session = DBSession
-        tasteid = map(int, kwargs.get("food_profile"))
-        dietid = map(int, kwargs.get("diet_restrict"))
-        grouptaste = []
-        diettaste = []
-        for eid in tasteid:
-            grouptaste.append(session.query(Profile).filter
-                              (Profile.id == eid).all()[0])
-        for eid in dietid:
-            diettaste.append(session.query(Diet).filter
-                             (Diet.id == eid).all()[0])
-        kwargs["food_profile"] = grouptaste
-        kwargs["diet_restrict"] = diettaste
-        username = kwargs.get("Admin")
-        del kwargs['Admin']
-        instance = cls(**kwargs)
-        User.addgroup(usergroup=instance, username=username)
-        session.add(instance)
-        return instance
-
-    @classmethod
-    def all(cls, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).all()
-
-    @classmethod
-    def lookup_group_by_id(cls, gid, session=None):
-        if session is None:
-            session = DBSession
-        return session.query(cls).filter(cls.id == gid).one()
-
-    @classmethod
-    def get_members_of_gid(cls, gid, session=None):
-        if session is None:
-            session = DBSession
-
-        return session.query(User).filter(User.user_groups == gid).all()
+    forum = Column(PickleType)
+    admin_id = Column(Integer, ForeignKey('users.id'))
+    criteria_id = Column(Integer, ForeignKey('criteria.id'))
+    users = relationship("User", secondary=group_user, backref='groups')
 
     @property
     def __acl__(self):
         acl = []
-
-        acl.append((Allow, self.group_admin, 'g_admin'))
-
+        acl.append((Allow, self.admin, 'g_admin'))
         members = self.id.users
         for member in members:
             acl.append((Allow, 'member:{}'.format(member.username), 'member'))
-
-        # acl.append((Deny, Everyone, ALL_PERMISSIONS))
-
         return acl
 
     def __repr__(self):
-        return "<Group(%s, location=%s)>" % (self.name, self.location)
-
-
-class Discussion(Base, _Table):
-    __tablename__ = 'discussion'
-    title = Column(Text)
-    group_id = Column(Integer, ForeignKey('groups.id'))
-    posts = relationship('Post',
-                         primaryjoin="(Discussion.id==Post.discussion_id)")
-
-    def __repr__(self):
-        return "<Discussion(%s)>" % (self.title)
-
-
-class Post(Base, _Table):
-    __tablename__ = 'post'
-    text = Column(Text)
-    discussion_id = Column(Integer, ForeignKey('discussion.id'))
-
-    def __repr__(self):
-        return "<Post(%s)>" % (self.text)
-
-
-class Admin(Base, _Table):
-    __tablename__ = 'admin'
-    users = Column(Integer, ForeignKey('users.id'))
-    group_id = Column(Integer, ForeignKey('groups.id'))
-
-    def __repr__(self):
-        return "<Admin(%s)>" % (self.users)
+        return "<Group(%s)>" % (self.name)

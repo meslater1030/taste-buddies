@@ -1,18 +1,21 @@
-from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPFound, HTTPForbidden
-
-import os
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from collections import OrderedDict
+from cryptacular.bcrypt import BCRYPTPasswordManager
+import datetime
 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-import smtplib
-from random import randint
 
+from models import User, Group, Criteria
+import os
+
+from pyramid.httpexceptions import HTTPFound, HTTPForbidden
 from pyramid.security import remember, forget
-from cryptacular.bcrypt import BCRYPTPasswordManager
+from pyramid.view import view_config
 
-from models import (User, Cost, Location, AgeGroup, Profile, Post, Discussion,
-                    Group, Diet)
+from random import randint
+import smtplib
 
 
 @view_config(route_name='home',
@@ -25,7 +28,6 @@ def home_view(request):
              renderer='templates/user_create.jinja2')
 def user_create_view(request):
 
-    error_msg = None
     username = request.authenticated_userid
 
     if request.method == 'POST':
@@ -36,22 +38,18 @@ def user_create_view(request):
             password = request.params.get('password')
             hashed = manager.encode(password)
             email = request.params.get('email')
-
-            User.write(
+            user = User.add(
                 username=username,
                 password=hashed,
                 email=email,
-                cost=1,
-                age=1,
-                user_location=1
             )
+            Criteria.add(user=user)
             headers = remember(request, username)
 
             return HTTPFound(request.route_url('send_email'), headers=headers)
         except:
             return {}
-    return {'username': username,
-            'error_msg': error_msg}
+    return {'username': username}
 
 
 @view_config(route_name='send_email', permission='authn')
@@ -59,12 +57,12 @@ def send_verify_email(request):
 
     ver_code = randint(1000, 9999)
 
-    uname = request.authenticated_userid
-    user_obj = User.lookup_user_by_username(uname)
-    user_obj.write_ver_code(username=user_obj.username, ver_code=ver_code)
+    username = request.authenticated_userid
+    user = User.lookup_by_attribute(username=username)[0]
+    user.edit(id=user.id, ver_code=int(ver_code))
 
     fromaddr = "tastebot@gmail.com"
-    toaddr = user_obj.email
+    toaddr = user.email
 
     msg = MIMEMultipart()
     msg["From"] = fromaddr
@@ -98,21 +96,21 @@ def send_verify_email(request):
              renderer='templates/verify.jinja2')
 def verify(request):
     error_msg = None
-    uname = request.authenticated_userid
-    user_obj = User.lookup_user_by_username(uname)
+    username = request.authenticated_userid
+    user = User.lookup_by_attribute(username=username)[0]
 
     if request.method == "POST":
         user_vcode = int(request.params.get('verify_code'))
-        db_vcode = user_obj.ver_code
+        db_vcode = user.ver_code
 
         if user_vcode == db_vcode:
-            user_obj.confirm_user(username=user_obj.username)
+            user.edit(id=user.id, confirmed=True)
 
             action = HTTPFound(
-                request.route_url('profile_detail', username=uname)
+                request.route_url('profile_detail', username=username)
             )
 
-    action = {'username': uname, 'error_msg': error_msg}
+    action = {'username': username, 'error_msg': error_msg}
 
     return action
 
@@ -124,7 +122,7 @@ def do_login(request):
     entered_username = request.params.get('username', None)
     entered_password = request.params.get('password', None)
 
-    user_obj = User.lookup_user_by_username(username=entered_username)
+    user_obj = User.lookup_by_attribute(username=entered_username)[0]
     db_username = user_obj.username
 
     if entered_username == db_username:
@@ -147,7 +145,7 @@ def passes_authentication(request):
 
 def passes_verification(request):
     username = request.params.get('username', None)
-    udata = User.lookup_user_by_username(username)
+    udata = User.lookup_by_attribute(username=username)[0]
 
     try:
         verified_status = udata.confirmed
@@ -204,298 +202,157 @@ def logout(request):
 @view_config(route_name='profile_detail',
              renderer='templates/profile_detail.jinja2')
 def profile_detail_view(request):
-
-    error_msg = None
+    """will allow the user who owns the profile or any user who is in a group
+    with that user to see that users current informmation and criteria.
+    """
     if not (request.has_permission('owner')
             or request.has_permission('connect')):
         return HTTPForbidden()
 
-    uname = request.matchdict['username']
-    udata = User.lookup_user_by_username(uname)
-
-    tastes = []
-    diets = []
-    groups = []
-
-    for taste in udata.food_profile:
-        tastes.append(taste.taste)
-
-    for diet in udata.diet_restrict:
-        diets.append(diet.diet)
-
-    for group in udata.user_groups:
-        groups.append(group)
-
-    price = Cost.one(eid=udata.cost).cost
-    location = Location.one(eid=udata.user_location).city
-    age = AgeGroup.one(eid=udata.age).age_group
-
-    return {
-        'username': request.authenticated_userid,
-        'error_msg': error_msg,
-        'firstname': udata.firstname,
-        'lastname': udata.lastname,
-        'food': udata.food,
-        'restaurant': udata.restaurants,
-        'tastes': tastes,
-        'diets': diets,
-        'groups': groups,
-        'age': age,
-        'location': location,
-        'price': price,
-    }
+    user = User.lookup_by_attribute(username=request.matchdict['username'])[0]
+    profile = {}
+    profile['username'] = request.authenticated_userid,
+    profile['user'] = user
+    profile['criteria'] = Criteria.lookup_by_attribute(user=user)[0]
+    return profile
 
 
 @view_config(route_name='profile_edit',
              permission='authn',
              renderer='templates/profile_edit.jinja2')
 def profile_edit_view(request):
-    error_msg = None
-    if request.method == 'POST':
-            username = request.authenticated_userid
-            firstname = request.params.get('first_name')
-            lastname = request.params.get('last_name')
-            location = request.params.get('location')
-            taste = request.params.getall('personal_taste')
-            diet = request.params.getall('diet')
-            restaurant = request.params.get('favorite_restaurants')
-            price = request.params.get('group_price')
-            food = request.params.get('favorite_food')
-            age = request.params.get('age')
-            User.change(username=username, firstname=firstname,
-                        lastname=lastname, location=location,
-                        taste=taste, diet=diet, price=price,
-                        restaurant=restaurant, food=food, age=age)
-
-            headers = remember(request, username)
-            return HTTPFound(request.route_url(
-                             'profile_detail', username=username
-                             ),
-                             headers=headers)
-
+    """returns current user information.  On POST collects all information
+    fromt the page and edits the user and criteria accordingly.
+    """
     username = request.authenticated_userid
-    user = User.lookup_user_by_username(username)
-    tastes = Profile.all()
-    diet = Diet.all()
-    age = AgeGroup.all()
-    location = Location.all()
-    price = Cost.all()
-    return {
-        'username': username,
-        'error_msg': error_msg,
-        'user': user,
-        'tastes': tastes,
-        'ages': age,
-        'location': location,
-        'price': price,
-        'diets': diet
-    }
+    user = User.lookup_by_attribute(username=username)[0]
+    criteria = Criteria.lookup_by_attribute(user=user)[0]
+    if request.method == 'POST':
+        User.edit(id=user.id,
+                  username=username,
+                  firstname=request.params.get('first_name'),
+                  lastname=request.params.get('last_name'),
+                  restaurants=request.params.get('favorite_restaurants'),
+                  food=request.params.get('favorite_food')
+                  )
+        Criteria.edit(id=criteria.id,
+                      location=request.params.getall('location'),
+                      taste=request.params.getall('taste'),
+                      diet=request.params.getall('diet'),
+                      cost=request.params.getall('cost'),
+                      age=request.params.getall('age')
+                      )
+        headers = remember(request, username)
+        return HTTPFound(request.route_url(
+                         'profile_detail', username=username
+                         ),
+                         headers=headers)
+    profile = {}
+    profile['criteria'] = criteria
+    profile['username'] = username
+    profile['user'] = user
+    return profile
 
 
 @view_config(route_name='group_create',
              permission='authn',
              renderer='templates/group_create.jinja2')
 def group_create_view(request):
-    error_msg = None
+    """Collects all information from the page and instanciates a new
+    group and its corresponding criteria.
+    """
     username = request.authenticated_userid
-
+    admin = User.lookup_by_attribute(username=username)[0]
     if request.method == 'POST':
-            group_name = request.params.get('group_name')
-            group_descrip = request.params.get('group_description')
-            location = request.params.get('location')
-            taste = request.params.getall('personal_taste')
-            diet = request.params.getall('diet')
-            price = request.params.get('group_price')
-            age = request.params.get('age')
-            Group.write(name=group_name, description=group_descrip,
-                        location=location, food_profile=taste,
-                        diet_restrict=diet, cost=price, age=age,
-                        Admin=username)
-            all_groups = Group.all()
-            for group in all_groups:
-                if group.name == group_name:
-                    group_id = group.id
-            return HTTPFound(request.route_url('group_detail',
-                             group_id=group_id))
-    tastes = Profile.all()
-    diet = Diet.all()
-    age = AgeGroup.all()
-    location = Location.all()
-    price = Cost.all()
-    return {
-        'username': username,
-        'error_msg': error_msg,
-        'tastes': tastes,
-        'ages': age,
-        'location': location,
-        'price': price,
-        'diets': diet
-    }
+        group = Group.add(name=request.params.get('name'),
+                          description=request.params.get('description'),
+                          admin=admin, users=[admin], forum=OrderedDict())
+        Criteria.add(location=request.params.getall('location'),
+                     taste=request.params.getall('taste'),
+                     diet=request.params.getall('diet'),
+                     cost=request.params.getall('cost'),
+                     age=request.params.getall('age'),
+                     group=group)
+        return HTTPFound(request.route_url('group_detail',
+                         group_name=group.name))
+    profile = {}
+    profile['criteria'] = Criteria()
+    profile['username'] = username
+    return profile
 
 
 @view_config(route_name='group_detail',
              renderer='templates/group_detail.jinja2')
 def group_detail_view(request):
-    error_msg = None
+    """returns current group information.  If recievng input form a form
+    will add that user as a group member if they aren't already.  Will look
+    to see whether a new discussion is being created and if so, add it
+    to the group forum.  If a new post on an existing discussion is created
+    that post will be added to the appropriate discussion.  Discussions
+    are returned in reverse order.
+    """
     username = request.authenticated_userid
-    grp_obj = Group.lookup_group_by_id(request.matchdict['group_id'])
-
+    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
+    criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-        User.addgroup(username=username, usergroup=grp_obj)
-
+        user = User.lookup_by_attribute(username=username)[0]
+        user.groups.append(group)
+        time = datetime.datetime.utcnow()
         if request.params.get('title'):
             title = request.params.get('title')
-            Discussion.write(title=title, group_id=grp_obj.id)
-
-            for discussions in Discussion.all():
-
-                if discussions.title == title:
-                    discussion = discussions
-            discussion_id = discussion.id
-
-            return HTTPFound(request.route_url(
-                'group_discussion',
-                group_id=request.matchdict['group_id'],
-                discussion_id=discussion_id
-            ))
-
-        if request.params.get('text'):
-            discussion = Discussion.one(request.matchdict['discussion_id'])
-            text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
-
-    members = grp_obj.users
-
-    tmp_discussions = []
-
-    for discussion in Discussion.all():
-        if discussion.group_id == grp_obj.id:
-            tmp_discussions.append(discussion)
-
-    discussions = []
-
-    for discussion in tmp_discussions:
-        discussions.append(tmp_discussions.pop())
-
-    posts = Post.all()
-    price = Cost.one(eid=grp_obj.cost).cost
-    location = Location.one(eid=grp_obj.location).city
-    age = AgeGroup.one(eid=grp_obj.age).age_group
-
-    return {
-        'username': username,
-        'error_msg': error_msg,
-        'group': grp_obj,
-        'members': members,
-        'age': age,
-        'location': location,
-        'price': price,
-        'discussions': discussions,
-        'posts': posts
-    }
-
-
-@view_config(route_name='group_discussion',
-             renderer='templates/group_detail.jinja2')
-def group_discussion_view(request):
-    error_msg = None
-    username = request.authenticated_userid
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-
-    if request.method == 'POST':
-
-        if request.params.get('title'):
-            title = request.params.get('title')
-            Discussion.write(title=title, group_id=group.id)
-
-        if request.params.get('text'):
-
-            discussion = Discussion.one(request.matchdict['discussion_id'])
-            text = request.params.get('text')
-            Post.write(text=text, discussion_id=discussion.id)
-
-    members = User.all()
-    group_members = []
-
-    for member in members:
-        for group in member.user_groups:
-            if group == member.user_groups:
-                group_members.append(group)
-
-    tmp_discussions = group.discussions
-
-    for discussion in Discussion.all():
-
-        if discussion.group_id == group.id:
-            tmp_discussions.append(discussion)
-
-    discussions = []
-
-    for discussion in tmp_discussions:
-        discussions.append(tmp_discussions.pop())
-
-    posts = Post.all()
-    price = Cost.one(eid=group.cost).cost
-    location = Location.one(eid=group.location).city
-    age = AgeGroup.one(eid=group.age).age_group
-
-    return {
-        'username': username,
-        'error_msg': error_msg,
-        'group': group,
-        'members': members,
-        'age': age,
-        'location': location,
-        'price': price,
-        'discussions': discussions,
-        'posts': posts,
-    }
+            group.forum[title] = [(request.params.get('post'), username, time)]
+            group.edit(id=group.id, forum=group.forum)
+        else:
+            title = request.params.items()[0][0]
+            post = request.params.items()[0][1]
+            group.forum[title].append((post, username, time))
+            group.edit(id=group.id, forum=group.forum)
+        return HTTPFound(request.route_url(
+                         'group_detail',
+                         group_name=request.matchdict['group_name'],
+                         ))
+    profile = {}
+    forum = OrderedDict()
+    for _ in range(len(group.forum)):
+        to_add = group.forum.popitem()
+        forum[to_add[0]] = to_add[1]
+    profile['forum'] = forum
+    profile['criteria'] = criteria
+    profile['group'] = group
+    profile['username'] = username
+    return profile
 
 
 @view_config(route_name='group_edit',
              permission='authn',
              renderer='templates/group_edit.jinja2')
 def group_edit_view(request):
-    error_msg = None
+    """returns current group information for editing and then collects
+    all information that has been added by the user whether new or existing
+    and edits the existing entries.
+    """
     username = request.authenticated_userid
+    group = Group.lookup_by_attribute(name=request.matchdict['group_name'])[0]
+    criteria = Criteria.lookup_by_attribute(group=group)[0]
     if request.method == 'POST':
-            group = Group.lookup_group_by_id(request.matchdict['group_id'])
-            group_name = request.params.get('group_name')
-            group_descrip = request.params.get('group_description')
-            location = request.params.get('group_location')
-            taste = request.params.getall('personal_taste')
-            diet = request.params.getall('group_diet')
-            price = request.params.get('group_price')
-            age = request.params.get('group_age')
-            username = request.authenticated_userid
-            Group.change(name=group_name, description=group_descrip,
-                         location=location, taste=taste,
-                         diet=diet, cost=price, age=age,
-                         Admin=username, id=group.id)
-            all_groups = Group.all()
-            for group in all_groups:
-                if group.name == group_name:
-                    group_id = group.id
-            return HTTPFound(request.route_url('group_detail',
-                             group_id=group_id))
+        criteria = Criteria.edit(location=request.params.getall('location'),
+                                 taste=request.params.getall('taste'),
+                                 diet=request.params.getall('diet'),
+                                 cost=request.params.getall('cost'),
+                                 age=request.params.getall('age'),
+                                 id=criteria.id)
+        group = Group.edit(name=request.params.get('name'),
+                           description=request.params.get('description'),
+                           id=group.id)
+        return HTTPFound(request.route_url('group_detail',
+                                           group_name=group.name))
 
-    group = Group.lookup_group_by_id(request.matchdict['group_id'])
-    ages = AgeGroup.all()
-    locations = Location.all()
-    food_profiles = Profile.all()
-    diets = Diet.all()
-    costs = Cost.all()
-    # id = group.id
-    return {
-        'username': username,
-        'error_msg': error_msg,
-        'group': group,
-        'ages': ages,
-        'locations': locations,
-        'food_profiles': food_profiles,
-        'diets': diets,
-        'costs': costs
-    }
+    profile = {}
+    profile['criteria'] = criteria
+    profile['group'] = group
+    profile['username'] = username
+
+    return profile
 
 
 conn_err_msg = """

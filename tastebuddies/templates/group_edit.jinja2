@@ -3,83 +3,95 @@
 {% block body %}
 
 <div id="#form-container">
-<form id="view-group-form" action="{{ request.route_url('group_edit', group_id=group.id) }}" method='POST'>
+<form id="view-group-form" action="{{ request.route_url('group_edit', group_name=group.name) }}" method='POST'>
     <h1>Edit your group!</h1>
      <div><!--     an image uploading bar thing suppose to be right here -->
         <img src="../../static/img/dog.jpg" alt="Group Profile Photo" class="group-profile-photo">
     </div>
 <label>Group Name</label>
     <div class="field-group">
-        <input type="text" name="group_name" id="group_name"
+        <input type="text" name="name" id="group_name"
         value="{{ group.name }}"/>
     </div>
     <label>Age</label>
     <div class="field-group">
-        <select class="group_age" name="group_age" />
-        {% for age in ages %}
-            {% if age.age_group == group.age %}
-                <option selected='selected' value='{{ age.id }}' name="group_age" class="group_age">{{ group.age }}</option>
-            {% else %}
-                <option value='{{ age.id }}' name="group_age" class="group_age">{{ age.age_group }}</option>
-            {% endif %}
-        {% endfor %}
+        <select class="age" name="age" />
+            {% for age in criteria.AGES %}
+                {% if criteria.age %}
+                {% if age in criteria.age %}
+
+                <option value={{ age }} selected>{{ age }}</option>
+
+                {% else %}
+                <option value={{ age }}>{{ age }}</option>
+                {% endif %}
+                {% else %}
+                <option value={{ age }}>{{ age }}</option>
+                {% endif %}
+            {% endfor %}
         </select>
     </div>
     <label>Location</label>
-        <select class="group_location" name="group_location"/>
-        {% for location in locations %}
-            {% if location.city == group.location %}
-                <option selected='selected' value='{{ location.id }}' name='group_location' class="group_location">{{ group.location }}</option>
-            {% else %}
-                <option value='{{ location.id }}' name='group_location' class="group_location">{{ location.city }}</option>
-            {% endif %}
-        {% endfor %}
+        <select class="location" name="location"/>
+            {% for location in criteria.LOCATIONS %}
+                {% if criteria.location %}
+                {% if location in criteria.location %}
+                <option value={{ location }} selected>{{ location }}</option>
+
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
+                {% else %}
+                <option value={{ location }}>{{ location }}</option>
+                {% endif %}
+            {% endfor %}
         </select>
     </div>
 
-    <div id="group_taste" class="field-group">
+    <div id="taste" class="field-group">
         <label>Taste</label>
-        {% for food_profile in food_profiles %}
-            {% for group_food_taste in group.food_profile %}
-                {% if group_food_taste.taste == food_profile.taste %}
-                    <input type="checkbox" name="personal_taste" class="personal_taste"
-                           value="{{ food_profile.id }}" checked="checked">{{ food_profile.taste }}
-                {% else %}
-                    <input type="checkbox" name="personal_taste" class="personal_taste" value="{{ food_profile.id }}">{{ food_profile.taste }}
-                {% endif %}
-            {% endfor %}
+        {% for taste in criteria.TASTES %}
+            {% if taste in criteria.taste %}
+                <input type="checkbox" name="taste" class="personal_taste"
+                       value="{{ taste }}" checked="checked">{{ taste }}
+            {% else %}
+                <input type="checkbox" name="personal_taste" class="taste" value="{{ taste.id }}">{{ taste }}
+            {% endif %}
         {% endfor %}
 
         <label>Diet</label>
-        {% for diet in diets %}
-            {% for group_diet in group.diet_restrict %}
-                {% if group_diet.diet == diet.diet %}
-                    <input type="checkbox" class="diet"
-                           value="{{ diet.id }}" checked="checked" name="group_diet">{{ diet.diet }}
-                {% else %}
-                    <input type="checkbox" class="diet" value="{{ diet.id }}" name="group_diet">{{ diet.diet }}
-                {% endif %}
-            {% endfor %}
+        {% for diet in criteria.DIETS %}
+            {% if diet in criteria.diet %}
+                <input type="checkbox" class="diet"
+                       value="{{ diet }}" checked="checked" name="diet">{{ diet }}
+            {% else %}
+                <input type="checkbox" class="diet" value="{{ diet }}" name="diet">{{ diet }}
+            {% endif %}
         {% endfor %}
     </div>
 
     <div class="field-group">
-        <label>Price</label>
-        {% for cost in costs %}
-            {% if group.cost == cost.id %}
-                <input type="radio" name="group_price" class="style"
-                       value="{{ cost.id }}" checked="checked">{{ cost.cost }}
-            {% else %}
-                <input type="radio" name="group_price" class="style" value="{{ cost.id }}">{{ cost.cost }}
-            {% endif %}
+        <label>Cost</label>
+        {% for cost in criteria.COSTS %}
+          {% if criteria.cost %}
+          {% if cost in criteria.cost %}
+          <input type="radio" checked='checked' name="cost" class="style" value={{ cost }}>{{ cost }}
+
+          {% else %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
+          {% endif %}
+          {% else %}
+          <input type="radio" name="cost" class="style" value={{ cost }}>{{ cost }}
+          {% endif %}
+
         {% endfor %}
     </div>
         <label>Group Description</label>
-    <div class="group_description" id="group_description" name="group_description">
+    <div class="description" id="description" name="description">
         <textarea
             id="text"
-            name="group_description"
-            class="group_description"
+            name="description"
+            class="description"
             cols="60"
             rows="8"
             value="{{ group.description }}">{{ group.description }}</textarea>
